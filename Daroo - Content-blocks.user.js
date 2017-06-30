@@ -90,7 +90,6 @@ $("#dk-sh").click(function() {
 $("#clearDk").click(function() {
 	$("#dkPanel input").val("");
 	$("#dkPanel textarea").val("");
-	$("input").keyup();
 });
 
 //Собираем разметку
@@ -152,7 +151,6 @@ $("#clearH").click(function() {
 	$("tr.added-h-block").remove();
 	$("#hPanel input").val("");
 	$("#hPanel textarea").val("");
-	$("input").keyup();
 });
 
 //Собираем разметку
@@ -264,7 +262,6 @@ $("#clearSe").click(function() {
 	$("tr.added-se-block").remove();
 	$("#sePanel input").val("");
 	$("#sePanel textarea").val("");
-	$("input").keyup();
 });
 
 //Собираем разметку
@@ -351,7 +348,6 @@ $("#pv-sh").click(function() {
 $("#clearPv").click(function() {
 	$("#pvPanel input").val("");
 	$("#pvPanel textarea").val("");
-	$("input").keyup();
 });
 
 //Собираем разметку
