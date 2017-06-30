@@ -459,14 +459,12 @@ $("#sv-sh").click(function() {
 //Очищаем форму
 $("#clearSv").click(function() {
 	$("#svPanel input").val("");
-	$("input").keyup();
 });
 
 //Переводим placeholder'ы формы на соотв. язык
-$("ul.a2lix_translationsLocales").click(function() {
+$("html").click(function() {
 	if (tab_lang("ua"))
 	{
-		langLabels = uaLabels;
 		$("#svPanel input").each(function(){
 			$(this).attr("placeholder", uaLabels[(($(this).attr('tabindex'))*1)]);
 		});
@@ -474,7 +472,6 @@ $("ul.a2lix_translationsLocales").click(function() {
 	else
 		if (tab_lang("ru"))
 		{
-			langLabels = ruLabels;
 			$("#svPanel input").each(function(){
 				$(this).attr("placeholder", ruLabels[(($(this).attr('tabindex'))*1)]);
 			});
