@@ -1,20 +1,11 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      1.0
+// @version      1.1
 // @include      *daroo*.*/manager/*
 // @description  Добавляет формы для добавления основных контент блоков
 // @author       Frants Mitskun
 // ==/UserScript==
-
-//ФУНКЦИЯ СОКРЫТИЯ ПАНЕЛЕЙ
-function hide_all_panels(){
-	$("#dkPanel").hide();
-	$("#hPanel").hide();
-	$("#sePanel").hide();
-	$("#pvPanel").hide();
-	$("#svPanel").hide();
-}
 
 //ФУНКЦИЯ ОТОБРАЖАЕТ ПАНЕЛЬ ДЛЯ ВСТАВКИ РАЗМЕТКИ ЕСЛИ ОНА ЗАКРЫТА
 function show_textarea(){
@@ -34,6 +25,30 @@ function tab_lang(str){
 		}
 	});
 	return str===lang;
+}
+
+//ФУНКЦИЯ ВЫБИРАЕТ НЕОБХОДИМЫЙ КОНТЕНТ-БЛОК ИЗ ВЫПАДАЙКИ
+function select_block(by, ru, ua){
+	if(location.host === "daroo.by")
+	{
+		$("select#product_block_content").val(by).change();
+		$("select#price_block_content").val(by).change();
+		$("select#supplier_block_content").val(by).change();
+	}
+	else
+		if(location.host === "daroo.ru")
+		{
+			$("select#product_block_content").val(ru).change();
+			$("select#price_block_content").val(ru).change();
+			$("select#supplier_block_content").val(ru).change();
+		}
+	else
+		if(location.host === "daroo.ua")
+		{
+			$("select#product_block_content").val(ua).change();
+			$("select#price_block_content").val(ua).change();
+			$("select#supplier_block_content").val(ua).change();
+		}
 }
 
 //СТИЛИ
@@ -59,42 +74,17 @@ $("ul.top-nav").prepend("<li style=\"\" id=\"content-block-menu\" class=\"dropdo
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //ДВЕ КОЛОНКИ
 
-$("body").prepend("<div id=\"dkPanel\"><table><tr><td colspan=\"2\" align=\"center\"><input type=\"text\" id=\"dkTitle\" placeholder=\"Заголовок\" style=\"width:180px; text-align:center;\"></td></tr>"+
+$("body").prepend("<div id=\"dkPanel\" class=\"content-block-panel\"><table><tr><td colspan=\"2\" align=\"center\"><input type=\"text\" id=\"dkTitle\" placeholder=\"Заголовок\" style=\"width:180px; text-align:center;\"></td></tr>"+
 				  "<tr><td><input type=\"text\" id=\"dkSubtitle1\" placeholder=\"Подзаголовок\" style=\"width:180px;\"><br><textarea id=\"dkText1\" cols=\"23\" rows=\"5\" placeholder=\"Текст\"></textarea></td>"+
 				  "<td><input type=\"text\" id=\"dkSubtitle2\" placeholder=\"Подзаголовок\" style=\"width:180px;\"><br><textarea id=\"dkText2\" cols=\"23\" rows=\"5\" placeholder=\"Текст\"></textarea></td></tr>"+
-				  "</table><div class=\"hideSave btn btn-primary\">Сохранить и закрыть</div><div id=\"clearDk\" class=\"btn btn-primary\">Очистить</div> <div class=\"closePanel btn btn-primary\">Закрыть</div></div>");
+				  "</table><div class=\"hideSave btn btn-primary\">Сохранить и закрыть</div><div class=\"btn btn-primary clearPanel\">Очистить</div> <div class=\"closePanel btn btn-primary\">Закрыть</div></div>");
 $( "#dkPanel" ).draggable();
 
 $("#dk-sh").click(function() {
-	hide_all_panels();
+	$(".content-block-panel").hide();
 	$("#dkPanel").show();
 	show_textarea();
-
-		if(location.host === "daroo.by")
-		{
-			$("select#product_block_content").val('5000246').change();
-			$("select#price_block_content").val('5000246').change();
-			$("select#supplier_block_content").val('5000246').change();
-		}
-		else
-			if(location.host === "daroo.ru")
-	{
-		$("select#product_block_content").val('4000022').change();
-		$("select#price_block_content").val('4000022').change();
-		$("select#supplier_block_content").val('4000022').change();
-	}
-	else
-	if(location.host === "daroo.ua")
-	{
-		$("select#product_block_content").val('268').change();
-		$("select#price_block_content").val('268').change();
-		$("select#supplier_block_content").val('268').change();
-	}
-});
-
-$("#clearDk").click(function() {
-	$("#dkPanel input").val("");
-	$("#dkPanel textarea").val("");
+	select_block('5000246', '4000022', '268');
 });
 
 //Собираем разметку
@@ -122,42 +112,16 @@ $('#dkPanel').keyup(function( event ){
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //ХАРАКТЕРИСТИКИ (шахматный)
 
-$( "body" ).prepend( "<div id=\"hPanel\"><table id=\"hTable\"><tr><td align=\"center\"><input type=\"text\" id=\"hTitle\" placeholder=\"Заголовок\" style=\"width:240px; text-align:center;\"></td></tr><tr class=\"h_right h_tr\"><td align=\"right\"><input type=\"text\" id=\"hSubtitle\" placeholder=\"Подзаголовок\"><br><textarea id=\"hDescText\" cols=\"20\" rows=\"5\" placeholder=\"Текст\"></textarea></td></tr></table><div class=\"hideSave btn btn-primary\">Сохранить и закрыть</div> <div id=\"clearH\" class=\"btn btn-primary\">Очистить</div> <div class=\"closePanel btn btn-primary\">Закрыть</div></div>");
+$( "body" ).prepend( "<div id=\"hPanel\" class=\"content-block-panel\"><table id=\"hTable\"><tr><td align=\"center\"><input type=\"text\" id=\"hTitle\" placeholder=\"Заголовок\" style=\"width:240px; text-align:center;\"></td></tr><tr class=\"h_right h_tr\"><td align=\"right\"><input type=\"text\" id=\"hSubtitle\" placeholder=\"Подзаголовок\"><br><textarea id=\"hDescText\" cols=\"20\" rows=\"5\" placeholder=\"Текст\"></textarea></td></tr></table><div class=\"hideSave btn btn-primary\">Сохранить и закрыть</div> <div class=\"btn btn-primary clearPanel\">Очистить</div> <div class=\"closePanel btn btn-primary\">Закрыть</div></div>");
 $( "#hPanel" ).draggable();
 var h_right_block = "<tr class=\"h_right h_tr added-h-block\"><td align=\"right\"><input type=\"text\" id=\"hSubtitle\" placeholder=\"Подзаголовок\"><br><textarea id=\"hDescText\" cols=\"20\" rows=\"5\" placeholder=\"Текст\"></textarea></td></tr>";
 var h_left_block = "<tr class=\"h_left h_tr added-h-block\"><td align=\"left\"><input type=\"text\" id=\"hSubtitle\" placeholder=\"Подзаголовок\"><br><textarea id=\"hDescText\" cols=\"20\" rows=\"5\" placeholder=\"Текст\"></textarea></td></tr>";
 
 $("#h-sh").click(function() {
-	hide_all_panels();
+	$(".content-block-panel").hide();
 	$("#hPanel").show();
 	show_textarea();
-
-	if(location.host === "daroo.by")
-	{
-		$("select#product_block_content").val('5000250').change();
-		$("select#price_block_content").val('5000250').change();
-		$("select#supplier_block_content").val('5000250').change();
-	}
-	else
-		if(location.host === "daroo.ru")
-		{
-			$("select#product_block_content").val('4000026').change();
-			$("select#price_block_content").val('4000026').change();
-			$("select#supplier_block_content").val('4000026').change();
-		}
-	else
-		if(location.host === "daroo.ua")
-		{
-			$("select#product_block_content").val('276').change();
-			$("select#price_block_content").val('276').change();
-			$("select#supplier_block_content").val('276').change();
-		}
-});
-
-$("#clearH").click(function() {
-	$("tr.added-h-block").remove();
-	$("#hPanel input").val("");
-	$("#hPanel textarea").val("");
+	select_block('5000250', '4000026', '276');
 });
 
 //Собираем разметку
@@ -233,42 +197,16 @@ function addBlock(){
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //СТРУКТУРА/ЭТАПЫ (последовательный)
 
-$( "body" ).prepend( "<div id=\"sePanel\"><table style=\"padding-bottom:20px;\" id=\"seTable\"><tr><td align=\"center\"><input type=\"text\" id=\"seTitle\" placeholder=\"Заголовок\" style=\"text-align:center; width:240px;\"></td></tr><tr class=\"se_tr\"><td align=\"right\"><input type=\"text\" id=\"seSubtitle\" placeholder=\"Подзаголовок\"><br><textarea id=\"seDescText\" cols=\"20\" rows=\"5\" placeholder=\"Текст\"></textarea></td></tr></table><div class=\"hideSave btn btn-primary\">Сохранить и закрыть</div> <div id=\"clearSe\" class=\"btn btn-primary\">Очистить</div> <div class=\"closePanel btn btn-primary\">Закрыть</div></div>");
+$( "body" ).prepend( "<div id=\"sePanel\" class=\"content-block-panel\"><table style=\"padding-bottom:20px;\" id=\"seTable\"><tr><td align=\"center\"><input type=\"text\" id=\"seTitle\" placeholder=\"Заголовок\" style=\"text-align:center; width:240px;\"></td></tr><tr class=\"se_tr\"><td align=\"right\"><input type=\"text\" id=\"seSubtitle\" placeholder=\"Подзаголовок\"><br><textarea id=\"seDescText\" cols=\"20\" rows=\"5\" placeholder=\"Текст\"></textarea></td></tr></table><div class=\"hideSave btn btn-primary\">Сохранить и закрыть</div> <div class=\"btn btn-primary clearPanel\">Очистить</div> <div class=\"closePanel btn btn-primary\">Закрыть</div></div>");
 $( "#sePanel" ).draggable();
 
 var se_block = "<tr class=\"se_tr added-se-block\"><td align=\"right\"><input type=\"text\" id=\"seSubtitle\" placeholder=\"Подзаголовок\"><br><textarea id=\"seDescText\" cols=\"20\" rows=\"5\" placeholder=\"Текст\"></textarea></td></tr>";
 
 $("#se-sh").click(function() {
-	hide_all_panels();
+	$(".content-block-panel").hide();
 	$("#sePanel").show();
 	show_textarea();
-
-	if(location.host === "daroo.by")
-	{
-		$("select#product_block_content").val('5000252').change();
-		$("select#price_block_content").val('5000252').change();
-		$("select#supplier_block_content").val('5000252').change();
-	}
-	else
-		if(location.host === "daroo.ru")
-		{
-			$("select#product_block_content").val('4000031').change();
-			$("select#price_block_content").val('4000031').change();
-			$("select#supplier_block_content").val('4000031').change();
-		}
-	else
-		if(location.host === "daroo.ua")
-		{
-			$("select#product_block_content").val('274').change();
-			$("select#price_block_content").val('274').change();
-			$("select#supplier_block_content").val('274').change();
-		}
-});
-
-$("#clearSe").click(function() {
-	$("tr.added-se-block").remove();
-	$("#sePanel input").val("");
-	$("#sePanel textarea").val("");
+	select_block('5000252', '4000031', '274');
 });
 
 //Собираем разметку
@@ -324,40 +262,15 @@ function addBlockSe(){
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //ПРЕИМУЩЕСТВА/ВОЗМОЖНОСТИ (буллиты)
 
-$("body").prepend('<div id="pvPanel"><table style="padding-bottom:20px;"><tr><td colspan="4" align="center"><input type="text" id="pvTitle" placeholder="Заголовок" style="width:240px; text-align:center;"></td></tr><tr><td><input type="text" id="pvSubtitle1" placeholder="Подзаголовок"><Br><textarea id="pvText1" cols="20" rows="5" placeholder="Описание"></textarea></td><td><input type="text" id="pvSubtitle2" placeholder="Подзаголовок"><Br><textarea id="pvText2" cols="20" rows="5" placeholder="Описание"></textarea></td><td><input type="text" id="pvSubtitle3" placeholder="Подзаголовок"><Br><textarea id="pvText3" cols="20" rows="5" placeholder="Описание"></textarea></td><td><input type="text" id="pvSubtitle4" placeholder="Подзаголовок"><Br><textarea id="pvText4" cols="20" rows="5" placeholder="Описание"></textarea></td></tr></table><div class="hideSave btn btn-primary">Сохранить и закрыть</div><div id="clearPv" class="btn btn-primary">Очистить</div><div class="closePanel btn btn-primary">Закрыть</div></div>');
+$("body").prepend('<div id="pvPanel" class=\"content-block-panel\"><table style="padding-bottom:20px;"><tr><td colspan="4" align="center"><input type="text" id="pvTitle" placeholder="Заголовок" style="width:240px; text-align:center;"></td></tr><tr><td><input type="text" id="pvSubtitle1" placeholder="Подзаголовок"><Br><textarea id="pvText1" cols="20" rows="5" placeholder="Описание"></textarea></td><td><input type="text" id="pvSubtitle2" placeholder="Подзаголовок"><Br><textarea id="pvText2" cols="20" rows="5" placeholder="Описание"></textarea></td><td><input type="text" id="pvSubtitle3" placeholder="Подзаголовок"><Br><textarea id="pvText3" cols="20" rows="5" placeholder="Описание"></textarea></td><td><input type="text" id="pvSubtitle4" placeholder="Подзаголовок"><Br><textarea id="pvText4" cols="20" rows="5" placeholder="Описание"></textarea></td></tr></table><div class="hideSave btn btn-primary">Сохранить и закрыть</div><div class="btn btn-primary clearPanel">Очистить</div><div class="closePanel btn btn-primary">Закрыть</div></div>');
 $( "#pvPanel" ).draggable();
 
 //Отображаем и прячем форму
 $("#pv-sh").click(function() {
-	hide_all_panels();
+	$(".content-block-panel").hide();
 	$("#pvPanel").show();
 	show_textarea();
-
-	if(location.host === "daroo.by")
-	{
-		$("select#product_block_content").val('5000248').change();
-		$("select#price_block_content").val('5000248').change();
-		$("select#supplier_block_content").val('5000248').change();
-	}
-	else
-		if(location.host === "daroo.ru")
-		{
-			$("select#product_block_content").val('4000024').change();
-			$("select#price_block_content").val('4000024').change();
-			$("select#supplier_block_content").val('4000024').change();
-		}
-	else
-		if(location.host === "daroo.ua")
-		{
-			$("select#product_block_content").val('270').change();
-			$("select#price_block_content").val('270').change();
-			$("select#supplier_block_content").val('270').change();
-		}
-});
-
-$("#clearPv").click(function() {
-	$("#pvPanel input").val("");
-	$("#pvPanel textarea").val("");
+	select_block('5000248', '4000024', '270');
 });
 
 //Собираем разметку
@@ -394,7 +307,7 @@ $('#pvPanel').keyup(function( event ){
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //СЕРВИСНЫЕ ВОЗМОЖНОСТИ
 
-$("body").prepend('<div id="svPanel"><input type="text" tabindex="1" id="check1" placeholder="Что взять с собой?"><Br><input type="text" tabindex="2" id="check2" placeholder="C кем пойти?"><Br><input type="text" tabindex="3" id="check3" placeholder="Сезон"><Br><input type="text" tabindex="4" id="check4" placeholder="Сколько дарить"><Br><input type="text" tabindex="5" id="check5" placeholder="Расписание и время"><Br><input type="text" tabindex="6" id="check6" placeholder="Безопасность"><Br><input type="text" tabindex="7" id="check7" placeholder="Программа"><Br><input type="text" tabindex="8" id="check8" placeholder="Дополнительные возможности"><Br><input type="text" tabindex="9" id="check9" placeholder="Возраст"><br><br><div id="" class="hideSave btn btn-primary">Сохранить и закрыть</div> <div id="clearSv" class="btn btn-primary">Очистить</div> <div class="closePanel btn btn-primary">Закрыть</div></div>');
+$("body").prepend('<div id="svPanel" class=\"content-block-panel\"><input type="text" tabindex="1" id="check1" placeholder="Что взять с собой?"><Br><input type="text" tabindex="2" id="check2" placeholder="C кем пойти?"><Br><input type="text" tabindex="3" id="check3" placeholder="Сезон"><Br><input type="text" tabindex="4" id="check4" placeholder="Сколько дарить"><Br><input type="text" tabindex="5" id="check5" placeholder="Расписание и время"><Br><input type="text" tabindex="6" id="check6" placeholder="Безопасность"><Br><input type="text" tabindex="7" id="check7" placeholder="Программа"><Br><input type="text" tabindex="8" id="check8" placeholder="Дополнительные возможности"><Br><input type="text" tabindex="9" id="check9" placeholder="Возраст"><br><br><div id="" class="hideSave btn btn-primary">Сохранить и закрыть</div> <div class="btn btn-primary clearPanel">Очистить</div> <div class="closePanel btn btn-primary">Закрыть</div></div>');
 $( "#svPanel" ).draggable();
 
 var ruLabels = [
@@ -427,38 +340,14 @@ var langLabels = ruLabels; //По умолчанию русский
 
 //Отображаем и прячем форму
 $("#sv-sh").click(function() {
-	hide_all_panels();
+	$(".content-block-panel").hide();
 	$("#svPanel").show();
 	show_textarea();
-
-	if(location.host === "daroo.by")
-	{
-		$("select#product_block_content").val('5000253').change();
-		$("select#price_block_content").val('5000253').change();
-		$("select#supplier_block_content").val('5000253').change();
-	}
-	else
-		if(location.host === "daroo.ru")
-		{
-			$("select#product_block_content").val('4000029').change();
-			$("select#price_block_content").val('4000029').change();
-			$("select#supplier_block_content").val('4000029').change();
-		}
-	else
-		if(location.host === "daroo.ua")
-		{
-			$("select#product_block_content").val('275').change();
-			$("select#price_block_content").val('275').change();
-			$("select#supplier_block_content").val('275').change();
-		}
-});
-
-$("#clearSv").click(function() {
-	$("#svPanel input").val("");
+	select_block('5000253', '4000029', '275');
 });
 
 //Переводим placeholder'ы формы на соотв. язык
-$("html").click(function() {
+$("html").click(function(){
 	if (tab_lang("ua"))
 	{
 		$("#svPanel input").each(function(){
@@ -537,15 +426,23 @@ $("input").keyup(function( event ){
 
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //После того как все панели были добавлены в разметку
-hide_all_panels(); //Скрываем все добавленные к body панели
+$(".content-block-panel").hide(); //Скрываем все добавленные к body панели
+
+//По кнопке очищаем панельку
+$("div.clearPanel").click(function(){
+	$("tr.added-se-block").remove();
+	$("tr.added-h-block").remove();
+	$(".content-block-panel input").val("");
+	$(".content-block-panel textarea").val("");
+});
 
 //По кнопке закрываем панельку
 $("div.closePanel").click(function(){
-	hide_all_panels();
+	$(".content-block-panel").hide();
 });
 
 //По кнопке закрываем панельку и сохраняем контент
 $("div.hideSave").click(function() {
-	hide_all_panels();
+	$(".content-block-panel").hide();
 	$('.btn-primary:first-child').first().click();
 });
