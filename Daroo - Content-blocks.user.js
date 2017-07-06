@@ -54,7 +54,7 @@ function select_block(by, ru, ua){
 
 //СТИЛИ
 $("body").append("<style>#dkPanel, #hPanel, #sePanel, #pvPanel, #svPanel{height:auto; max-height:400px; max-width:900px; overflow: auto; background: white;" +
-				 "border:solid 1px lightgray; box-shadow: 0px 0px 17px -1px rgba(0,0,0,0.5); border-radius:5px; padding:10px; z-index:9999 !important; /*margin-top:60px; margin-left:250px;*/ margin-top:460px; margin-left:290px; position:fixed; opacity:0.93;}"+
+				 "border:solid 1px lightgray; box-shadow: 0px 0px 17px -1px rgba(0,0,0,0.5); border-radius:5px; padding:10px; z-index:9999 !important; margin-top:60px; margin-left:250px; /*margin-top:460px; margin-left:290px;*/ position:fixed; opacity:0.93;}"+
 				 "#dkPanel input, #hPanel input, #sePanel input, #pvPanel input{width:161px; height:40px;} #svPanel input{width:450px; height:30px;}"+
 				 "#clearDk, #clearH, #clearSe, #clearPv, #clearSv, .hideSave, .closePanel{float: left; margin-right:10px;}"+
 				 "#content-block-menu .dropdown-toggle:hover{color:red !important;} body{background-color:white !important;}</style>");
