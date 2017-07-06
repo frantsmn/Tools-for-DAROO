@@ -4,6 +4,7 @@
 // @version      1.1
 // @include      *daroo*.*/manager/*
 // @description  Добавляет формы для добавления основных контент блоков
+// @updateURL    https://openuserjs.org/install/frantsmn/Daroo_-_Content-blocks.meta.js
 // @author       Frants Mitskun
 // ==/UserScript==
 
