@@ -75,7 +75,6 @@
     }
 
     //Разметка меню
-
     var style = '<style>#edit-info{position: absolute; top: 10px; right: 10px; background-color:white;} #edit-info input{border:solid lightgray 1px; border-radius:2px; padding:1px;}'+
         '.page-menu-el{display:inline-block; margin-left:10px; padding:5px; border-radius:3px; border: 1px dashed orange;} #page-canonical-info{border:red dashed 1px; background-color:#ffeaf7;} .__a{color:orange;}'+
         '#page-history-info{cursor:pointer;} #page-history-info:hover, #edit-button:hover, a.page-menu-el:hover{border: 1px solid orange; color:orange;}'+
@@ -108,14 +107,12 @@
     });
 
     //Разметка таблицы истории
-
     var style_table = '<style>#history{padding: 0 40px; border-bottom: 1px solid #ededed;} #history table{width:100%;} #history table th{background-color:#ffeaf7; text-align: left; padding:0 0 0 5px; font-weight:bold;} #history table tr{border-bottom:1px solid #ededed;} #history tr:last-child{border-bottom:0px !important;} #history table td{padding:2px 2px 2px 5px} #history table tr td > img{vertical-align:middle;}</style>';
     var table_start = '<div id="history"><table><tr><th> </th><th>id</th><th>Тип</th><th>Наименование</th><th>Адрес</th><th>Ред.</th><th>Время</th></tr>';
     var table_end = '</table></div>';
     $("head").append(style_table);
 
     //Собираем таблицу
-
     function createTable(){
         var table = table_start;
         for (var i=list.length-2;i>=0;i--)
@@ -124,13 +121,11 @@
     }
 
     //Возвращает картинку флага
-
     function flag(str){
         return str === "daroo.by" ? '<img src="https://daroo.by/img/flags/by.png">' : str === "daroo.ru" ? '<img src="https://daroo.by/img/flags/ru.png">' : '<img src="https://daroo.by/img/flags/ua.png">';
     }
 
     //Отображаем/прячем таблицу по кнопке
-
     $("#page-history-info").click(function(){
         if(!$("#history").length)
         {
