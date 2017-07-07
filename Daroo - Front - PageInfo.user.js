@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Front - PageInfo
 // @namespace    PageInfo
-// @version      2.2
+// @version      2.3
 // @description  Добавляет на страницу некоторую информацию и ссылку на редактирование карточки товара/цены/партнера
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Front_-_PageInfo.meta.js
 // @grant        GM_getValue
@@ -156,25 +156,25 @@
     });
     
     //Ссылка на изображение баннера на Карточке товара/Ценовом предложении
-	$("body").append("<style>#banner-url{"+
-					 "float:right; position:relative; height:50px; width:200px; margin-bottom:-75px; margin-top:5px; margin-right:5px; padding:5px;"+
-					 "background:rgba(52, 52, 52, 0.7); color:white;"+
-					 "border:1px dashed orange; border-radius:3px;"+
-					 "z-index:9999999 !important;}"+
-					 "#banner-url a{color:white; letter-spacing:1px; padding-left:2px;}"+
-					 "#banner-url a:hover{color:orange;}"+
-					 "#banner-url input{color:white; background:black; border:solid gray 1px; border-radius:2px; padding-left:2px; width:195px;}"+
-					 "</style>");
+    $("body").append("<style>#banner-url{"+
+	"float:right; position:relative; height:50px; width:200px; margin-bottom:-75px; margin-top:5px; margin-right:5px; padding:5px;"+
+	"background:rgba(52, 52, 52, 0.7); color:white;"+
+	"border:1px dashed orange; border-radius:3px;"+
+	"z-index:9999999 !important;}"+
+	"#banner-url a{color:white; letter-spacing:1px; padding-left:2px;}"+
+	"#banner-url a:hover{color:orange;}"+
+	"#banner-url input{color:white; background:black; border:solid gray 1px; border-radius:2px; padding-left:2px; width:195px;}"+
+	"</style>");
 
-	$("ul.details-slider").find("li").each(function(){
-		$(this).prepend("<div id=\"banner-url\">"+
-						"<a href=\""+$(this).find("img").attr("src")+"\" target=\"_blank\">Cсылка на изображение</a><br>"+
-						"<input value=\""+$(this).find("img").attr("src")+"\">"+
-						"</div>");
-	});
+    $("ul.details-slider").find("li").each(function(){
+	$(this).prepend("<div id=\"banner-url\">"+
+		"<a href=\""+$(this).find("img").attr("src")+"\" target=\"_blank\">Cсылка на изображение</a><br>"+
+		"<input value=\""+$(this).find("img").attr("src")+"\">"+
+		"</div>");
+    });
 
-	$("#banner-url input").mouseenter(function(){
-		$("#banner-url input").select();
-	});
+    $("#banner-url input").mouseenter(function(){
+	$("#banner-url input").select();
+    });
 
 })();
