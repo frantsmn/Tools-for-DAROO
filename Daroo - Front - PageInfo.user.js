@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Front - PageInfo
 // @namespace    PageInfo
-// @version      2.4
+// @version      2.5
 // @description  Добавляет на страницу некоторую информацию и ссылку на редактирование карточки товара/цены/партнера
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Front_-_PageInfo.meta.js
 // @grant        GM_getValue
@@ -175,7 +175,7 @@
     });
 
 	//Разметка блока Meta
-    var style_meta = '<style>#meta{padding: 7px 40px; border-bottom: 1px solid #ededed;} #meta table{width:100%; margin:auto;} #meta table td:first-child{width:1%; padding-right:5px; line-height:30px;} #meta input{width:100% !important; height: 22px; border: solid white 1px; border-radius: 2px; padding: 1px 3px 2px 3px; margin:2px 0 0 2px;} #meta input:hover{border:1px solid lightgrey;}</style>';
+    var style_meta = '<style>#meta{padding: 7px 40px; border-bottom: 1px solid #ededed;} #meta table{width:100%; margin:auto;} #meta table td:first-child{width:1%; padding-right:5px; line-height:30px;} #meta input{width:100% !important; height: 22px; border: solid #eaeaea 1px; border-radius: 2px; padding: 1px 3px 2px 3px; margin:2px 0 0 2px;} #meta input:hover{border:1px solid lightgrey;}</style>';
     var meta = '<div id="meta"><table><tr><td><b>Title:</b><br><b>Description:</b><br><b>Keywords:</b></td>'+
 	'<td><input value="'+$("title").html()+'"><br><input value="'+$('meta[name="description"]').attr('content')+'"><br><input value="'+$('meta[name="keywords"]').attr('content')+'">'+
 	'</td></table></div>';
