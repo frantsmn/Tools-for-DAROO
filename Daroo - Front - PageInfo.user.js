@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Front - PageInfo
 // @namespace    PageInfo
-// @version      2.3
+// @version      2.4
 // @description  Добавляет на страницу некоторую информацию и ссылку на редактирование карточки товара/цены/партнера
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Front_-_PageInfo.meta.js
 // @grant        GM_getValue
@@ -77,7 +77,7 @@
     //Разметка меню
     var style = '<style>#edit-info{position: absolute; top: 10px; right: 10px; background-color:white;} #edit-info input{border:solid lightgray 1px; border-radius:2px; padding:1px;}'+
         '.page-menu-el{display:inline-block; margin-left:10px; padding:5px; border-radius:3px; border: 1px dashed orange;} #page-canonical-info{border:red dashed 1px; background-color:#ffeaf7;} .__a{color:orange;}'+
-        '#page-history-info{cursor:pointer;} #page-history-info:hover, #edit-button:hover, a.page-menu-el:hover{border: 1px solid orange; color:orange;}'+
+        '#page-meta-info, #page-history-info{cursor:pointer;} #page-meta-info:hover, #page-history-info:hover, #edit-button:hover, a.page-menu-el:hover{border: 1px solid orange; color:orange;}'+
         '#page-id-info input{width:45px;} #page-url-info input, #page-canonical-info input{width:80px;}</style>';
 
     var div = '<div id="edit-info"><div id="page-id-info" class="page-menu-el">ID: <input value='+google_tag_params.local_id+'></div><div id="page-url-info" class="page-menu-el">URL: <input value='+window.location.pathname.split("/").slice(-1)[0]+'></div></div>';
@@ -95,6 +95,8 @@
         $("#edit-info").append('<a id="edit-button" href=\"https://'+window.location.hostname+'/manager/'+page.type.type+'/edit/'+google_tag_params.local_id+'" target="_blank" class="page-menu-el">Редактировать '+page.type.str1+'</a>');
     if (list.length>1) //Если количество элементов в списке истории больше 1
         $("#edit-info").prepend('<div id="page-history-info" class="page-menu-el">History</div>');
+
+	$("#edit-info").prepend('<div id="page-meta-info" class="page-menu-el">Meta</div>');
 
     $("#page-url-info").mouseenter(function(){
         $("#page-url-info input").select();
@@ -149,7 +151,7 @@
         $("div.accordion-header").css({"padding": "10px 40px 0","height": "90px"});
         $(this).after('<a class="page-menu-el" style="position:relative; top:-55px; left:500px; padding:10px 30px; background-color:white;" href="'+$(this).attr("data-ajax-url")+'" target="_blank">Открыть в новой вкладке</a>');
     });
-    
+
     //Ссылка на изображение баннера на Карточке товара/Ценовом предложении
     $("body").append("<style>#banner-url{"+
 	"float:right; position:relative; height:50px; width:200px; margin-bottom:-75px; margin-top:5px; margin-right:5px; padding:5px;"+
@@ -169,7 +171,32 @@
     });
 
     $("#banner-url input").mouseenter(function(){
-	$("#banner-url input").select();
+		$("#banner-url input").select();
+    });
+
+	//Разметка блока Meta
+    var style_meta = '<style>#meta{padding: 7px 40px; border-bottom: 1px solid #ededed;} #meta table{width:100%; margin:auto;} #meta table td:first-child{width:1%; padding-right:5px; line-height:30px;} #meta input{width:100% !important; height: 22px; border: solid white 1px; border-radius: 2px; padding: 1px 3px 2px 3px; margin:2px 0 0 2px;} #meta input:hover{border:1px solid lightgrey;}</style>';
+    var meta = '<div id="meta"><table><tr><td><b>Title:</b><br><b>Description:</b><br><b>Keywords:</b></td>'+
+	'<td><input value="'+$("title").html()+'"><br><input value="'+$('meta[name="description"]').attr('content')+'"><br><input value="'+$('meta[name="keywords"]').attr('content')+'">'+
+	'</td></table></div>';
+    $("head").append(style_meta);
+
+	//Отображаем/прячем блок Meta по кнопке
+    $("#page-meta-info").click(function(){
+        if(!$("#meta").length)
+        {
+            $("div.textBlock").prepend(meta);
+            $("#page-meta-info").addClass("__a");
+        }
+        else
+        {
+            $("#meta").remove();
+            $("#page-meta-info").removeClass("__a");
+        }
+    });
+
+ 	$("div.textBlock").on("click", "input", function(){
+		$(this).select();
     });
 
 })();
