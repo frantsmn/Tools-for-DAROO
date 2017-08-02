@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Front - PageInfo
 // @namespace    PageInfo
-// @version      2.5
+// @version      2.6
 // @description  Добавляет на страницу некоторую информацию и ссылку на редактирование карточки товара/цены/партнера
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Front_-_PageInfo.meta.js
 // @grant        GM_getValue
@@ -28,6 +28,7 @@
     var d = new Date();
     var time = d.toLocaleTimeString();
     var date = d.toLocaleDateString();
+	var settings = GM_getValue("settings") ? GM_getValue("settings") : {show_meta : false, show_history : false};
     var list = GM_getValue("history") ? GM_getValue("history") : [];
     var page = {
         id          : google_tag_params.local_id,
@@ -181,17 +182,28 @@
 	'</td></table></div>';
     $("head").append(style_meta);
 
+	//Отображаем блок Meta согласно настройкам
+	if(settings.show_meta)
+	{
+		$("div.textBlock").prepend(meta);
+        $("#page-meta-info").addClass("__a");
+	}
+
 	//Отображаем/прячем блок Meta по кнопке
     $("#page-meta-info").click(function(){
         if(!$("#meta").length)
         {
             $("div.textBlock").prepend(meta);
             $("#page-meta-info").addClass("__a");
+			settings.show_meta = true;
+        	GM_setValue("settings", settings);
         }
         else
         {
             $("#meta").remove();
             $("#page-meta-info").removeClass("__a");
+			settings.show_meta = false;
+        	GM_setValue("settings", settings);
         }
     });
 
