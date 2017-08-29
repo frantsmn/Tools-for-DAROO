@@ -1,14 +1,31 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      1.2
+// @version      1.3
 // @include      *daroo*.*/manager/*
 // @description  Добавляет формы для добавления основных контент блоков
 // @updateURL    https://openuserjs.org/install/frantsmn/Daroo_-_Content-blocks.meta.js
 // @author       Frants Mitskun
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_deleteValue
 // ==/UserScript==
 
-//ФУНКЦИЯ ОТОБРАЖАЕТ ПАНЕЛЬ ДЛЯ ВСТАВКИ РАЗМЕТКИ ЕСЛИ ОНА ЗАКРЫТА
+//GM_deleteValue("settings");
+
+//Координаты панелек на странице
+var settings = GM_getValue("settings") ? GM_getValue("settings") :
+{
+	offset: {
+		svPanel : {top: 200, left: 350},
+		pvPanel : {top: 200, left: 350},
+		sePanel : {top: 200, left: 350},
+		hPanel  : {top: 200, left: 350},
+		dkPanel : {top: 200, left: 350}
+	}
+};
+
+//ФУНКЦИЯ ОТОБРАЖАЕТ ПОЛЕ ДЛЯ ВСТАВКИ КОДА ЕСЛИ ОНО ЗАКРЫТО
 function show_textarea(){
 	if($("#product_block_translations_ru_contents").css('display') == 'none')
 		$("a.re-icon.re-html").click();
@@ -28,7 +45,7 @@ function tab_lang(str){
 	return str===lang;
 }
 
-//ФУНКЦИЯ ВЫБИРАЕТ НЕОБХОДИМЫЙ КОНТЕНТ-БЛОК ИЗ ВЫПАДАЙКИ
+//ФУНКЦИЯ ОТКРЫВАЕТ НЕОБХОДИМЫЙ КОНТЕНТ-БЛОК ВЫБИРАЕМЫЙ ИЗ ВЫПАДАЙКИ
 function select_block(by, ru, ua){
 	if(location.host === "daroo.by")
 	{
@@ -53,11 +70,10 @@ function select_block(by, ru, ua){
 }
 
 //СТИЛИ
-$("body").append("<style>#dkPanel, #hPanel, #sePanel, #pvPanel, #svPanel{height:auto; max-height:400px; max-width:900px; overflow: auto; background: white;" +
-				 "border:solid 1px lightgray; box-shadow: 0px 0px 17px -1px rgba(0,0,0,0.5); border-radius:5px; padding:10px; z-index:9999 !important; /*margin-top:450px;*/ margin-top:200px; margin-left:350px; position:fixed; opacity:0.93;}"+
-				 "#dkPanel input, #hPanel input, #sePanel input, #pvPanel input{width:161px; height:40px;} #svPanel input{width:450px; height:30px;}"+
-				 "#clearDk, #clearH, #clearSe, #clearPv, #clearSv, .hideSave, .closePanel{float: left; margin-right:10px;}"+
-				 "#content-block-menu .dropdown-toggle:hover{color:red !important;} body{background-color:white !important;}</style>");
+$("body").append("<style>.content-block-panel{height:auto; max-height:400px; max-width:900px; overflow: auto; background: white; position: fixed;" +
+				 "border:solid 1px lightgray; box-shadow: 0px 0px 17px -1px rgba(0,0,0,0.5); border-radius:5px; padding:10px; z-index:9999 !important; opacity:0.93;}"+
+				 "#dkPanel input, #hPanel input, #sePanel input, #pvPanel input{width:161px; height:40px;} #svPanel input{width:450px; height:30px;}" +
+				 ".hideSave, .closePanel{float: left; margin-right:10px;} #content-block-menu .dropdown-toggle:hover{color:red !important;} body{background-color:white !important;}</style>");
 
 //МЕНЮ
 $("ul.top-nav").prepend("<li style=\"\" id=\"content-block-menu\" class=\"dropdown-toggle\"" +
@@ -90,7 +106,6 @@ $("#dk-sh").click(function() {
 
 //Собираем разметку
 $('#dkPanel').keyup(function( event ){
-
 	var strings = [
 		"<div class=\"detail-school-desc\"><h2>" + $( "input[id='dkTitle']" ).val() + "</h2><ul>",
 		"<li><h3>" + $( "input[id='dkSubtitle1']" ).val() + "</h3>" + $( "textarea[id='dkText1']" ).val() + "</li>",
@@ -107,7 +122,6 @@ $('#dkPanel').keyup(function( event ){
 		$("textarea#product_block_translations_ua_contents").val(dkText);
 		$("textarea#product_price_block_translations_ua_contents").val(dkText);
 	}
-
 });
 
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
@@ -159,7 +173,6 @@ $("#hPanel").keyup(function( event ){
 		{
 			hText += "<li><figure><img src=\"http://images.daroo.gift/daroo.by/gallery/editor/2016/08/24/57bd615ccb044.jpg\"></figure><div class=\"article\"><div>" + hDescText + "</div></div></li>";
 		}
-
 	});
 
 	hText += "</ul></div>"; //Финальная строка
@@ -426,8 +439,17 @@ $("input").keyup(function( event ){
 });
 
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-//После того как все панели были добавлены в разметку
-$(".content-block-panel").hide(); //Скрываем все добавленные к body панели
+//После того как все панели были добавлены в DOM
+
+//Скрываем все добавленные к body панели
+$(".content-block-panel").hide();
+
+//Ратаскиваем их по сохраненным позициям на странице
+$("#dkPanel").offset(settings.offset.dkPanel);
+$("#hPanel").offset(settings.offset.hPanel);
+$("#sePanel").offset(settings.offset.sePanel);
+$("#pvPanel").offset(settings.offset.pvPanel);
+$("#svPanel").offset(settings.offset.svPanel);
 
 //По кнопке очищаем панельку
 $("div.clearPanel").click(function(){
@@ -446,4 +468,23 @@ $("div.closePanel").click(function(){
 $("div.hideSave").click(function() {
 	$(".content-block-panel").hide();
 	$('.btn-primary:first-child').first().click();
+});
+
+//После drag'n'drop сохраняем координаты панельки в базу
+var isDragging = false;
+$(".content-block-panel")
+	.mousedown(function() {
+	isDragging = false;
+})
+	.mousemove(function() {
+	isDragging = true;
+})
+	.mouseup(function(){
+	var wasDragging = isDragging;
+	isDragging = false;
+	if (wasDragging){
+		settings.offset[$(this).attr('id').toString()] = $(this).offset();
+		GM_setValue("settings", settings);
+		console.log(GM_getValue("settings"));
+	}
 });
