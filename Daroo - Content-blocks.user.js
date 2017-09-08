@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      1.3
+// @version      1.4
 // @include      *daroo*.*/manager/*
-// @description  Добавляет формы для добавления основных контент блоков
+// @description  Удобные формы для добавления основных контент-блоков
 // @updateURL    https://openuserjs.org/install/frantsmn/Daroo_-_Content-blocks.meta.js
 // @author       Frants Mitskun
 // @grant        GM_getValue
@@ -70,13 +70,10 @@ function select_block(by, ru, ua){
 }
 
 //СТИЛИ
-$("body").append("<style>.content-block-panel{height:auto; max-height:400px; max-width:900px; overflow: auto; background: white; position: fixed;" +
-				 "border:solid 1px lightgray; box-shadow: 0px 0px 17px -1px rgba(0,0,0,0.5); border-radius:5px; padding:10px; z-index:9999 !important; opacity:0.93;}"+
-				 "#dkPanel input, #hPanel input, #sePanel input, #pvPanel input{width:161px; height:40px;} #svPanel input{width:450px; height:30px;}" +
-				 ".hideSave, .closePanel{float: left; margin-right:10px;} #content-block-menu .dropdown-toggle:hover{color:red !important;} body{background-color:white !important;}</style>");
+$("body").append("<style> .content-block-panel { height: auto; max-height: 400px; max-width: 900px; overflow: auto; background: white; position: fixed; border: solid 1px lightgray; box-shadow: 0px 0px 17px -1px rgba(0, 0, 0, 0.5); border-radius: 5px; padding: 10px; z-index: 9999 !important; opacity: 0.93; } .hideSave { float: right; } .closePanel, .clearPanel { float: left; margin-right: 4px; } #content-block-menu .dropdown-toggle:hover { color: red !important; } .content-block-panel .form-control { margin-bottom: 4px; } .content-block-panel textarea { padding: 10px; } </style>");
 
 //МЕНЮ
-$("ul.top-nav").prepend("<li style=\"\" id=\"content-block-menu\" class=\"dropdown-toggle\"" +
+$("ul.top-nav").prepend("<li id=\"content-block-menu\" class=\"dropdown-toggle\"" +
 						"data-toggle=\"dropdown\" role=\"button\">"+
 						"<a class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\" style=\"color:#999; font-size:14px; font-family:Helvetica,Arial,sans-serif\">" +
 						"Контент-блоки <span class=\"caret\"></span></a>"+
@@ -91,10 +88,7 @@ $("ul.top-nav").prepend("<li style=\"\" id=\"content-block-menu\" class=\"dropdo
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //ДВЕ КОЛОНКИ
 
-$("body").prepend("<div id=\"dkPanel\" class=\"content-block-panel\"><table><tr><td colspan=\"2\" align=\"center\"><input type=\"text\" id=\"dkTitle\" placeholder=\"Заголовок\" style=\"width:180px; text-align:center;\"></td></tr>"+
-				  "<tr><td><input type=\"text\" id=\"dkSubtitle1\" placeholder=\"Подзаголовок\" style=\"width:180px;\"><br><textarea id=\"dkText1\" cols=\"23\" rows=\"5\" placeholder=\"Текст\"></textarea></td>"+
-				  "<td><input type=\"text\" id=\"dkSubtitle2\" placeholder=\"Подзаголовок\" style=\"width:180px;\"><br><textarea id=\"dkText2\" cols=\"23\" rows=\"5\" placeholder=\"Текст\"></textarea></td></tr>"+
-				  "</table><div class=\"hideSave btn btn-primary\">Сохранить и закрыть</div><div class=\"btn btn-primary clearPanel\">Очистить</div> <div class=\"closePanel btn btn-primary\">Закрыть</div></div>");
+$("body").prepend("<div id='dkPanel' class='content-block-panel'><table><tr><td colspan='2' align='center'><input type='text' id='dkTitle' class='form-control' placeholder='Заголовок' style='width:180px; text-align:center;'></td></tr><tr><td><input type='text' id='dkSubtitle1' class='form-control' placeholder='Подзаголовок' style='width:180px;'><textarea id='dkText1' class='form-control' cols='20' rows='5' placeholder='Текст'></textarea></td><td><input type='text' id='dkSubtitle2' class='form-control' placeholder='Подзаголовок' style='width:180px;'><textarea id='dkText2' class='form-control' cols='20' rows='5' placeholder='Текст'></textarea></td></tr><tr><td colspan='2'><button class='closePanel btn btn-default'>Закрыть</button><button class='clearPanel btn btn-default'>Очистить</button><button class='hideSave btn btn-primary'>Сохранить и закрыть</button></td></tr></table></div>");
 $( "#dkPanel" ).draggable();
 
 $("#dk-sh").click(function() {
@@ -127,10 +121,10 @@ $('#dkPanel').keyup(function( event ){
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //ХАРАКТЕРИСТИКИ (шахматный)
 
-$( "body" ).prepend( "<div id=\"hPanel\" class=\"content-block-panel\"><table id=\"hTable\"><tr><td align=\"center\"><input type=\"text\" id=\"hTitle\" placeholder=\"Заголовок\" style=\"width:240px; text-align:center;\"></td></tr><tr class=\"h_right h_tr\"><td align=\"right\"><input type=\"text\" id=\"hSubtitle\" placeholder=\"Подзаголовок\"><br><textarea id=\"hDescText\" cols=\"20\" rows=\"5\" placeholder=\"Текст\"></textarea></td></tr></table><div class=\"hideSave btn btn-primary\">Сохранить и закрыть</div> <div class=\"btn btn-primary clearPanel\">Очистить</div> <div class=\"closePanel btn btn-primary\">Закрыть</div></div>");
+$( "body" ).prepend("<div id='hPanel' class='content-block-panel ui-draggable ui-draggable-handle'><table id='hTable' style='width:340px;'><tr><td><input type='text' class='form-control' id='hTitle' placeholder='Заголовок' style='width:200px;'></td></tr><tr class='h_right h_tr'><td align='right'><input type='text' class='form-control' style='width:200px;' id='hSubtitle' placeholder='Подзаголовок'><textarea id='hDescText' class='form-control' style='width:200px;' rows='5' placeholder='Текст'></textarea></td></tr></table><div style='position:sticky; bottom: 0px;'><button class='closePanel btn btn-default'>Закрыть</button><button class='clearPanel btn btn-default'>Очистить</button><button class='hideSave btn btn-primary'>Сохранить и закрыть</button></div></div>");
 $( "#hPanel" ).draggable();
-var h_right_block = "<tr class=\"h_right h_tr added-h-block\"><td align=\"right\"><input type=\"text\" id=\"hSubtitle\" placeholder=\"Подзаголовок\"><br><textarea id=\"hDescText\" cols=\"20\" rows=\"5\" placeholder=\"Текст\"></textarea></td></tr>";
-var h_left_block = "<tr class=\"h_left h_tr added-h-block\"><td align=\"left\"><input type=\"text\" id=\"hSubtitle\" placeholder=\"Подзаголовок\"><br><textarea id=\"hDescText\" cols=\"20\" rows=\"5\" placeholder=\"Текст\"></textarea></td></tr>";
+var h_right_block = "<tr class='h_right h_tr added-h-block'><td align='right'><input type='text' class='form-control' style='width:200px;' id='hSubtitle' placeholder='Подзаголовок'><textarea id='hDescText' class='form-control' style='width:200px;' rows='5' placeholder='Текст'></textarea></td></tr>";
+var h_left_block = "<tr class='h_left h_tr added-h-block'><td align='left'><input type='text' class='form-control' style='width:200px;' id='hSubtitle' placeholder='Подзаголовок'><textarea id='hDescText' class='form-control' style='width:200px;' rows='5' placeholder='Текст'></textarea></td></tr>";
 
 $("#h-sh").click(function() {
 	$(".content-block-panel").hide();
@@ -211,10 +205,10 @@ function addBlock(){
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //СТРУКТУРА/ЭТАПЫ (последовательный)
 
-$( "body" ).prepend( "<div id=\"sePanel\" class=\"content-block-panel\"><table style=\"padding-bottom:20px;\" id=\"seTable\"><tr><td align=\"center\"><input type=\"text\" id=\"seTitle\" placeholder=\"Заголовок\" style=\"text-align:center; width:240px;\"></td></tr><tr class=\"se_tr\"><td align=\"right\"><input type=\"text\" id=\"seSubtitle\" placeholder=\"Подзаголовок\"><br><textarea id=\"seDescText\" cols=\"20\" rows=\"5\" placeholder=\"Текст\"></textarea></td></tr></table><div class=\"hideSave btn btn-primary\">Сохранить и закрыть</div> <div class=\"btn btn-primary clearPanel\">Очистить</div> <div class=\"closePanel btn btn-primary\">Закрыть</div></div>");
+$( "body" ).prepend("<div id='sePanel' class='content-block-panel'><table id='seTable' style='width:340px;'><tr><td><input type='text' id='seTitle' class='form-control' placeholder='Заголовок' style='width:200px;'></td></tr><tr class='se_tr'><td align='right'><input type='text' id='seSubtitle' class='form-control' style='width:200px;' placeholder='Подзаголовок'><textarea id='seDescText' class='form-control' style='width:200px;' rows='5' placeholder='Текст'></textarea></td></tr></table><div style='position:sticky; bottom: 0px;'><button class='closePanel btn btn-default'>Закрыть</button><button class='clearPanel btn btn-default'>Очистить</button><button class='hideSave btn btn-primary'>Сохранить и закрыть</button></div></div>");
 $( "#sePanel" ).draggable();
 
-var se_block = "<tr class=\"se_tr added-se-block\"><td align=\"right\"><input type=\"text\" id=\"seSubtitle\" placeholder=\"Подзаголовок\"><br><textarea id=\"seDescText\" cols=\"20\" rows=\"5\" placeholder=\"Текст\"></textarea></td></tr>";
+var se_block = "<tr class='se_tr added-se-block'><td align='right'><input type='text' id='seSubtitle' class='form-control' style='width:200px;' placeholder='Подзаголовок'><textarea id='seDescText' class='form-control' style='width:200px;' rows='5' placeholder='Текст'></textarea></td></tr>";
 
 $("#se-sh").click(function() {
 	$(".content-block-panel").hide();
@@ -276,7 +270,7 @@ function addBlockSe(){
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //ПРЕИМУЩЕСТВА/ВОЗМОЖНОСТИ (буллиты)
 
-$("body").prepend('<div id="pvPanel" class=\"content-block-panel\"><table style="padding-bottom:20px;"><tr><td colspan="4" align="center"><input type="text" id="pvTitle" placeholder="Заголовок" style="width:240px; text-align:center;"></td></tr><tr><td><input type="text" id="pvSubtitle1" placeholder="Подзаголовок"><Br><textarea id="pvText1" cols="20" rows="5" placeholder="Описание"></textarea></td><td><input type="text" id="pvSubtitle2" placeholder="Подзаголовок"><Br><textarea id="pvText2" cols="20" rows="5" placeholder="Описание"></textarea></td><td><input type="text" id="pvSubtitle3" placeholder="Подзаголовок"><Br><textarea id="pvText3" cols="20" rows="5" placeholder="Описание"></textarea></td><td><input type="text" id="pvSubtitle4" placeholder="Подзаголовок"><Br><textarea id="pvText4" cols="20" rows="5" placeholder="Описание"></textarea></td></tr></table><div class="hideSave btn btn-primary">Сохранить и закрыть</div><div class="btn btn-primary clearPanel">Очистить</div><div class="closePanel btn btn-primary">Закрыть</div></div>');
+$("body").prepend("<div id='pvPanel' class='content-block-panel'><table><tr><td colspan='4' align='center'><input type='text' id='pvTitle' class='form-control' placeholder='Заголовок' style='width:240px; text-align:center;'></td></tr><tr><td><input type='text' id='pvSubtitle1' class='form-control' placeholder='Подзаголовок'><textarea id='pvText1' class='form-control' rows='4' placeholder='Описание'></textarea></td><td><input type='text' id='pvSubtitle2' class='form-control' placeholder='Подзаголовок'><textarea id='pvText2' class='form-control' rows='4' placeholder='Описание'></textarea></td><td><input type='text' id='pvSubtitle3' class='form-control' placeholder='Подзаголовок'><textarea id='pvText3' class='form-control' rows='4' placeholder='Описание'></textarea></td><td><input type='text' id='pvSubtitle4' class='form-control' placeholder='Подзаголовок'><textarea id='pvText4' class='form-control' rows='4' placeholder='Описание'></textarea></td></tr></table><button class='closePanel btn btn-default'>Закрыть</button><button class='clearPanel btn btn-default'>Очистить</button><button class='hideSave btn btn-primary'>Сохранить и закрыть</button></div>");
 $( "#pvPanel" ).draggable();
 
 //Отображаем и прячем форму
@@ -321,7 +315,7 @@ $('#pvPanel').keyup(function( event ){
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //СЕРВИСНЫЕ ВОЗМОЖНОСТИ
 
-$("body").prepend('<div id="svPanel" class=\"content-block-panel\"><input type="text" tabindex="1" id="check1" placeholder="Что взять с собой?"><Br><input type="text" tabindex="2" id="check2" placeholder="C кем пойти?"><Br><input type="text" tabindex="3" id="check3" placeholder="Сезон"><Br><input type="text" tabindex="4" id="check4" placeholder="Сколько дарить"><Br><input type="text" tabindex="5" id="check5" placeholder="Расписание и время"><Br><input type="text" tabindex="6" id="check6" placeholder="Безопасность"><Br><input type="text" tabindex="7" id="check7" placeholder="Программа"><Br><input type="text" tabindex="8" id="check8" placeholder="Дополнительные возможности"><Br><input type="text" tabindex="9" id="check9" placeholder="Возраст"><br><br><div id="" class="hideSave btn btn-primary">Сохранить и закрыть</div> <div class="btn btn-primary clearPanel">Очистить</div> <div class="closePanel btn btn-primary">Закрыть</div></div>');
+$("body").prepend("<div id='svPanel' class='content-block-panel'><input class='form-control' type='text' tabindex='1' id='check1' placeholder='Что взять с собой?'><input class='form-control' type='text' tabindex='2' id='check2' placeholder='C кем пойти?'><input class='form-control' type='text' tabindex='3' id='check3' placeholder='Сезон'><input class='form-control' type='text' tabindex='4' id='check4' placeholder='Сколько дарить'><input class='form-control' type='text' tabindex='5' id='check5' placeholder='Расписание и время'><input class='form-control' type='text' tabindex='6' id='check6' placeholder='Безопасность'><input class='form-control' type='text' tabindex='7' id='check7' placeholder='Программа'><input class='form-control' type='text' tabindex='8' id='check8' placeholder='Дополнительные возможности'><input class='form-control' type='text' tabindex='9' id='check9' placeholder='Возраст'><button class='closePanel btn btn-default'>Закрыть</button><button class='clearPanel btn btn-default'>Очистить</button><button class='hideSave btn btn-primary'>Сохранить и закрыть</button></div>");
 $( "#svPanel" ).draggable();
 
 var ruLabels = [
@@ -451,26 +445,26 @@ $("#sePanel").offset(settings.offset.sePanel);
 $("#pvPanel").offset(settings.offset.pvPanel);
 $("#svPanel").offset(settings.offset.svPanel);
 
-//По кнопке очищаем панельку
-$("div.clearPanel").click(function(){
+//По кнопке закрываем панель
+$("button.closePanel").click(function(){
+	$(".content-block-panel").hide();
+});
+
+//По кнопке очищаем панель
+$("button.clearPanel").click(function(){
 	$("tr.added-se-block").remove();
 	$("tr.added-h-block").remove();
 	$(".content-block-panel input").val("");
 	$(".content-block-panel textarea").val("");
 });
 
-//По кнопке закрываем панельку
-$("div.closePanel").click(function(){
-	$(".content-block-panel").hide();
-});
-
-//По кнопке закрываем панельку и сохраняем контент
-$("div.hideSave").click(function() {
+//По кнопке закрываем панель и сохраняем контент
+$("button.hideSave").click(function() {
 	$(".content-block-panel").hide();
 	$('.btn-primary:first-child').first().click();
 });
 
-//После drag'n'drop сохраняем координаты панельки в базу
+//После drag'n'drop сохраняем координаты панели в базу
 var isDragging = false;
 $(".content-block-panel")
 	.mousedown(function() {
