@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      1.4
+// @version      1.5
 // @include      *daroo*.*/manager/*
 // @description  Удобные формы для добавления основных контент-блоков
 // @updateURL    https://openuserjs.org/install/frantsmn/Daroo_-_Content-blocks.meta.js
@@ -70,7 +70,7 @@ function select_block(by, ru, ua){
 }
 
 //СТИЛИ
-$("body").append("<style> .content-block-panel { height: auto; max-height: 400px; max-width: 900px; overflow: auto; background: white; position: fixed; border: solid 1px lightgray; box-shadow: 0px 0px 17px -1px rgba(0, 0, 0, 0.5); border-radius: 5px; padding: 10px; z-index: 9999 !important; opacity: 0.93; } .hideSave { float: right; } .closePanel, .clearPanel { float: left; margin-right: 4px; } #content-block-menu .dropdown-toggle:hover { color: red !important; } .content-block-panel .form-control { margin-bottom: 4px; } .content-block-panel textarea { padding: 10px; } </style>");
+$("body").append("<style>@keyframes fade-in { 0% {opacity: 0;} 100% {opacity: 0.93;} } .content-block-panel { animation: fade-in .3s ease; } .content-block-panel { height: auto; max-height: 500px; max-width: 900px; overflow: auto; background: white; position: fixed; border: solid 1px lightgray; box-shadow: 0px 0px 17px -1px rgba(0, 0, 0, 0.5); border-radius: 5px; padding: 10px; z-index: 9999 !important; opacity: 0.93; } .hideSave { float: right; } .closePanel, .clearPanel { float: left; margin-right: 4px; } #content-block-menu .dropdown-toggle:hover { color: red !important; } .content-block-panel .form-control { margin-bottom: 4px; } .content-block-panel textarea { padding: 10px; } </style>");
 
 //МЕНЮ
 $("ul.top-nav").prepend("<li id=\"content-block-menu\" class=\"dropdown-toggle\"" +
@@ -315,7 +315,8 @@ $('#pvPanel').keyup(function( event ){
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //СЕРВИСНЫЕ ВОЗМОЖНОСТИ
 
-$("body").prepend("<div id='svPanel' class='content-block-panel'><input class='form-control' type='text' tabindex='1' id='check1' placeholder='Что взять с собой?'><input class='form-control' type='text' tabindex='2' id='check2' placeholder='C кем пойти?'><input class='form-control' type='text' tabindex='3' id='check3' placeholder='Сезон'><input class='form-control' type='text' tabindex='4' id='check4' placeholder='Сколько дарить'><input class='form-control' type='text' tabindex='5' id='check5' placeholder='Расписание и время'><input class='form-control' type='text' tabindex='6' id='check6' placeholder='Безопасность'><input class='form-control' type='text' tabindex='7' id='check7' placeholder='Программа'><input class='form-control' type='text' tabindex='8' id='check8' placeholder='Дополнительные возможности'><input class='form-control' type='text' tabindex='9' id='check9' placeholder='Возраст'><button class='closePanel btn btn-default'>Закрыть</button><button class='clearPanel btn btn-default'>Очистить</button><button class='hideSave btn btn-primary'>Сохранить и закрыть</button></div>");
+//$("body").prepend("<div id='svPanel' class='content-block-panel'><input class='form-control' type='text' tabindex='1' id='check1' placeholder='Что взять с собой?'><input class='form-control' type='text' tabindex='2' id='check2' placeholder='C кем пойти?'><input class='form-control' type='text' tabindex='3' id='check3' placeholder='Сезон'><input class='form-control' type='text' tabindex='4' id='check4' placeholder='Сколько дарить'><input class='form-control' type='text' tabindex='5' id='check5' placeholder='Расписание и время'><input class='form-control' type='text' tabindex='6' id='check6' placeholder='Безопасность'><input class='form-control' type='text' tabindex='7' id='check7' placeholder='Программа'><input class='form-control' type='text' tabindex='8' id='check8' placeholder='Дополнительные возможности'><input class='form-control' type='text' tabindex='9' id='check9' placeholder='Возраст'><button class='closePanel btn btn-default'>Закрыть</button><button class='clearPanel btn btn-default'>Очистить</button><button class='hideSave btn btn-primary'>Сохранить и закрыть</button></div>");
+$("body").prepend("<div id='svPanel' class='content-block-panel' style='max-height:505px !important;'><textarea type='text' class='form-control' id='table-check' placeholder='Вставить контент-блок таблицей'></textarea><hr><input class='form-control' type='text' tabindex='1' id='check1' placeholder='Что взять с собой?'><input class='form-control' type='text' tabindex='2' id='check2' placeholder='C кем пойти?'><input class='form-control' type='text' tabindex='3' id='check3' placeholder='Сезон'><input class='form-control' type='text' tabindex='4' id='check4' placeholder='Сколько дарить'><input class='form-control' type='text' tabindex='5' id='check5' placeholder='Расписание и время'><input class='form-control' type='text' tabindex='6' id='check6' placeholder='Безопасность'><input class='form-control' type='text' tabindex='7' id='check7' placeholder='Программа'><input class='form-control' type='text' tabindex='8' id='check8' placeholder='Дополнительные возможности'><input class='form-control' type='text' tabindex='9' id='check9' placeholder='Возраст'><button class='closePanel btn btn-default'>Закрыть</button><button class='clearPanel btn btn-default'>Очистить</button><button class='hideSave btn btn-primary'>Сохранить и закрыть</button></div>");
 $( "#svPanel" ).draggable();
 
 var ruLabels = [
@@ -372,7 +373,9 @@ $("html").click(function(){
 });
 
 //Собираем разметку
-$("input").keyup(function( event ){
+$("input").keyup(function(){makeSvBlock();});
+
+function makeSvBlock(){
 
 	if (tab_lang("ua"))
 	{
@@ -430,6 +433,60 @@ $("input").keyup(function( event ){
 			$("textarea#product_block_translations_ua_contents").val(svText);
 			$("textarea#product_price_block_translations_ua_contents").val(svText);
 		}
+}
+
+//Разбираем текст вставленный таблицей на строки
+$("#table-check").keyup(function(){
+	var arr = $('#table-check').val().split('\n');
+	console.log(arr);
+	var strings = {
+		label : [],
+		text : []
+	};
+	var i = 0;
+	arr.forEach(function(){
+		if(arr[i].length > 10)
+		{
+			var ss = arr[i].split('\t');
+			strings.label[i] = ss[0];
+			strings.text[i] = ss[1];
+		}
+		i++;
+	});
+
+	for(var j=0;j<=strings.label.length;j++)
+	{
+		switch (strings.label[j]) {
+			case "Что взять с собой?":
+				$("#check1").val(strings.text[j]);
+				break;
+			case "С кем пойти?":
+				$("#check2").val(strings.text[j]);
+				break;
+			case "Сезон":
+				$("#check3").val(strings.text[j]);
+				break;
+			case "Сколько дарить":
+				$("#check4").val(strings.text[j]);
+				break;
+			case "Расписание и время":
+				$("#check5").val(strings.text[j]);
+				break;
+			case "Безопасность":
+				$("#check6").val(strings.text[j]);
+				break;
+			case "Программа":
+				$("#check7").val(strings.text[j]);
+				break;
+			case "Дополнительные возможности":
+				$("#check8").val(strings.text[j]);
+				break;
+			case "Возраст":
+				$("#check9").val(strings.text[j]);
+				break;
+		}
+	}
+	makeSvBlock();
 });
 
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
