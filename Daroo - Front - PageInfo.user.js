@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name         Daroo - Front - PageInfo
 // @namespace    PageInfo
-// @version      3.0
+// @version      3.1
 // @description  Добавляет на страницу некоторую информацию и ссылку на редактирование карточки товара/цены/партнера
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Front_-_PageInfo.meta.js
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_deleteValue
 // @author       Frants Mitskun
+// @include      *daroo.by/life*
+// @include      *daroo.ru/life*
 // @include      *daroo.by/minsk*
 // @include      *daroo.by/brest*
 // @include      *daroo.by/vitebsk*
@@ -94,6 +96,11 @@
 
 	if (page.type) //Если мы на странице цены/карточки/партнера
 		$("#edit-info").append('<a id="edit-button" href=\"https://'+window.location.hostname+'/manager/'+page.type.type+'/edit/'+google_tag_params.local_id+'" target="_blank" class="page-menu-el">Редактировать '+page.type.str1+'</a>');
+	var pri = /(\/life\/)/;
+	if (pri.exec(window.location.href))
+	{
+		$("#edit-info").append('<a id="edit-button" href=\"https://'+window.location.hostname+'/manager/blog/edit/'+google_tag_params.local_id+'" target="_blank" class="page-menu-el">Редактировать запись</a>');
+	}
 	if (list.length>1) //Если количество элементов в списке истории больше 1
 		$("#edit-info").prepend('<div id="page-history-info" class="page-menu-el">History</div>');
 
