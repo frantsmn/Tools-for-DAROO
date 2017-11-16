@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      1.5
+// @version      1.6
 // @include      *daroo*.*/manager/*
 // @description  Удобные формы для добавления основных контент-блоков
 // @updateURL    https://openuserjs.org/install/frantsmn/Daroo_-_Content-blocks.meta.js
@@ -33,16 +33,18 @@ function show_textarea(){
 		$("a.re-icon.re-html").click();
 }
 
-//ФУНКЦИЯ ПРОВЕРЯЕТ ЯЗЫК АКТИВНОЙ ВКЛАДКИ
-function tab_lang(str){
-	var lang;
+//ФУНКЦИЯ ВОЗВРАЩАЕТ ЯЗЫК АКТИВНОЙ ВКЛАДКИ
+function activeTabLocale(str){
+	var locale;
 	$("ul.a2lix_translationsLocales").find("a.language-change-button").each(function(){
 		if ($(this).parent().hasClass("active"))
-		{
-			lang = $(this).data('locale');
-		}
+			locale = $(this).data('locale');
 	});
-	return str===lang;
+	if (str && str===locale)
+		return true;
+	if (str && str!==locale)
+		return false;
+	return locale;
 }
 
 //ФУНКЦИЯ ОТКРЫВАЕТ НЕОБХОДИМЫЙ КОНТЕНТ-БЛОК ВЫБИРАЕМЫЙ ИЗ ВЫПАДАЙКИ
@@ -70,12 +72,11 @@ function select_block(by, ru, ua){
 }
 
 //СТИЛИ
-$("body").append("<style>@keyframes fade-in { 0% {opacity: 0;} 100% {opacity: 0.93;} } .content-block-panel { animation: fade-in .3s ease; } .content-block-panel { height: auto; max-height: 500px; max-width: 900px; overflow: auto; background: white; position: fixed; border: solid 1px lightgray; box-shadow: 0px 0px 17px -1px rgba(0, 0, 0, 0.5); border-radius: 5px; padding: 10px; z-index: 9999 !important; opacity: 0.93; } .hideSave { float: right; } .closePanel, .clearPanel { float: left; margin-right: 4px; } #content-block-menu .dropdown-toggle:hover { color: red !important; } .content-block-panel .form-control { margin-bottom: 4px; } .content-block-panel textarea { padding: 10px; } </style>");
+$("body").append("<style>@keyframes fade-in { 0% {opacity: 0;} 100% {opacity: 0.93;} } .content-block-panel { animation: fade-in .3s ease; } .content-block-panel { height: auto; max-height: 500px; max-width: 900px; overflow: auto; background: white; position: fixed; border: solid 1px lightgray; box-shadow: 0px 0px 17px -1px rgba(0, 0, 0, 0.5); border-radius: 5px; padding: 10px; z-index: 9999 !important; opacity: 0.93; } .hideSave{ float: right; } .closePanel, .clearPanel { float: left; margin-right: 4px; } .content-block-panel .form-control { margin-bottom: 4px; } .content-block-panel textarea { padding: 10px; } </style>");
 
 //МЕНЮ
-$("ul.top-nav").prepend("<li id=\"content-block-menu\" class=\"dropdown-toggle\"" +
-						"data-toggle=\"dropdown\" role=\"button\">"+
-						"<a class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\" style=\"color:#999; font-size:14px; font-family:Helvetica,Arial,sans-serif\">" +
+$("ul.top-nav").prepend("<li id='content-block-menu' class='dropdown-toggle' data-toggle='dropdown'>"+
+						"<a class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">" +
 						"Контент-блоки <span class=\"caret\"></span></a>"+
 						"<ul class=\"dropdown-menu\" style=\"cursor: pointer !important;\" role=\"menu\">" +
 						" <li id=\"dk-sh\"><a>Две колонки</a></li>"+
@@ -99,7 +100,7 @@ $("#dk-sh").click(function() {
 });
 
 //Собираем разметку
-$('#dkPanel').keyup(function( event ){
+$('#dkPanel').keyup(function(){
 	var strings = [
 		"<div class=\"detail-school-desc\"><h2>" + $( "input[id='dkTitle']" ).val() + "</h2><ul>",
 		"<li><h3>" + $( "input[id='dkSubtitle1']" ).val() + "</h3>" + $( "textarea[id='dkText1']" ).val() + "</li>",
@@ -108,11 +109,11 @@ $('#dkPanel').keyup(function( event ){
 	];
 	var dkText = strings[0] + strings[1] + strings[2] + strings[3];
 
-	if (tab_lang("ru")){
+	if (activeTabLocale("ru")){
 		$("textarea#product_block_translations_ru_contents").val(dkText);
 		$("textarea#product_price_block_translations_ru_contents").val(dkText);
 	}
-	if (tab_lang("ua")){
+	if (activeTabLocale("ua")){
 		$("textarea#product_block_translations_ua_contents").val(dkText);
 		$("textarea#product_price_block_translations_ua_contents").val(dkText);
 	}
@@ -134,7 +135,7 @@ $("#h-sh").click(function() {
 });
 
 //Собираем разметку
-$("#hPanel").keyup(function( event ){
+$("#hPanel").keyup(function(){
 
 	var hText = "<div class=\"full-desc\">"; 		    //Стартовая строка
 	if($(this).find("#hTitle").val() !== "")  			//Если есть заголовок, то херачим его в кучу
@@ -171,12 +172,12 @@ $("#hPanel").keyup(function( event ){
 
 	hText += "</ul></div>"; //Финальная строка
 
-	if (tab_lang("ru")){
+	if (activeTabLocale("ru")){
 		$("textarea#product_block_translations_ru_contents").val(hText);
 		$("textarea#product_price_block_translations_ru_contents").val(hText);
 	}
 	else
-		if (tab_lang("ua")){
+		if (activeTabLocale("ua")){
 			$("textarea#product_block_translations_ua_contents").val(hText);
 			$("textarea#product_price_block_translations_ua_contents").val(hText);
 		}
@@ -218,7 +219,7 @@ $("#se-sh").click(function() {
 });
 
 //Собираем разметку
-$("#sePanel").keyup(function( event ){
+$("#sePanel").keyup(function(){
 
 	var seText = '<div class="full-desc full-left">'; 				//Стартовая строка
 	if($(this).find("#seTitle").val() !== "")  			//Если есть заголовок
@@ -246,11 +247,11 @@ $("#sePanel").keyup(function( event ){
 
 	seText += '</ul></div>'; //Финальная строка
 
-	if (tab_lang("ru")){
+	if (activeTabLocale("ru")){
 		$("textarea#product_block_translations_ru_contents").val(seText);
 		$("textarea#product_price_block_translations_ru_contents").val(seText);
 	}else
-		if (tab_lang("ua")){
+		if (activeTabLocale("ua")){
 			$("textarea#product_block_translations_ua_contents").val(seText);
 			$("textarea#product_price_block_translations_ua_contents").val(seText);
 		}
@@ -282,7 +283,7 @@ $("#pv-sh").click(function() {
 });
 
 //Собираем разметку
-$('#pvPanel').keyup(function( event ){
+$('#pvPanel').keyup(function(){
 
 	var strings = [
 		'<div class="detail-desc-features clear"><h2>'+$("input[id='pvTitle']").val()+'</h2><ul>',
@@ -301,12 +302,12 @@ $('#pvPanel').keyup(function( event ){
 	}
 	pvText += strings[5]; //Добавляем финальную строку
 
-	if (tab_lang("ru")){
+	if (activeTabLocale("ru")){
 		$("textarea#product_block_translations_ru_contents").val(pvText);
 		$("textarea#product_price_block_translations_ru_contents").val(pvText);
 	}
 	else
-		if (tab_lang("ua")){
+		if (activeTabLocale("ua")){
 			$("textarea#product_block_translations_ua_contents").val(pvText);
 			$("textarea#product_price_block_translations_ua_contents").val(pvText);
 		}
@@ -357,14 +358,14 @@ $("#sv-sh").click(function() {
 
 //Переводим placeholder'ы формы на соотв. язык
 $("html").click(function(){
-	if (tab_lang("ua"))
+	if (activeTabLocale("ua"))
 	{
 		$("#svPanel input").each(function(){
 			$(this).attr("placeholder", uaLabels[(($(this).attr('tabindex'))*1)]);
 		});
 	}
 	else
-		if (tab_lang("ru"))
+		if (activeTabLocale("ru"))
 		{
 			$("#svPanel input").each(function(){
 				$(this).attr("placeholder", ruLabels[(($(this).attr('tabindex'))*1)]);
@@ -377,12 +378,12 @@ $("input").keyup(function(){makeSvBlock();});
 
 function makeSvBlock(){
 
-	if (tab_lang("ua"))
+	if (activeTabLocale("ua"))
 	{
 		langLabels = uaLabels;
 	}
 	else
-		if (tab_lang("ru"))
+		if (activeTabLocale("ru"))
 		{
 			langLabels = ruLabels;
 		}
@@ -424,12 +425,12 @@ function makeSvBlock(){
 	}
 	svText = svText + strings[10]; //Добавляем финальную строку
 
-	if (tab_lang("ru")){
+	if (activeTabLocale("ru")){
 		$("textarea#product_block_translations_ru_contents").val(svText);
 		$("textarea#product_price_block_translations_ru_contents").val(svText);
 	}
 	else
-		if (tab_lang("ua")){
+		if (activeTabLocale("ua")){
 			$("textarea#product_block_translations_ua_contents").val(svText);
 			$("textarea#product_price_block_translations_ua_contents").val(svText);
 		}
@@ -516,12 +517,12 @@ $("button.clearPanel").click(function(){
 });
 
 //По кнопке закрываем панель и сохраняем контент
-$("button.hideSave").click(function() {
+$("button.hideSave").on('click', function() {
 	$(".content-block-panel").hide();
 	$('.btn-primary:first-child').first().click();
 });
 
-//После drag'n'drop сохраняем координаты панели в базу
+//После drag'n'drop панели сохраняем координаты панели в базу
 var isDragging = false;
 $(".content-block-panel")
 	.mousedown(function() {
@@ -536,6 +537,444 @@ $(".content-block-panel")
 	if (wasDragging){
 		settings.offset[$(this).attr('id').toString()] = $(this).offset();
 		GM_setValue("settings", settings);
-		console.log(GM_getValue("settings"));
+		//console.log(GM_getValue("settings"));
 	}
 });
+
+
+
+
+//==========================================================================================================================================================//
+// Зависимости:
+// js activeTabLocale(str) — Узнаем/проверяем локаль открытой вкладки языка; select_block(by, ru, ua) - открываем необходимый редактор блока по id (для каждой страны свой)
+// css .content-block-panel
+
+//МЕНЮ
+$("ul.top-nav").prepend("<li data-toggle='dropdown'><a href='#' id='open-textarea' aria-expanded='false'><i class='fa fa-file-word-o'></i> Разобрать документ</a><div style='position:absolute;'><textarea id='docText' style='box-shadow: 0 6px 12px rgba(0,0,0,.175); display: none; width: 250px; height: 150px; border-bottom-left-radius: 3px; border-bottom-right-radius: 3px; padding:5px; margin-top:1px;' placeholder='Вставьте содержимое документа в это поле'></textarea></div></li>");
+$("#open-textarea").click(function(){
+	$( "#docText" ).fadeIn(1, function(){
+		$(this).focus();
+	});
+});
+$("#docText").focusout(function(){
+	$("#docText").delay(50).fadeOut(0);
+});
+
+//СТИЛИ
+$("body").append("<style>#rezultPanel{right:0px; bottom:0px; display:none; max-width: max-content; max-height: max-content;} #rezultPanel .first-row { padding: 0 0 5px 0; font-size: 13pt; } #rezultPanel .row { border-radius: 3px; border: solid 1px lightgrey; margin: 2px 0 0 0; padding: 5px; background-color: #f9f9f9; } #rezultPanel #buttons { float: right; } #rezultPanel button{margin-left: 5px;} </style>");
+
+//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+//ПАНЕЛЬ РЕЗУЛЬТАТА
+$("body").prepend("<div id='rezultPanel' class='content-block-panel'><div class='first-row'><button type='button' class='close'>×</button><span></span></div><div id='rows'></div><div class='form-actions'></div></div>");
+$( "#rezultPanel" ).draggable();
+$( "#rezultPanel .close" ).on("click", function(){$( "#rezultPanel").hide(); clearRezultPanelRow();});
+
+//Массив объектов (контент-блоков)
+var blocks = [];
+/* = [{
+code: "",
+name: "",
+text: ""
+}];
+*/
+
+//По вставке текста разбираем текст по строкам на контент-блоки
+$("textarea#docText").on("input",function(){
+
+	clearRezultPanelRow(); //Очищаем панель результата
+	blocks = []; //Очищаем массив объектов (контент-блоков)
+
+	var strings = $('textarea#docText').val().split('\n'); //Разбираем текст по строкам
+	//console.log(strings);
+	var number = 0; //Порядковый номер блока
+	strings.forEach(function(item, i) {
+		switch (item) {
+			case "dk-sh":
+				blocks.push({id: number, code:"dk", name:"Две колонки", text: makeDkText(i, strings)});
+				addRezultPanelRow(number, "dk", "Две колонки");
+				number++;
+				break;
+			case "ci-sh":
+				blocks.push({id: number, code:"ci", name:"Цитата", text: makeCiText(i, strings)});
+				addRezultPanelRow(number, "ci", "Цитата");
+				number++;
+				break;
+			case "pv-sh":
+				blocks.push({id: number, code:"pv", name:"Преимущества/возможности", text: makePvText(i, strings)});
+				addRezultPanelRow(number, "pv", "Преимущества/возможности");
+				number++;
+				break;
+			case "ot-sh":
+				blocks.push({id: number, code:"ot", name:"Подзаголовок/Обычный текст", text: makeOtText(i, strings)});
+				addRezultPanelRow(number, "ot", "Подзаголовок/Обычный текст");
+				number++;
+				break;
+			case "h-sh":
+				blocks.push({id: number, code:"h", name:"Характеристики", text: makeHText(i, strings)});
+				addRezultPanelRow(number, "h", "Характеристики");
+				number++;
+				break;
+			case "se-sh":
+				blocks.push({id: number, code:"se", name:"Структура/этапы", text: makeSeText(i, strings)});
+				addRezultPanelRow(number, "se", "Структура/этапы");
+				number++;
+				break;
+			case "sv-sh":
+				blocks.push({id: number, code:"sv", name:"Сервисные возможности", text: makeSvText(i, strings, activeTabLocale())});
+				addRezultPanelRow(number, "sv", "Сервисные возможности");
+				number++;
+				break;
+		}
+	});
+
+	$(".content-block-panel").hide();
+	$("#rezultPanel div.first-row span").html("Найдено блоков: <b>"+blocks.length+"</b>");
+	if (blocks.length>0)
+	{
+		$("#rezultPanel").show();
+		console.log(blocks);
+	}
+	else
+		$("#rezultPanel").show().delay(5000).fadeOut(700);
+
+	$("textarea#docText").fadeOut(700);
+});
+
+//Очистка панели результата
+function clearRezultPanelRow() {
+	$("#rezultPanel .row:not(first-child)").remove();
+}
+
+//Добавление строки на панель результата, установка обработчиков кликов по кнопкам
+function addRezultPanelRow(number, code, name) {
+	$("#rezultPanel #rows").append('<div class="row">' + name + '<div id="buttons"><button class="open-editor btn btn-xs btn-default" data-code="'+code+'" data-number="'+number+'">Вставить текст</button></div></div>');
+
+	//Нажатие кнопки ОТКРЫТЬ РЕДАКТОР БЛОКА
+	$("button.open-editor").on("click", function(){
+		switch ($(this).data("code")) {
+			case "dk": select_block('5000246', '4000022', '268');
+				break;
+			case "ci": select_block('5000247', '4000023', '269');
+				break;
+			case "pv": select_block('5000248', '4000024', '270');
+				break;
+			case "ot": select_block('5000249', '4000025', '271');
+				break;
+			case "h" : select_block('5000250', '4000026', '276');
+				break;
+			case "se": select_block('5000252', '4000031', '274');
+				break;
+			case "sv": select_block('5000253', '4000029', '275');
+				break;
+		}
+
+		if (activeTabLocale("ru")){
+			$("textarea#product_block_translations_ru_contents").val(blocks[$(this).data("number")].text);
+			$("textarea#product_price_block_translations_ru_contents").val(blocks[$(this).data("number")].text);
+		}
+		else
+			if (activeTabLocale("ua")){
+				$("textarea#product_block_translations_ua_contents").val(blocks[$(this).data("number")].text);
+				$("textarea#product_price_block_translations_ua_contents").val(blocks[$(this).data("number")].text);
+			}
+		$("a.re-icon.re-html").click().delay(1000).click();
+	});
+}
+
+
+
+//===============================================================================================
+//  ДВЕ КОЛОНКИ
+//===============================================================================================
+
+function makeDkText(start, arr){
+	arr=arr.slice(++start);
+	/*arr.forEach(function(item,i) {
+        const regex = /^.{1,2}-sh$/g;
+        if (regex.test(item)) //Если нашли начало следующего контент-блока
+            arr = arr.slice(0,i); //обрезаем массив
+        return;
+    });*/
+	var dk_text =
+		"<div class=\"detail-school-desc\"><h2>" + arr[0] + "</h2><ul>" +
+		"<li><h3>" + arr[1].split('\t')[0] + "</h3>" + arr[2].split('\t')[0] + "</li>" +
+		"<li><h3>" + arr[1].split('\t')[1] + "</h3>" + arr[2].split('\t')[1] + "</li>" +
+		"</ul></div>";
+
+	return dk_text;
+}
+
+//===============================================================================================
+//  ЦИТАТА
+//===============================================================================================
+
+function makeCiText(start, arr){
+	arr=arr.slice(++start);
+
+	let txt = "<p><em>" + arr[1].split('\t')[1];
+	if (arr[0].length === 0) //Если нет заголовка
+	{
+		if (txt.length < 210) //Текст недостаточно длинный — добавляем 1 перенос
+			txt = "<em><br></em>" + txt;
+	}
+
+	var ci_text =
+		"<div class=\"detail-quote-block clear\">" +
+		"<div class=\"quoute-holder\"><figure><img src=\"http://images.daroo.gift/daroo.ru/gallery/editor/2016/03/22/56f0e860c3ba9.jpg\"></figure>" +
+		"<div class=\"desc\">" +
+		"<h2>"+ arr[0] +"</h2>" +
+		txt +"</em></p>" +
+		"<p>"+ arr[2].split('\t')[1] +"</p>" +
+		"</div></div></div>";
+
+	return ci_text;
+}
+
+//===============================================================================================
+//  ПРЕИМУЩЕСТВА/ВОЗМОЖНОСТИ
+//===============================================================================================
+
+function makePvText(start, arr){
+	arr=arr.slice(++start);
+
+	var strings = [
+		'<div class="detail-desc-features clear"><h2>'+ arr[0] +'</h2><ul>',
+		'<li><figure><img src="http://images.daroo.gift/daroo.by/gallery/editor/2016/02/03/56b1e66d2ece6.jpg"><br></figure><h3>'+arr[2].split('\t')[0]+'<br></h3>'+arr[3].split('\t')[0]+'</li>',
+		'<li><figure><img src="http://images.daroo.gift/daroo.by/gallery/editor/2016/02/03/56b1e66d2ece6.jpg"><br></figure><h3>'+arr[2].split('\t')[1]+'<br></h3>'+arr[3].split('\t')[1]+'</li>',
+		'<li><figure><img src="http://images.daroo.gift/daroo.by/gallery/editor/2016/02/03/56b1e66d2ece6.jpg"><br></figure><h3>'+arr[2].split('\t')[2]+'<br></h3>'+arr[3].split('\t')[2]+'</li>',
+		'</ul></div>'
+	];
+
+	var pv_text = strings[0] + strings[1] + strings[2] + strings[3];
+
+	if (arr[2].split('\t')[3].length || arr[3].split('\t')[3].length) //Если в 4 колонке есть что-нибудь, то
+		pv_text += '<li><figure><img src="http://images.daroo.gift/daroo.by/gallery/editor/2016/02/03/56b1e66d2ece6.jpg"><br></figure><h3>'+arr[2].split('\t')[3]+'<br></h3>'+arr[3].split('\t')[3]+'</li>'; //Добавляем строку с содержимым 4 колонки
+
+	pv_text += strings[4]; //Добавляем финальную строку
+
+	return pv_text;
+}
+
+//===============================================================================================
+//  ОБЫЧНЫЙ ТЕКСТ ot-sh
+//===============================================================================================
+
+function makeOtText(start, arr){
+	arr=arr.slice(++start);
+	const regex = /^.{1,2}-sh$/g;
+	arr.some(function(item, i){ //Подрезаем массив по началу следующего блока
+		if (regex.test(item)) //Если нашли начало следующего контент-блока
+		{
+			arr = arr.slice(0,i); //Обрезаем массив
+			return true; //Выходим из цикла
+		}
+	});
+	for(let i = arr.length-1;i>=0; i--) //Подрезаем пустые строки с конца массива
+	{
+		if(arr[i]==="")
+			arr = arr.slice(0, i);
+		else
+			break;
+	}
+
+	console.log(arr);
+
+	var ot_text = '<div class="full-desc"><div class="desc">';
+	if (arr[0].length) //Если есть заголовок
+		ot_text += '<h2>' + arr[0] + '</h2>'; //Вставляем заголовок в итоговый текст
+
+	for(let i = 1; i<=arr.length-1; i++)
+	{
+		if (arr[i][0]=='●')
+		{
+			if (ot_text.slice(-11) == '<p><br></p>') //Убираем лишний перенос (если есть), т.к. следующим в тексте идет список
+			{
+				ot_text = ot_text.slice(0,-11);
+				alert(ot_text);
+			}
+			ot_text += '<ul>';
+			while(arr[i][0]=='●')
+			{
+				ot_text += '<li>'+ arr[i].slice(2) +'</li>';
+				i++;
+			}
+			ot_text += '</ul>';
+		}
+		if (arr[i].length > 2)
+			ot_text += '<p>' + arr[i] + '</p><p><br></p>'; //Добавляем перенос, т.к. следующим в тексте идет абзац, либо это конец контент-блока
+	}
+	ot_text += '</div></div>';
+	return ot_text;
+}
+
+//===============================================================================================
+//  ХАРАКТЕРИСТИКИ h-sh
+//===============================================================================================
+
+function makeHText(start, arr){
+	arr=arr.slice(++start);
+	const regex = /^.{1,2}-sh$/g;
+	arr.some(function(item, i){ //Подрезаем массив по началу следующего блока
+		if (regex.test(item)) //Если нашли начало следующего контент-блока
+		{
+			arr = arr.slice(0,i); //Обрезаем массив
+			return true; //Выходим из цикла
+		}
+	});
+	for(let i = arr.length-1;i>=0; i--) //Подрезаем пустые строки с конца массива
+	{
+		if(arr[i]==="")
+			arr = arr.slice(0, i);
+		else
+			break;
+	}
+
+	var h_text = "<div class=\"full-desc\">";
+	if (arr[0].length) //Если есть заголовок
+		h_text += '<div class="desc"><h2>' + arr[0] + '</h2></div>'; //Вставляем заголовок в итоговый текст
+	h_text += "<ul class=\"detail-list\">";
+
+	let last_side = "left";
+
+	for(let i = 1; i<=arr.length-1; i++){
+		if(i%2){
+			if( last_side === "right")
+			{
+				h_text += '<li><div class="article"><div><h3>' + arr[i].split('\t')[0] + '</h3>' + arr[i+1].split('\t')[0] + '</div></div><figure><img src="http://images.daroo.gift/daroo.by/gallery/editor/2016/08/24/57bd618120fc9.jpg"></figure></li>';
+				last_side = "left";
+			} else {
+
+				h_text += '<li><figure><img src=\"http://images.daroo.gift/daroo.by/gallery/editor/2016/08/24/57bd615ccb044.jpg\"></figure><div class="article"><div><h3>' + arr[i].split('\t')[1] + '</h3>' + arr[i+1].split('\t')[1] + '</div></div></li>';
+				last_side = "right";
+			}
+		}
+	}
+	h_text += "</ul></div>";
+	return h_text;
+}
+
+//===============================================================================================
+//  СТРУКТУРА/ЭТАПЫ se-sh
+//===============================================================================================
+
+function makeSeText(start, arr){
+	arr=arr.slice(++start);
+	const regex = /^.{1,2}-sh$/g;
+	arr.some(function(item, i){ //Подрезаем массив по началу следующего блока
+		if (regex.test(item)) //Если нашли начало следующего контент-блока
+		{
+			arr = arr.slice(0,i); //Обрезаем массив
+			return true; //Выходим из цикла
+		}
+	});
+	for(let i = arr.length-1;i>=0; i--) //Подрезаем пустые строки с конца массива
+	{
+		if(arr[i]==="")
+			arr = arr.slice(0, i);
+		else
+			break;
+	}
+
+	console.log("!",arr);
+
+
+	var se_text = '<div class="full-desc full-left">';
+	if (arr[0].length) //Если есть заголовок
+		se_text += '<div class="desc"><h2>' + arr[0] + '</h2></div>'; //Вставляем заголовок в итоговый текст
+	se_text += "<ul class=\"detail-list\">";
+
+	for(let i = 1; i<=arr.length-1; i++){
+		se_text += '<li><figure><img src=\"http://images.daroo.gift/daroo.by/gallery/editor/2016/08/24/57bd615ccb044.jpg\"></figure><div class="article"><div><h3>' + arr[i].split('\t')[1] + '</h3>' + arr[i+1].split('\t')[1] + '</div></div></li>';
+		i++;
+	}
+
+	se_text += "</ul></div>";
+	return se_text;
+}
+
+//===============================================================================================
+//  СЕРВИСНЫЕ ВОЗМОЖНОСТИ
+//===============================================================================================
+
+function makeSvText(start, arr, lang) {
+	arr = arr.slice(++start);
+	var sv_strings = {
+		label: [],
+		text: []
+	};
+
+	arr.forEach(function(item, i) {
+		sv_strings.label[i] = item.split('\t')[0];
+		sv_strings.text[i] = item.split('\t')[1];
+	});
+
+	var ruLabels = [
+		"",
+		"Что взять с собой?",
+		"С кем пойти?",
+		"Сезон",
+		"Расписание и время",
+		"Безопасность",
+		"Программа",
+		"Дополнительные возможности",
+		"Возраст"
+	];
+
+	var uaLabels = [
+		"",
+		"Що взяти з собою?",
+		"З ким піти?",
+		"Сезон",
+		"Розклад і час",
+		"Безпека",
+		"Програма",
+		"Додаткові можливості",
+		"Вік"
+	];
+
+	var langLabels = lang === "ua" ? uaLabels : ruLabels; //Выбираем язык лейблов в зависимости от активной вкладки (RU) (UA)
+	var counter = 0; //Счетчик пары
+
+	var sv_text = '<div class="detail-faq-block infoscroll-content"><div class="row">'; //Стартовая строка
+	for(var j=0;j<=sv_strings.label.length;j++) //Перебираем найденные строки и собираем из найденного разметку
+	{
+		if (sv_strings.text[j]) //Если не пустая ячейка
+		{
+			if (counter === 2) //Если был заполнен второй столбец то,
+			{
+				sv_text += '</div><div class="row">'; //Добавим теги перехода на следующюю строку
+				counter = 0; //И обнулим счетчик
+			}
+			switch (sv_strings.label[j]) {
+				case "Что взять с собой?":
+					sv_text += '<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-01.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[1]+'</h3><p>'+sv_strings.text[j]+'</p></div></dd></dl></div>';
+					break;
+				case "С кем пойти?":
+					sv_text += '<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-06.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[2]+'</h3><p>'+sv_strings.text[j]+'</p></div></dd></dl></div>';
+					break;
+				case "Сезон":
+					sv_text += '<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-02.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[3]+'</h3><p>'+sv_strings.text[j]+'</p></div></dd></dl></div>';
+					break;
+				case "Расписание и время":
+					sv_text += '<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-03.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[4]+'</h3><p>'+sv_strings.text[j]+'</p></div></dd></dl></div>';
+					break;
+				case "Безопасность":
+					sv_text += '<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-08.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[5]+'</h3><p>'+sv_strings.text[j]+'</p></div></dd></dl></div>';
+					break;
+				case "Программа":
+					sv_text += '<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-04.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[6]+'</h3><p>'+sv_strings.text[j]+'</p></div></dd></dl></div>';
+					break;
+				case "Дополнительные возможности":
+					sv_text += '<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-09.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[7]+'</h3><p>'+sv_strings.text[j]+'</p></div></dd></dl></div>';
+					break;
+				case "Возраст":
+					sv_text += '<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-05.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[8]+'</h3><p>'+sv_strings.text[j]+'</p></div></dd></dl></div>';
+					break;
+			}
+			counter++; //Счетчик для определения пары столбцов
+		}
+	}
+	sv_text += '</div></div>';//Финальная строка
+
+	return sv_text;
+}
