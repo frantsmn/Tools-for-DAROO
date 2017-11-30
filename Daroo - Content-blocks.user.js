@@ -1,14 +1,16 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      1.7
+// @version      1.8
 // @include      *daroo*.*/manager/*
 // @description  Удобные формы для добавления основных контент-блоков
-// @updateURL    https://openuserjs.org/install/frantsmn/Daroo_-_Content-blocks.meta.js
+// @updateURL 	 https://openuserjs.org/meta/frantsmn/Daroo_-_Content-blocks.meta.js
 // @author       Frants Mitskun
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_deleteValue
+// @license		 MIT
+// @copyright 	 2017, frantsmn (https://openuserjs.org/users/frantsmn)
 // ==/UserScript==
 
 //GM_deleteValue("settings");
