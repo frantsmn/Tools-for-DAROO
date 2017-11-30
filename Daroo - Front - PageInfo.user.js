@@ -22,6 +22,8 @@
 // @include      *daroo.ru/ekb*
 // @include      *daroo.ua/ru/kiev*
 // @include      *daroo.ua/kiev*
+// @license		 MIT
+// @copyright 	 2017, frantsmn (https://openuserjs.org/users/frantsmn)
 // ==/UserScript==
 
 //GM_deleteValue("history");
