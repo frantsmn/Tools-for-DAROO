@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Front - PageInfo
 // @namespace    PageInfo
-// @version      3.1
+// @version      3.2
 // @description  Добавляет на страницу некоторую информацию и ссылку на редактирование карточки товара/цены/партнера
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Front_-_PageInfo.meta.js
 // @grant        GM_getValue
@@ -173,7 +173,7 @@
 
 	$("ul.details-slider").find("li").each(function(){
 		$(this).prepend("<div id=\"banner-url\">"+
-						"<a href=\""+$(this).find("img").attr("src")+"\" target=\"_blank\">Cсылка на изображение</a><br>"+
+						"<a href=\""+$(this).find("img").attr("src")+"\" target=\"_blank\" download>Сохранить изображение</a><br>"+
 						"<input value=\""+$(this).find("img").attr("src")+"\">"+
 						"</div>");
 	});
@@ -189,7 +189,7 @@
 		'#metatext-for-table{margin-left:10px; margin-left: 10px; height: 79px; margin-top: 2px; border: solid #eaeaea 1px; border-radius: 2px; resize: none;} #copyButton{height: 85px; margin-top: 2px; margin-left:0px; background-color:white; cursor:pointer;}</style>';
 	var meta = '<div id="meta"><table><tr><td><b>Title:</b><br><b>Description:</b><br><b>Keywords:</b></td>'+
 		'<td><input value="'+$("title").html()+'"><br><input value="'+$('meta[name="description"]').attr('content')+'"><br><input value="'+$('meta[name="keywords"]').attr('content')+'">'+
-		'</td><td><textarea id="metatext-for-table">'+document.location.href+'&#9;'+$("title").html()+'&#9;'+$("h1[itemprop='name']").html()+'&#9;'+$('meta[name="description"]').attr('content')+'&#9;'+$('meta[name="keywords"]').attr('content')+'</textarea></td><td><button id="copyButton" class="page-menu-el">Скопировать для вставки в Google Таблицы</button></td></tr></table></div>';
+		'</td><td><textarea id="metatext-for-table">'+document.location.href+'&#9;'+$("title").html()+'&#9;'+$("h1[itemprop='name']").html()+'&#9;'+$('meta[name="description"]').attr('content')+'&#9;'+$('meta[name="keywords"]').attr('content')+'&#9;'+ date +'</textarea></td><td><button id="copyButton" class="page-menu-el">Скопировать для вставки в Google Таблицы</button></td></tr></table></div>';
 	$("head").append(style_meta);
 
 	//Отображаем блок Meta согласно настройкам
