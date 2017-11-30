@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      1.6
+// @version      1.7
 // @include      *daroo*.*/manager/*
 // @description  Удобные формы для добавления основных контент-блоков
 // @updateURL    https://openuserjs.org/install/frantsmn/Daroo_-_Content-blocks.meta.js
@@ -439,7 +439,6 @@ function makeSvBlock(){
 //Разбираем текст вставленный таблицей на строки
 $("#table-check").keyup(function(){
 	var arr = $('#table-check').val().split('\n');
-	console.log(arr);
 	var strings = {
 		label : [],
 		text : []
@@ -585,7 +584,6 @@ $("textarea#docText").on("input",function(){
 	blocks = []; //Очищаем массив объектов (контент-блоков)
 
 	var strings = $('textarea#docText').val().split('\n'); //Разбираем текст по строкам
-	//console.log(strings);
 	var number = 0; //Порядковый номер блока
 	strings.forEach(function(item, i) {
 		switch (item) {
@@ -777,31 +775,28 @@ function makeOtText(start, arr){
 			break;
 	}
 
-	console.log(arr);
-
 	var ot_text = '<div class="full-desc"><div class="desc">';
 	if (arr[0].length) //Если есть заголовок
 		ot_text += '<h2>' + arr[0] + '</h2>'; //Вставляем заголовок в итоговый текст
 
 	for(let i = 1; i<=arr.length-1; i++)
 	{
-		if (arr[i][0]=='●')
+		if (arr[i][0] == '●')
 		{
 			if (ot_text.slice(-11) == '<p><br></p>') //Убираем лишний перенос (если есть), т.к. следующим в тексте идет список
 			{
 				ot_text = ot_text.slice(0,-11);
-				alert(ot_text);
 			}
 			ot_text += '<ul>';
-			while(arr[i][0]=='●')
+			while(i <= arr.length-1 && arr[i][0] == '●')
 			{
 				ot_text += '<li>'+ arr[i].slice(2) +'</li>';
 				i++;
 			}
 			ot_text += '</ul>';
 		}
-		if (arr[i].length > 2)
-			ot_text += '<p>' + arr[i] + '</p><p><br></p>'; //Добавляем перенос, т.к. следующим в тексте идет абзац, либо это конец контент-блока
+		if (i <= arr.length-1 && arr[i].length > 2) //Если i не вышел за допустимое кол-во строк в массиве и текущая строка не пустая, то
+			ot_text += '<p>' + arr[i] + '</p><p><br></p>'; //добавляем строку и добавляем перенос, т.к. следующим в тексте идет абзац, либо это конец контент-блока
 	}
 	ot_text += '</div></div>';
 	return ot_text;
@@ -874,9 +869,6 @@ function makeSeText(start, arr){
 		else
 			break;
 	}
-
-	console.log("!",arr);
-
 
 	var se_text = '<div class="full-desc full-left">';
 	if (arr[0].length) //Если есть заголовок
