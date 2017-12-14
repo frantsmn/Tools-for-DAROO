@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Front - PageInfo
 // @namespace    PageInfo
-// @version      3.2
+// @version      3.3
 // @description  Добавляет на страницу некоторую информацию и ссылку на редактирование карточки товара/цены/партнера
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Front_-_PageInfo.meta.js
 // @grant        GM_getValue
@@ -80,7 +80,7 @@
 	}
 
 	//Разметка меню
-	var style = '<style>#edit-info{position: absolute; top: 10px; right: 10px; background-color:white;} #edit-info input{border:solid lightgray 1px; border-radius:2px; padding:1px;}'+
+	var style = '<style>#edit-info{position: absolute; top: 68px; right: 10px; background-color:white;} #edit-info input{border:solid lightgray 1px; border-radius:2px; padding:1px;}'+
 		'.page-menu-el{display:inline-block; margin-left:10px; padding:5px; border-radius:3px; border: 1px dashed orange;} #page-canonical-info{border:red dashed 1px; background-color:#ffeaf7;} .__a{color:orange;}'+
 		'#page-meta-info, #page-history-info{cursor:pointer;} #page-meta-info:hover, #page-history-info:hover, #edit-button:hover, .page-menu-el:hover{border: 1px solid orange; color:orange;}'+
 		'#page-id-info input{width:45px;} #page-url-info input, #page-canonical-info input{width:80px;}</style>';
