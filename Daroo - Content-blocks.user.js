@@ -1,15 +1,15 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      1.8
+// @version      1.9
 // @include      *daroo*.*/manager/*
-// @description  Удобные формы для добавления основных контент-блоков
+// @description  Удобные формы для добавления основных контент-блоков, парсинг документа на META-загловки и контент-блоки
 // @updateURL 	 https://openuserjs.org/meta/frantsmn/Daroo_-_Content-blocks.meta.js
 // @author       Frants Mitskun
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_deleteValue
-// @license		 MIT
+// @license	 MIT
 // @copyright 	 2017, frantsmn (https://openuserjs.org/users/frantsmn)
 // ==/UserScript==
 
@@ -23,7 +23,8 @@ var settings = GM_getValue("settings") ? GM_getValue("settings") :
 		pvPanel : {top: 200, left: 350},
 		sePanel : {top: 200, left: 350},
 		hPanel  : {top: 200, left: 350},
-		dkPanel : {top: 200, left: 350}
+		dkPanel : {top: 200, left: 350},
+		rezultPanel: {top: 50, left: 600}
 	}
 };
 
@@ -47,6 +48,16 @@ function activeTabLocale(str){
 	if (str && str!==locale)
 		return false;
 	return locale;
+}
+
+//ФУНКЦИЯ ВОЗВРАЩАЕТ ТИП РЕДАКТИРУЕМОЙ СТРАНИЦЫ
+function getPageType(){
+	if( $('input#product__token').length )
+		return "product";
+	if( $('input#product_price__token').length )
+		return "price";
+	if( $('input#supplier__token').length )
+		return "supplier";
 }
 
 //ФУНКЦИЯ ОТКРЫВАЕТ НЕОБХОДИМЫЙ КОНТЕНТ-БЛОК ВЫБИРАЕМЫЙ ИЗ ВЫПАДАЙКИ
@@ -547,8 +558,9 @@ $(".content-block-panel")
 
 //==========================================================================================================================================================//
 // Зависимости:
-// js activeTabLocale(str) — Узнаем/проверяем локаль открытой вкладки языка; select_block(by, ru, ua) - открываем необходимый редактор блока по id (для каждой страны свой)
-// css .content-block-panel
+// js       : activeTabLocale(str) — Узнаем/проверяем локаль открытой вкладки языка; select_block(by, ru, ua) - открываем необходимый редактор блока по id (для каждой страны свой)
+// css      : .content-block-panel
+// settings : положение блока на странице; ($("#rezultPanel").offset(settings.offset.rezultPanel);)
 
 //МЕНЮ
 $("ul.top-nav").prepend("<li data-toggle='dropdown'><a href='#' id='open-textarea' aria-expanded='false'><i class='fa fa-file-word-o'></i> Разобрать документ</a><div style='position:absolute;'><textarea id='docText' style='box-shadow: 0 6px 12px rgba(0,0,0,.175); display: none; width: 250px; height: 150px; border-bottom-left-radius: 3px; border-bottom-right-radius: 3px; padding:5px; margin-top:1px;' placeholder='Вставьте содержимое документа в это поле'></textarea></div></li>");
@@ -562,13 +574,33 @@ $("#docText").focusout(function(){
 });
 
 //СТИЛИ
-$("body").append("<style>#rezultPanel{right:0px; bottom:0px; display:none; max-width: max-content; max-height: max-content;} #rezultPanel .first-row { padding: 0 0 5px 0; font-size: 13pt; } #rezultPanel .row { border-radius: 3px; border: solid 1px lightgrey; margin: 2px 0 0 0; padding: 5px; background-color: #f9f9f9; } #rezultPanel #buttons { float: right; } #rezultPanel button{margin-left: 5px;} </style>");
+$("body").append("<style>#rezultPanel{display:none; max-width: max-content; max-height: max-content;} #rezultPanel .first-row { padding: 0 0 5px 0; font-size: 13pt; } #rezultPanel .row { border-radius: 3px; border: solid 1px lightgrey; margin: 2px 0 0 0; padding: 5px; background-color: #f9f9f9; } #rezultPanel #buttons { float: right; } #rezultPanel button{margin-left: 5px;} </style>");
 
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //ПАНЕЛЬ РЕЗУЛЬТАТА
 $("body").prepend("<div id='rezultPanel' class='content-block-panel'><div class='first-row'><button type='button' class='close'>×</button><span></span></div><div id='rows'></div><div class='form-actions'></div></div>");
 $( "#rezultPanel" ).draggable();
+$("#rezultPanel").offset(settings.offset.rezultPanel);
 $( "#rezultPanel .close" ).on("click", function(){$( "#rezultPanel").hide(); clearRezultPanelRow();});
+
+//После drag'n'drop панели сохраняем координаты панели в базу
+var isDragging = false;
+$("#rezultPanel")
+	.mousedown(function() {
+	isDragging = false;
+})
+	.mousemove(function() {
+	isDragging = true;
+})
+	.mouseup(function(){
+	var wasDragging = isDragging;
+	isDragging = false;
+	if (wasDragging){
+		settings.offset[$(this).attr('id').toString()] = $(this).offset();
+		GM_setValue("settings", settings);
+		//console.log(GM_getValue("settings"));
+	}
+});
 
 //Массив объектов (контент-блоков)
 var blocks = [];
@@ -578,15 +610,69 @@ name: "",
 text: ""
 }];
 */
+var meta = {};
 
-//По вставке текста разбираем текст по строкам на контент-блоки
+//По вставке текста разбираем текст по строкам
 $("textarea#docText").on("input",function(){
-
-	clearRezultPanelRow(); //Очищаем панель результата
-	blocks = []; //Очищаем массив объектов (контент-блоков)
 
 	var strings = $('textarea#docText').val().split('\n'); //Разбираем текст по строкам
 	var number = 0; //Порядковый номер блока
+	//var page_type = getPageType();
+
+	console.log(strings);
+
+	meta = {
+		title: "",
+		description: "",
+		keywords: "",
+		title_for_catalog: "",
+		h: "",
+		title_for_marketing: "",
+		announcement: "",
+		description_for_marketing: ""
+	}; //Очищаем объект мета-заголовков
+
+	clearRezultPanelRow(); //Очищаем панель результата
+	blocks = []; //Очищаем массив объектов контент-блоков
+
+	//Поиск META-заголовков
+	for(let i=0; i<=strings.length; i++) {
+		switch(true) {
+			case /Title	/.test(strings[i]):
+				meta.title = strings[i].slice(6);
+				break;
+			case /Description	/.test(strings[i]):
+				meta.description = strings[i].slice(12);
+				break;
+			case /Заголовок в каталоге для товаров \/ Название партнера	/.test(strings[i]):
+				meta.title_for_catalog = strings[i].slice(53);
+				break;
+			case /Заголовок H1 \(только для товаров\)	/.test(strings[i]):
+				meta.h = strings[i].slice(34);
+				break;
+			case /Заголовок для рекламы \(только для товаров\) 25 символов	/.test(strings[i]):
+				meta.title_for_marketing = strings[i].slice(55);
+				break;
+			case /Анонс \(аннотация\) для товаров \/ Лид для партнера/.test(strings[i]):
+				alert();
+				while(strings[i+1]==="")
+					i++;
+				meta.announcement = strings[i+1];
+				break;
+			case /Описание для маркетинга/.test(strings[i]):
+				alert();
+				while(strings[i+1]==="")
+					i++;
+				meta.description_for_marketing = strings[i+1];
+				break;
+			case /.*-sh/.test(strings[i]):
+				console.log("Finished at: "+ i);
+				console.log(meta);
+				i = Infinity;
+				break;
+		}
+	}
+
 	strings.forEach(function(item, i) {
 		switch (item) {
 			case "dk-sh":
