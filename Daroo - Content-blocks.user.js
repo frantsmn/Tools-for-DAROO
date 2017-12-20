@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      1.9
+// @version      2.0
 // @include      *daroo*.*/manager/*
 // @description  Удобные формы для добавления основных контент-блоков, парсинг документа на META-загловки и контент-блоки
 // @updateURL 	 https://openuserjs.org/meta/frantsmn/Daroo_-_Content-blocks.meta.js
@@ -558,7 +558,7 @@ $(".content-block-panel")
 
 //==========================================================================================================================================================//
 // Зависимости:
-// js       : activeTabLocale(str) — Узнаем/проверяем локаль открытой вкладки языка; select_block(by, ru, ua) - открываем необходимый редактор блока по id (для каждой страны свой)
+// js       : activeTabLocale(str) — Узнаем/проверяем локаль открытой вкладки языка; select_block(by, ru, ua) - открываем необходимый редактор блока по id (для каждой страны свой); getPageType() - узнать тип редактируемой страницы
 // css      : .content-block-panel
 // settings : положение блока на странице; ($("#rezultPanel").offset(settings.offset.rezultPanel);)
 
@@ -574,7 +574,7 @@ $("#docText").focusout(function(){
 });
 
 //СТИЛИ
-$("body").append("<style>#rezultPanel{display:none; max-width: max-content; max-height: max-content;} #rezultPanel .first-row { padding: 0 0 5px 0; font-size: 13pt; } #rezultPanel .row { border-radius: 3px; border: solid 1px lightgrey; margin: 2px 0 0 0; padding: 5px; background-color: #f9f9f9; } #rezultPanel #buttons { float: right; } #rezultPanel button{margin-left: 5px;} </style>");
+$("body").append("<style>#rezultPanel{display:none; max-width: 370px; max-height: max-content;} #rezultPanel .first-row { padding: 0 0 5px 0; font-size: 13pt; } #rezultPanel .row { border-radius: 3px; border: solid 1px lightgrey; margin: 2px 0 0 0; padding: 5px; background-color: #f9f9f9; } #rezultPanel #buttons { float: right; } #rezultPanel button{margin-left: 5px;} #rezultPanel button.paste-meta-info-button{width:100%; height:30px; margin: 5px 5px 0 0;} </style>");
 
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //ПАНЕЛЬ РЕЗУЛЬТАТА
@@ -617,53 +617,60 @@ $("textarea#docText").on("input",function(){
 
 	var strings = $('textarea#docText').val().split('\n'); //Разбираем текст по строкам
 	var number = 0; //Порядковый номер блока
-	//var page_type = getPageType();
+	var titles = ""; //Строка для названий всех найденных META-заголовков
 
-	console.log(strings);
-
+	//Очищаем объект мета-заголовков
 	meta = {
 		title: "",
 		description: "",
 		keywords: "",
 		title_for_catalog: "",
-		h: "",
+		h1: "",
 		title_for_marketing: "",
 		announcement: "",
 		description_for_marketing: ""
-	}; //Очищаем объект мета-заголовков
+	};
 
-	clearRezultPanelRow(); //Очищаем панель результата
-	blocks = []; //Очищаем массив объектов контент-блоков
+	//Очищаем панель результата
+	clearRezultPanelRow();
+
+	//Очищаем массив объектов контент-блоков
+	blocks = [];
 
 	//Поиск META-заголовков
 	for(let i=0; i<=strings.length; i++) {
 		switch(true) {
 			case /Title	/.test(strings[i]):
 				meta.title = strings[i].slice(6);
+				titles += "Title, ";
 				break;
 			case /Description	/.test(strings[i]):
 				meta.description = strings[i].slice(12);
+				titles += "Description, ";
 				break;
 			case /Заголовок в каталоге для товаров \/ Название партнера	/.test(strings[i]):
 				meta.title_for_catalog = strings[i].slice(53);
+				titles += (getPageType() == "product" || getPageType() == "price") ? "Крошка, Наименование, Наименование для каталога, " : "Крошка, Наименование партнера, Краткое наименование, ";
 				break;
 			case /Заголовок H1 \(только для товаров\)	/.test(strings[i]):
-				meta.h = strings[i].slice(34);
+				meta.h1 = strings[i].slice(34);
+				titles += "Заголовок H1, ";
 				break;
 			case /Заголовок для рекламы \(только для товаров\) 25 символов	/.test(strings[i]):
 				meta.title_for_marketing = strings[i].slice(55);
+				titles += (getPageType() == "product" || getPageType() == "price") ? "Наименование для маркетинга, " : "";
 				break;
 			case /Анонс \(аннотация\) для товаров \/ Лид для партнера/.test(strings[i]):
-				alert();
 				while(strings[i+1]==="")
 					i++;
 				meta.announcement = strings[i+1];
+				titles += "Аннотация, ";
 				break;
 			case /Описание для маркетинга/.test(strings[i]):
-				alert();
 				while(strings[i+1]==="")
 					i++;
 				meta.description_for_marketing = strings[i+1];
+				titles += "Описание для маркетинга";
 				break;
 			case /.*-sh/.test(strings[i]):
 				console.log("Finished at: "+ i);
@@ -672,6 +679,9 @@ $("textarea#docText").on("input",function(){
 				break;
 		}
 	}
+
+	if(titles.length>0) //Если заголовки нашлись
+		addMetaPanelRow(titles); //Добавим запись и кнопку на их вставку в панельку результата
 
 	strings.forEach(function(item, i) {
 		switch (item) {
@@ -714,14 +724,14 @@ $("textarea#docText").on("input",function(){
 	});
 
 	$(".content-block-panel").hide();
-	$("#rezultPanel div.first-row span").html("Найдено блоков: <b>"+blocks.length+"</b>");
-	if (blocks.length>0)
-	{
-		$("#rezultPanel").show();
-		console.log(blocks);
-	}
-	else
-		$("#rezultPanel").show().delay(5000).fadeOut(700);
+	$("#rezultPanel div.first-row span").html("<b>Найдено контент-блоков: <b>"+blocks.length+"</b>");
+	// if (blocks.length>0)
+	// {
+	$("#rezultPanel").show();
+	// 	console.log(blocks);
+	// }
+	// else
+	// 	$("#rezultPanel").show().delay(5000).fadeOut(700);
 
 	$("textarea#docText").fadeOut(700);
 });
@@ -731,7 +741,75 @@ function clearRezultPanelRow() {
 	$("#rezultPanel .row:not(first-child)").remove();
 }
 
-//Добавление строки на панель результата, установка обработчиков кликов по кнопкам
+//Вставка META-заголовков по клику на кнопку
+function addMetaPanelRow(titles){
+	$("#rezultPanel #rows").append('<div class="row">Найдены заголовки: <b>'+titles+'<b><div id="buttons"><button class="btn btn-xs btn-default paste-meta-info-button">Вставить заголовки</button></div></div>');
+	$("button.paste-meta-info-button").on("click", function(){
+		let pagetype = getPageType();
+		if(pagetype==="product")
+		{
+			//Заголовки
+			$("input#product_translations_ru_name").css("border-color", "#00c14b").val(meta.title_for_catalog);
+			$("input#product_translations_ru_header").css("border-color", "#00c14b").val(meta.h1);
+			$("input#product_translations_ru_marketingName").css("border-color", "#00c14b").val(meta.title_for_marketing);
+			$("input#product_translations_ru_catalogName").css("border-color", "#00c14b").val(meta.title_for_catalog);
+
+			//SEO
+			$("input#product_seo_translations_ru_metaTitle").css("border-color", "#00c14b").val(meta.title);
+			/*keywords*/
+			$("textarea#product_seo_translations_ru_metaDescription").css("border-color", "#00c14b").val(meta.description);
+			$("input#product_seo_translations_ru_metaBreadcrumbs").css("border-color", "#00c14b").val(meta.title_for_catalog);
+
+			//Аннотация и описание для маркетинга
+			$("div.redactor-editor").hide();
+			$("textarea#product_description_translations_ru_annotation").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.announcement);
+			$("textarea#product_description_translations_ru_marketingDescription").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.description_for_marketing);
+		}
+
+		if(pagetype==="price")
+		{
+			//Заголовки
+			$("input#product_price_translations_ru_name").css("border-color", "#00c14b").val(meta.title_for_catalog);
+			$("input#product_price_translations_ru_header").css("border-color", "#00c14b").val(meta.h1);
+			$("input#product_price_translations_ru_marketingName").css("border-color", "#00c14b").val(meta.title_for_marketing);
+			$("input#product_price_translations_ru_catalogName").css("border-color", "#00c14b").val(meta.title_for_catalog);
+
+			//SEO
+			$("input#product_price_seo_translations_ru_metaTitle").css("border-color", "#00c14b").val(meta.title);
+			/*keywords*/
+			$("textarea#product_price_seo_translations_ru_metaDescription").css("border-color", "#00c14b").val(meta.description);
+			$("input#product_price_seo_translations_ru_metaBreadcrumbs").css("border-color", "#00c14b").val(meta.title_for_catalog);
+
+			//Аннотация и описание для маркетинга
+			$("div.redactor-editor").hide();
+			$("textarea#product_price_description_translations_ru_annotation").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.announcement);
+			$("textarea#product_price_description_translations_ru_marketingDescription").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.description_for_marketing);
+		}
+
+		if(pagetype==="supplier")
+		{
+// 			//Заголовки
+// 			$("input#product_price_translations_ru_name").css("border-color", "#00c14b").val(meta.title_for_catalog);
+// 			$("input#product_price_translations_ru_header").css("border-color", "#00c14b").val(meta.h1);
+// 			$("input#product_price_translations_ru_marketingName").css("border-color", "#00c14b").val(meta.title_for_marketing);
+// 			$("input#product_price_translations_ru_catalogName").css("border-color", "#00c14b").val(meta.title_for_catalog);
+
+// 			//SEO
+// 			$("input#product_price_seo_translations_ru_metaTitle").css("border-color", "#00c14b").val(meta.title);
+// 			/*keywords*/
+// 			$("textarea#product_price_seo_translations_ru_metaDescription").css("border-color", "#00c14b").val(meta.description);
+// 			$("input#product_price_seo_translations_ru_metaBreadcrumbs").css("border-color", "#00c14b").val(meta.title_for_catalog);
+
+// 			//Аннотация и описание для маркетинга
+// 			$("div.redactor-editor").hide();
+// 			$("textarea#product_price_description_translations_ru_annotation").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.announcement);
+// 			$("textarea#product_price_description_translations_ru_marketingDescription").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.description_for_marketing);
+		}
+	});
+}
+
+
+//Добавление строки на панель результата, вставка блоков по кликам на соотв. кнопки
 function addRezultPanelRow(number, code, name) {
 	$("#rezultPanel #rows").append('<div class="row">' + name + '<div id="buttons"><button class="open-editor btn btn-xs btn-default" data-code="'+code+'" data-number="'+number+'">Вставить текст</button></div></div>');
 
