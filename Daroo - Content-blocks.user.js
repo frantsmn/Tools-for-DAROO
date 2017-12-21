@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      2.0
+// @version      2.1
 // @include      *daroo*.*/manager/*
 // @description  Удобные формы для добавления основных контент-блоков, парсинг документа на META-загловки и контент-блоки
 // @updateURL 	 https://openuserjs.org/meta/frantsmn/Daroo_-_Content-blocks.meta.js
@@ -788,22 +788,20 @@ function addMetaPanelRow(titles){
 
 		if(pagetype==="supplier")
 		{
-// 			//Заголовки
-// 			$("input#product_price_translations_ru_name").css("border-color", "#00c14b").val(meta.title_for_catalog);
-// 			$("input#product_price_translations_ru_header").css("border-color", "#00c14b").val(meta.h1);
-// 			$("input#product_price_translations_ru_marketingName").css("border-color", "#00c14b").val(meta.title_for_marketing);
-// 			$("input#product_price_translations_ru_catalogName").css("border-color", "#00c14b").val(meta.title_for_catalog);
+			//Заголовки
+			$("input#supplier_translations_ru_name").css("border-color", "#00c14b").val(meta.title_for_catalog);
+			$("input#supplier_translations_ru_shortName").css("border-color", "#00c14b").val(meta.title_for_catalog);
 
-// 			//SEO
-// 			$("input#product_price_seo_translations_ru_metaTitle").css("border-color", "#00c14b").val(meta.title);
-// 			/*keywords*/
-// 			$("textarea#product_price_seo_translations_ru_metaDescription").css("border-color", "#00c14b").val(meta.description);
-// 			$("input#product_price_seo_translations_ru_metaBreadcrumbs").css("border-color", "#00c14b").val(meta.title_for_catalog);
+			//SEO
+			$("input#supplier_seo_translations_ru_metaTitle").css("border-color", "#00c14b").val(meta.title);
+			/*keywords*/
+			$("textarea#supplier_seo_translations_ru_metaDescription").css("border-color", "#00c14b").val(meta.description);
+			$("input#supplier_seo_translations_ru_metaBreadcrumbs").css("border-color", "#00c14b").val(meta.title_for_catalog);
 
-// 			//Аннотация и описание для маркетинга
-// 			$("div.redactor-editor").hide();
-// 			$("textarea#product_price_description_translations_ru_annotation").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.announcement);
-// 			$("textarea#product_price_description_translations_ru_marketingDescription").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.description_for_marketing);
+			//Аннотация и описание для маркетинга
+			$("div.redactor-editor").hide();
+			$("textarea#supplier_description_translations_ru_annotation").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.announcement);
+			$("textarea#supplier_description_translations_ru_marketingDescription").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.description_for_marketing);
 		}
 	});
 }
