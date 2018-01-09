@@ -1,16 +1,16 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      2.1
+// @version      2.2
 // @include      *daroo*.*/manager/*
-// @description  Удобные формы для добавления основных контент-блоков, парсинг документа на META-загловки и контент-блоки
+// @description  Удобные формы для добавления контент-блоков в редактор сайта. Парсинг документа на заголовки, META-заголовки и контент-блоки с последующей их вставкой в редактор сайта.
 // @updateURL 	 https://openuserjs.org/meta/frantsmn/Daroo_-_Content-blocks.meta.js
 // @author       Frants Mitskun
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_deleteValue
 // @license	 MIT
-// @copyright 	 2017, frantsmn (https://openuserjs.org/users/frantsmn)
+// @copyright 	 2018, frantsmn (https://openuserjs.org/users/frantsmn)
 // ==/UserScript==
 
 //GM_deleteValue("settings");
@@ -28,26 +28,12 @@ var settings = GM_getValue("settings") ? GM_getValue("settings") :
 	}
 };
 
-//ФУНКЦИЯ ОТОБРАЖАЕТ ПОЛЕ ДЛЯ ВСТАВКИ КОДА ЕСЛИ ОНО ЗАКРЫТО
+//ФУНКЦИЯ ОТКРЫВАЕТ ПОЛЕ ДЛЯ ВСТАВКИ КОДА ЕСЛИ ОНО ЗАКРЫТО
 function show_textarea(){
 	if($("#product_block_translations_ru_contents").css('display') == 'none')
 		$("a.re-icon.re-html").click();
 	if($("#product_price_block_translations_ru_contents").css('display') == 'none')
 		$("a.re-icon.re-html").click();
-}
-
-//ФУНКЦИЯ ВОЗВРАЩАЕТ ЯЗЫК АКТИВНОЙ ВКЛАДКИ
-function activeTabLocale(str){
-	var locale;
-	$("ul.a2lix_translationsLocales").find("a.language-change-button").each(function(){
-		if ($(this).parent().hasClass("active"))
-			locale = $(this).data('locale');
-	});
-	if (str && str===locale)
-		return true;
-	if (str && str!==locale)
-		return false;
-	return locale;
 }
 
 //ФУНКЦИЯ ВОЗВРАЩАЕТ ТИП РЕДАКТИРУЕМОЙ СТРАНИЦЫ
@@ -89,14 +75,14 @@ $("body").append("<style>@keyframes fade-in { 0% {opacity: 0;} 100% {opacity: 0.
 
 //МЕНЮ
 $("ul.top-nav").prepend("<li id='content-block-menu' class='dropdown-toggle' data-toggle='dropdown'>"+
-						"<a class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">" +
-						"Контент-блоки <span class=\"caret\"></span></a>"+
-						"<ul class=\"dropdown-menu\" style=\"cursor: pointer !important;\" role=\"menu\">" +
-						" <li id=\"dk-sh\"><a>Две колонки</a></li>"+
-						" <li id=\"h-sh\"><a>Характеристики (шахматный)</a></li>"+
-						" <li id=\"se-sh\"><a>Структура/Этапы (последовательный)</a></li>"+
-						" <li id=\"pv-sh\"><a>Преимущества (буллиты)</a></li>"+
-						" <li id=\"sv-sh\"><a>Сервисные возможности</a></li>"+
+						"<a class='dropdown-toggle' data-toggle='dropdown' role='button' aria-expanded='false'>" +
+						"Контент-блоки <span class='caret'></span></a>"+
+						"<ul class='dropdown-menu' style='cursor: pointer' role='menu'>" +
+						"<li id='dk-sh'><a>Две колонки</a></li>"+
+						"<li id='h-sh'><a>Характеристики (шахматный)</a></li>"+
+						"<li id='se-sh'><a>Структура/Этапы (последовательный)</a></li>"+
+						"<li id='pv-sh'><a>Преимущества (буллиты)</a></li>"+
+						"<li id='sv-sh'><a>Сервисные возможности</a></li>"+
 						"</ul></li>");
 
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
@@ -122,14 +108,9 @@ $('#dkPanel').keyup(function(){
 	];
 	var dkText = strings[0] + strings[1] + strings[2] + strings[3];
 
-	if (activeTabLocale("ru")){
-		$("textarea#product_block_translations_ru_contents").val(dkText);
-		$("textarea#product_price_block_translations_ru_contents").val(dkText);
-	}
-	if (activeTabLocale("ua")){
-		$("textarea#product_block_translations_ua_contents").val(dkText);
-		$("textarea#product_price_block_translations_ua_contents").val(dkText);
-	}
+	$("textarea#product_block_translations_ru_contents").val(dkText);
+	$("textarea#product_price_block_translations_ru_contents").val(dkText);
+
 });
 
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
@@ -185,15 +166,8 @@ $("#hPanel").keyup(function(){
 
 	hText += "</ul></div>"; //Финальная строка
 
-	if (activeTabLocale("ru")){
-		$("textarea#product_block_translations_ru_contents").val(hText);
-		$("textarea#product_price_block_translations_ru_contents").val(hText);
-	}
-	else
-		if (activeTabLocale("ua")){
-			$("textarea#product_block_translations_ua_contents").val(hText);
-			$("textarea#product_price_block_translations_ua_contents").val(hText);
-		}
+	$("textarea#product_block_translations_ru_contents").val(hText);
+	$("textarea#product_price_block_translations_ru_contents").val(hText);
 
 	addBlock(); //Добавялем на всякий еще один текстовый блок
 });
@@ -260,14 +234,8 @@ $("#sePanel").keyup(function(){
 
 	seText += '</ul></div>'; //Финальная строка
 
-	if (activeTabLocale("ru")){
-		$("textarea#product_block_translations_ru_contents").val(seText);
-		$("textarea#product_price_block_translations_ru_contents").val(seText);
-	}else
-		if (activeTabLocale("ua")){
-			$("textarea#product_block_translations_ua_contents").val(seText);
-			$("textarea#product_price_block_translations_ua_contents").val(seText);
-		}
+	$("textarea#product_block_translations_ru_contents").val(seText);
+	$("textarea#product_price_block_translations_ru_contents").val(seText);
 
 	addBlockSe(); //Добавялем на всякий еще один текстовый блок
 });
@@ -315,25 +283,18 @@ $('#pvPanel').keyup(function(){
 	}
 	pvText += strings[5]; //Добавляем финальную строку
 
-	if (activeTabLocale("ru")){
-		$("textarea#product_block_translations_ru_contents").val(pvText);
-		$("textarea#product_price_block_translations_ru_contents").val(pvText);
-	}
-	else
-		if (activeTabLocale("ua")){
-			$("textarea#product_block_translations_ua_contents").val(pvText);
-			$("textarea#product_price_block_translations_ua_contents").val(pvText);
-		}
+	$("textarea#product_block_translations_ru_contents").val(pvText);
+	$("textarea#product_price_block_translations_ru_contents").val(pvText);
+
 });
 
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //СЕРВИСНЫЕ ВОЗМОЖНОСТИ
 
-//$("body").prepend("<div id='svPanel' class='content-block-panel'><input class='form-control' type='text' tabindex='1' id='check1' placeholder='Что взять с собой?'><input class='form-control' type='text' tabindex='2' id='check2' placeholder='C кем пойти?'><input class='form-control' type='text' tabindex='3' id='check3' placeholder='Сезон'><input class='form-control' type='text' tabindex='4' id='check4' placeholder='Сколько дарить'><input class='form-control' type='text' tabindex='5' id='check5' placeholder='Расписание и время'><input class='form-control' type='text' tabindex='6' id='check6' placeholder='Безопасность'><input class='form-control' type='text' tabindex='7' id='check7' placeholder='Программа'><input class='form-control' type='text' tabindex='8' id='check8' placeholder='Дополнительные возможности'><input class='form-control' type='text' tabindex='9' id='check9' placeholder='Возраст'><button class='closePanel btn btn-default'>Закрыть</button><button class='clearPanel btn btn-default'>Очистить</button><button class='hideSave btn btn-primary'>Сохранить и закрыть</button></div>");
 $("body").prepend("<div id='svPanel' class='content-block-panel' style='max-height:505px !important;'><textarea type='text' class='form-control' id='table-check' placeholder='Вставить контент-блок таблицей'></textarea><hr><input class='form-control' type='text' tabindex='1' id='check1' placeholder='Что взять с собой?'><input class='form-control' type='text' tabindex='2' id='check2' placeholder='C кем пойти?'><input class='form-control' type='text' tabindex='3' id='check3' placeholder='Сезон'><input class='form-control' type='text' tabindex='4' id='check4' placeholder='Сколько дарить'><input class='form-control' type='text' tabindex='5' id='check5' placeholder='Расписание и время'><input class='form-control' type='text' tabindex='6' id='check6' placeholder='Безопасность'><input class='form-control' type='text' tabindex='7' id='check7' placeholder='Программа'><input class='form-control' type='text' tabindex='8' id='check8' placeholder='Дополнительные возможности'><input class='form-control' type='text' tabindex='9' id='check9' placeholder='Возраст'><button class='closePanel btn btn-default'>Закрыть</button><button class='clearPanel btn btn-default'>Очистить</button><button class='hideSave btn btn-primary'>Сохранить и закрыть</button></div>");
 $( "#svPanel" ).draggable();
 
-var ruLabels = [
+var langLabels = [
 	"",
 	"Что взять с собой?",
 	"С кем пойти?",
@@ -346,21 +307,6 @@ var ruLabels = [
 	"Возраст"
 ];
 
-var uaLabels = [
-	"",
-	"Що взяти з собою?",
-	"З ким піти?",
-	"Коли активувати сертифікат?",
-	"Скільки дарувати",
-	"Розклад і час",
-	"Безпека",
-	"Програма",
-	"Додаткові можливості",
-	"Вік"
-];
-
-var langLabels = ruLabels; //По умолчанию русский
-
 //Отображаем и прячем форму
 $("#sv-sh").click(function() {
 	$(".content-block-panel").hide();
@@ -369,37 +315,17 @@ $("#sv-sh").click(function() {
 	select_block('5000253', '4000029', '275');
 });
 
-//Переводим placeholder'ы формы на соотв. язык
+//Переводим/Наименовываем placeholder'ы формы
 $("html").click(function(){
-	if (activeTabLocale("ua"))
-	{
-		$("#svPanel input").each(function(){
-			$(this).attr("placeholder", uaLabels[(($(this).attr('tabindex'))*1)]);
-		});
-	}
-	else
-		if (activeTabLocale("ru"))
-		{
-			$("#svPanel input").each(function(){
-				$(this).attr("placeholder", ruLabels[(($(this).attr('tabindex'))*1)]);
-			});
-		}
+	$("#svPanel input").each(function(){
+		$(this).attr("placeholder", langLabels[(($(this).attr('tabindex'))*1)]);
+	});
 });
 
 //Собираем разметку
 $("input").keyup(function(){makeSvBlock();});
 
 function makeSvBlock(){
-
-	if (activeTabLocale("ua"))
-	{
-		langLabels = uaLabels;
-	}
-	else
-		if (activeTabLocale("ru"))
-		{
-			langLabels = ruLabels;
-		}
 
 	var strings=[
 		'<br><div class="detail-faq-block infoscroll-content"><div class="row">',
@@ -438,15 +364,8 @@ function makeSvBlock(){
 	}
 	svText = svText + strings[10]; //Добавляем финальную строку
 
-	if (activeTabLocale("ru")){
-		$("textarea#product_block_translations_ru_contents").val(svText);
-		$("textarea#product_price_block_translations_ru_contents").val(svText);
-	}
-	else
-		if (activeTabLocale("ua")){
-			$("textarea#product_block_translations_ua_contents").val(svText);
-			$("textarea#product_price_block_translations_ua_contents").val(svText);
-		}
+	$("textarea#product_block_translations_ru_contents").val(svText);
+	$("textarea#product_price_block_translations_ru_contents").val(svText);
 }
 
 //Разбираем текст вставленный таблицей на строки
@@ -554,11 +473,9 @@ $(".content-block-panel")
 });
 
 
-
-
 //==========================================================================================================================================================//
 // Зависимости:
-// js       : activeTabLocale(str) — Узнаем/проверяем локаль открытой вкладки языка; select_block(by, ru, ua) - открываем необходимый редактор блока по id (для каждой страны свой); getPageType() - узнать тип редактируемой страницы
+// js       : select_block(by, ru, ua) - выбираем в выпадайке соответствующий контент-блок по id (для каждой страны свой); getPageType() - узнать тип редактируемой страницы
 // css      : .content-block-panel
 // settings : положение блока на странице; ($("#rezultPanel").offset(settings.offset.rezultPanel);)
 
@@ -610,6 +527,8 @@ name: "",
 text: ""
 }];
 */
+
+//Объект для META-информации и заголовков
 var meta = {};
 
 //По вставке текста разбираем текст по строкам
@@ -716,7 +635,7 @@ $("textarea#docText").on("input",function(){
 				number++;
 				break;
 			case "sv-sh":
-				blocks.push({id: number, code:"sv", name:"Сервисные возможности", text: makeSvText(i, strings, activeTabLocale())});
+				blocks.push({id: number, code:"sv", name:"Сервисные возможности", text: makeSvText(i, strings)});
 				addRezultPanelRow(number, "sv", "Сервисные возможности");
 				number++;
 				break;
@@ -725,14 +644,7 @@ $("textarea#docText").on("input",function(){
 
 	$(".content-block-panel").hide();
 	$("#rezultPanel div.first-row span").html("<b>Найдено контент-блоков: <b>"+blocks.length+"</b>");
-	// if (blocks.length>0)
-	// {
 	$("#rezultPanel").show();
-	// 	console.log(blocks);
-	// }
-	// else
-	// 	$("#rezultPanel").show().delay(5000).fadeOut(700);
-
 	$("textarea#docText").fadeOut(700);
 });
 
@@ -806,7 +718,6 @@ function addMetaPanelRow(titles){
 	});
 }
 
-
 //Добавление строки на панель результата, вставка блоков по кликам на соотв. кнопки
 function addRezultPanelRow(number, code, name) {
 	$("#rezultPanel #rows").append('<div class="row">' + name + '<div id="buttons"><button class="open-editor btn btn-xs btn-default" data-code="'+code+'" data-number="'+number+'">Вставить текст</button></div></div>');
@@ -830,20 +741,12 @@ function addRezultPanelRow(number, code, name) {
 				break;
 		}
 
-		if (activeTabLocale("ru")){
-			$("textarea#product_block_translations_ru_contents").val(blocks[$(this).data("number")].text);
-			$("textarea#product_price_block_translations_ru_contents").val(blocks[$(this).data("number")].text);
-		}
-		else
-			if (activeTabLocale("ua")){
-				$("textarea#product_block_translations_ua_contents").val(blocks[$(this).data("number")].text);
-				$("textarea#product_price_block_translations_ua_contents").val(blocks[$(this).data("number")].text);
-			}
+		$("textarea#product_block_translations_ru_contents").val(blocks[$(this).data("number")].text);
+		$("textarea#product_price_block_translations_ru_contents").val(blocks[$(this).data("number")].text);
+
 		$("a.re-icon.re-html").click().delay(1000).click();
 	});
 }
-
-
 
 //===============================================================================================
 //  ДВЕ КОЛОНКИ
@@ -851,12 +754,7 @@ function addRezultPanelRow(number, code, name) {
 
 function makeDkText(start, arr){
 	arr=arr.slice(++start);
-	/*arr.forEach(function(item,i) {
-        const regex = /^.{1,2}-sh$/g;
-        if (regex.test(item)) //Если нашли начало следующего контент-блока
-            arr = arr.slice(0,i); //обрезаем массив
-        return;
-    });*/
+
 	var dk_text =
 		"<div class=\"detail-school-desc\"><h2>" + arr[0] + "</h2><ul>" +
 		"<li><h3>" + arr[1].split('\t')[0] + "</h3>" + arr[2].split('\t')[0] + "</li>" +
@@ -945,14 +843,14 @@ function makeOtText(start, arr){
 
 	for(let i = 1; i<=arr.length-1; i++)
 	{
-		if (arr[i][0] == '●')
+		if (arr[i][0] == '●' || arr[i][0] == '•')
 		{
 			if (ot_text.slice(-11) == '<p><br></p>') //Убираем лишний перенос (если есть), т.к. следующим в тексте идет список
 			{
 				ot_text = ot_text.slice(0,-11);
 			}
 			ot_text += '<ul>';
-			while(i <= arr.length-1 && arr[i][0] == '●')
+			while(i <= arr.length-1 && (arr[i][0] == '●' || arr[i][0] == '•'))
 			{
 				ot_text += '<li>'+ arr[i].slice(2) +'</li>';
 				i++;
@@ -1052,7 +950,7 @@ function makeSeText(start, arr){
 //  СЕРВИСНЫЕ ВОЗМОЖНОСТИ
 //===============================================================================================
 
-function makeSvText(start, arr, lang) {
+function makeSvText(start, arr) {
 	arr = arr.slice(++start);
 	var sv_strings = {
 		label: [],
@@ -1064,7 +962,7 @@ function makeSvText(start, arr, lang) {
 		sv_strings.text[i] = item.split('\t')[1];
 	});
 
-	var ruLabels = [
+	var langLabels = [
 		"",
 		"Что взять с собой?",
 		"С кем пойти?",
@@ -1076,19 +974,6 @@ function makeSvText(start, arr, lang) {
 		"Возраст"
 	];
 
-	var uaLabels = [
-		"",
-		"Що взяти з собою?",
-		"З ким піти?",
-		"Сезон",
-		"Розклад і час",
-		"Безпека",
-		"Програма",
-		"Додаткові можливості",
-		"Вік"
-	];
-
-	var langLabels = lang === "ua" ? uaLabels : ruLabels; //Выбираем язык лейблов в зависимости от активной вкладки (RU) (UA)
 	var counter = 0; //Счетчик пары
 
 	var sv_text = '<div class="detail-faq-block infoscroll-content"><div class="row">'; //Стартовая строка
