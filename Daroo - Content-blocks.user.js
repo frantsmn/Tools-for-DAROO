@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      2.2
+// @version      2.3
 // @include      *daroo*.*/manager/*
 // @description  Удобные формы для добавления контент-блоков в редактор сайта. Парсинг документа на заголовки, META-заголовки и контент-блоки с последующей их вставкой в редактор сайта.
 // @updateURL 	 https://openuserjs.org/meta/frantsmn/Daroo_-_Content-blocks.meta.js
@@ -9,11 +9,105 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_deleteValue
+// @grant        GM_addStyle
 // @license	 MIT
 // @copyright 	 2018, frantsmn (https://openuserjs.org/users/frantsmn)
 // ==/UserScript==
 
 //GM_deleteValue("settings");
+
+GM_addStyle(`
+/* Панель для добавления контент-блоков */
+
+.content-block-panel {
+height: auto;
+max-height: 600px;
+max-width: 900px;
+overflow: auto;
+background: rgba(255,255,255,0.90);
+position: fixed;
+border: solid 1px lightgray;
+box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.3);
+border-radius: 5px;
+padding: 10px;
+z-index: 9999 !important;
+}
+
+.content-block-panel .clearPanel,
+.content-block-panel .closePanel {
+float: left;
+margin-right: 4px;
+}
+
+.content-block-panel .hideSave {
+float: right;
+}
+
+.content-block-panel .form-control {
+margin-bottom: 4px;
+}
+
+.content-block-panel textarea {
+padding: 10px;
+}
+
+/* Панель результата парсинга */
+
+#rezultPanel {
+display: none;
+max-width: 370px;
+max-height: 750px;
+user-select: none;
+}
+
+#rezultPanel .first-row {
+padding: 0 0 5px 0;
+font-weight: bold;
+font-size: 17px;
+line-height: 21px;
+}
+
+#rezultPanel .row {
+border-radius: 3px;
+border: solid 1px lightgray;
+margin: 2px 0 0 0;
+padding: 5px;
+background-color: #f9f9f9;
+}
+
+#rezultPanel button {
+margin: 0 0 0 10px;
+float: right;
+}
+
+#rezultPanel button.paste-meta-info-button {
+height: 30px;
+margin: 5px 0 0 5px;
+}
+
+#rezultPanel .close {
+font-size: 30px;
+margin-top: -5px;
+margin-left: 10px;
+}
+
+/* textarea в меню для парсера */
+
+div.doc-textarea-holder {
+position: absolute;
+}
+
+div.doc-textarea-holder #doc-text {
+display: none;
+margin-top: 1px;
+width: 250px;
+height: 150px;
+padding: 5px;
+border-bottom-left-radius: 4px;
+border-bottom-right-radius: 4px;
+box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+}
+`);
 
 //Координаты панелек на странице
 var settings = GM_getValue("settings") ? GM_getValue("settings") :
@@ -28,15 +122,8 @@ var settings = GM_getValue("settings") ? GM_getValue("settings") :
 	}
 };
 
-//ФУНКЦИЯ ОТКРЫВАЕТ ПОЛЕ ДЛЯ ВСТАВКИ КОДА ЕСЛИ ОНО ЗАКРЫТО
-function show_textarea(){
-	if($("#product_block_translations_ru_contents").css('display') == 'none')
-		$("a.re-icon.re-html").click();
-	if($("#product_price_block_translations_ru_contents").css('display') == 'none')
-		$("a.re-icon.re-html").click();
-}
 
-//ФУНКЦИЯ ВОЗВРАЩАЕТ ТИП РЕДАКТИРУЕМОЙ СТРАНИЦЫ
+//ОПРЕДЕЛЕНИЕ ТИПА РЕДАКТИРУЕМОЙ СТРАНИЦЫ
 function getPageType(){
 	if( $('input#product__token').length )
 		return "product";
@@ -46,56 +133,71 @@ function getPageType(){
 		return "supplier";
 }
 
-//ФУНКЦИЯ ОТКРЫВАЕТ НЕОБХОДИМЫЙ КОНТЕНТ-БЛОК ВЫБИРАЕМЫЙ ИЗ ВЫПАДАЙКИ
-function select_block(by, ru, ua){
-	if(location.host === "daroo.by")
-	{
-		$("select#product_block_content").val(by).change();
-		$("select#price_block_content").val(by).change();
-		$("select#supplier_block_content").val(by).change();
+//ВСТАВКА КОНТЕНТ-БЛОКА В РЕДАКТОР
+function insert_text(code, text){
+
+	//Выбор необходимого контент-блока из выпадайки
+	function select(by, ru){
+		if(location.host === "daroo.by")
+		{
+			$("select#product_block_content").val(by).change();
+			$("select#price_block_content").val(by).change();
+			$("select#supplier_block_content").val(by).change();
+		}
+		else
+			if(location.host === "daroo.ru")
+			{
+				$("select#product_block_content").val(ru).change();
+				$("select#price_block_content").val(ru).change();
+				$("select#supplier_block_content").val(ru).change();
+			}
 	}
-	else
-		if(location.host === "daroo.ru")
-		{
-			$("select#product_block_content").val(ru).change();
-			$("select#price_block_content").val(ru).change();
-			$("select#supplier_block_content").val(ru).change();
-		}
-	else
-		if(location.host === "daroo.ua")
-		{
-			$("select#product_block_content").val(ua).change();
-			$("select#price_block_content").val(ua).change();
-			$("select#supplier_block_content").val(ua).change();
-		}
+
+	//Выбираем необходимый блок согласно кодовому имени
+	switch (code) {
+		case "dk": select('5000246', '4000022');
+			break;
+		case "ci": select('5000247', '4000023');
+			break;
+		case "pv": select('5000248', '4000024');
+			break;
+		case "ot": select('5000249', '4000025');
+			break;
+		case "h" : select('5000250', '4000026');
+			break;
+		case "se": select('5000252', '4000031');
+			break;
+		case "sv": select('5000253', '4000029');
+			break;
+	}
+
+	$("textarea#product_block_translations_ru_contents").val(text); //Вставляем текст в редактор кода для карточки товара или карточки партнера
+	$("textarea#product_price_block_translations_ru_contents").val(text); //Вставляем текст в редактор кода для карточки цены
+	$(".redactor-editor").html(text); //Вставляем текст в визуальный редактор
 }
 
-//СТИЛИ
-$("body").append("<style>@keyframes fade-in { 0% {opacity: 0;} 100% {opacity: 0.93;} } .content-block-panel { animation: fade-in .3s ease; } .content-block-panel { height: auto; max-height: 500px; max-width: 900px; overflow: auto; background: white; position: fixed; border: solid 1px lightgray; box-shadow: 0px 0px 17px -1px rgba(0, 0, 0, 0.5); border-radius: 5px; padding: 10px; z-index: 9999 !important; opacity: 0.93; } .hideSave{ float: right; } .closePanel, .clearPanel { float: left; margin-right: 4px; } .content-block-panel .form-control { margin-bottom: 4px; } .content-block-panel textarea { padding: 10px; } </style>");
 
 //МЕНЮ
 $("ul.top-nav").prepend("<li id='content-block-menu' class='dropdown-toggle' data-toggle='dropdown'>"+
 						"<a class='dropdown-toggle' data-toggle='dropdown' role='button' aria-expanded='false'>" +
 						"Контент-блоки <span class='caret'></span></a>"+
-						"<ul class='dropdown-menu' style='cursor: pointer' role='menu'>" +
-						"<li id='dk-sh'><a>Две колонки</a></li>"+
-						"<li id='h-sh'><a>Характеристики (шахматный)</a></li>"+
-						"<li id='se-sh'><a>Структура/Этапы (последовательный)</a></li>"+
-						"<li id='pv-sh'><a>Преимущества (буллиты)</a></li>"+
-						"<li id='sv-sh'><a>Сервисные возможности</a></li>"+
+						"<ul class='dropdown-menu' role='menu'>" +
+						"<li id='dk-sh'><a href='#'>Две колонки</a></li>"+
+						"<li id='h-sh'><a href='#'>Характеристики (шахматный)</a></li>"+
+						"<li id='se-sh'><a href='#'>Структура/Этапы (последовательный)</a></li>"+
+						"<li id='pv-sh'><a href='#'>Преимущества (буллиты)</a></li>"+
+						"<li id='sv-sh'><a href='#'>Сервисные возможности</a></li>"+
 						"</ul></li>");
 
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //ДВЕ КОЛОНКИ
 
-$("body").prepend("<div id='dkPanel' class='content-block-panel'><table><tr><td colspan='2' align='center'><input type='text' id='dkTitle' class='form-control' placeholder='Заголовок' style='width:180px; text-align:center;'></td></tr><tr><td><input type='text' id='dkSubtitle1' class='form-control' placeholder='Подзаголовок' style='width:180px;'><textarea id='dkText1' class='form-control' cols='20' rows='5' placeholder='Текст'></textarea></td><td><input type='text' id='dkSubtitle2' class='form-control' placeholder='Подзаголовок' style='width:180px;'><textarea id='dkText2' class='form-control' cols='20' rows='5' placeholder='Текст'></textarea></td></tr><tr><td colspan='2'><button class='closePanel btn btn-default'>Закрыть</button><button class='clearPanel btn btn-default'>Очистить</button><button class='hideSave btn btn-primary'>Сохранить и закрыть</button></td></tr></table></div>");
+$("body").prepend("<div id='dkPanel' class='content-block-panel'><table><tr><td colspan='2' align='center'><input type='text' id='dkTitle' class='form-control' placeholder='Заголовок' style='width:180px; text-align:center;'></td></tr><tr><td><input type='text' id='dkSubtitle1' class='form-control' placeholder='Подзаголовок' style='width:180px;'><textarea id='dkText1' class='form-control' cols='20' rows='5' placeholder='Текст'></textarea></td><td><input type='text' id='dkSubtitle2' class='form-control' placeholder='Подзаголовок' style='width:180px;'><textarea id='dkText2' class='form-control' cols='20' rows='5' placeholder='Текст'></textarea></td></tr><tr><td colspan='2'><button class='clearPanel btn btn-default'>Очистить</button><button class='closePanel btn btn-default'>Закрыть</button><button class='hideSave btn btn-primary'>Сохранить и закрыть</button></td></tr></table></div>");
 $( "#dkPanel" ).draggable();
 
 $("#dk-sh").click(function() {
 	$(".content-block-panel").hide();
 	$("#dkPanel").show();
-	show_textarea();
-	select_block('5000246', '4000022', '268');
 });
 
 //Собираем разметку
@@ -108,15 +210,13 @@ $('#dkPanel').keyup(function(){
 	];
 	var dkText = strings[0] + strings[1] + strings[2] + strings[3];
 
-	$("textarea#product_block_translations_ru_contents").val(dkText);
-	$("textarea#product_price_block_translations_ru_contents").val(dkText);
-
+	insert_text('dk', dkText);
 });
 
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //ХАРАКТЕРИСТИКИ (шахматный)
 
-$( "body" ).prepend("<div id='hPanel' class='content-block-panel ui-draggable ui-draggable-handle'><table id='hTable' style='width:340px;'><tr><td><input type='text' class='form-control' id='hTitle' placeholder='Заголовок' style='width:200px;'></td></tr><tr class='h_right h_tr'><td align='right'><input type='text' class='form-control' style='width:200px;' id='hSubtitle' placeholder='Подзаголовок'><textarea id='hDescText' class='form-control' style='width:200px;' rows='5' placeholder='Текст'></textarea></td></tr></table><div style='position:sticky; bottom: 0px;'><button class='closePanel btn btn-default'>Закрыть</button><button class='clearPanel btn btn-default'>Очистить</button><button class='hideSave btn btn-primary'>Сохранить и закрыть</button></div></div>");
+$( "body" ).prepend("<div id='hPanel' class='content-block-panel ui-draggable ui-draggable-handle'><table id='hTable' style='width:340px;'><tr><td><input type='text' class='form-control' id='hTitle' placeholder='Заголовок' style='width:200px;'></td></tr><tr class='h_right h_tr'><td align='right'><input type='text' class='form-control' style='width:200px;' id='hSubtitle' placeholder='Подзаголовок'><textarea id='hDescText' class='form-control' style='width:200px;' rows='5' placeholder='Текст'></textarea></td></tr></table><div style='position:sticky; background-color: white;'><button class='closePanel btn btn-default'>Закрыть</button><button class='clearPanel btn btn-default'>Очистить</button><button class='hideSave btn btn-primary'>Сохранить и закрыть</button></div></div>");
 $( "#hPanel" ).draggable();
 var h_right_block = "<tr class='h_right h_tr added-h-block'><td align='right'><input type='text' class='form-control' style='width:200px;' id='hSubtitle' placeholder='Подзаголовок'><textarea id='hDescText' class='form-control' style='width:200px;' rows='5' placeholder='Текст'></textarea></td></tr>";
 var h_left_block = "<tr class='h_left h_tr added-h-block'><td align='left'><input type='text' class='form-control' style='width:200px;' id='hSubtitle' placeholder='Подзаголовок'><textarea id='hDescText' class='form-control' style='width:200px;' rows='5' placeholder='Текст'></textarea></td></tr>";
@@ -124,8 +224,6 @@ var h_left_block = "<tr class='h_left h_tr added-h-block'><td align='left'><inpu
 $("#h-sh").click(function() {
 	$(".content-block-panel").hide();
 	$("#hPanel").show();
-	show_textarea();
-	select_block('5000250', '4000026', '276');
 });
 
 //Собираем разметку
@@ -166,8 +264,7 @@ $("#hPanel").keyup(function(){
 
 	hText += "</ul></div>"; //Финальная строка
 
-	$("textarea#product_block_translations_ru_contents").val(hText);
-	$("textarea#product_price_block_translations_ru_contents").val(hText);
+	insert_text('h', hText);
 
 	addBlock(); //Добавялем на всякий еще один текстовый блок
 });
@@ -201,8 +298,6 @@ var se_block = "<tr class='se_tr added-se-block'><td align='right'><input type='
 $("#se-sh").click(function() {
 	$(".content-block-panel").hide();
 	$("#sePanel").show();
-	show_textarea();
-	select_block('5000252', '4000031', '274');
 });
 
 //Собираем разметку
@@ -210,13 +305,9 @@ $("#sePanel").keyup(function(){
 
 	var seText = '<div class="full-desc full-left">'; 				//Стартовая строка
 	if($(this).find("#seTitle").val() !== "")  			//Если есть заголовок
-	{
 		seText += '<div class="desc"><h2>' + $( "input[id='seTitle']" ).val() + '</h2></div><ul class="detail-list">';
-	}
 	else
-	{
 		seText += '<ul class="detail-list">';
-	}
 
 	$("tr.se_tr").each(function( index ){ 						//Перебираем все поля (блоки), проверям их
 		var seSubtitle = $(this).find("#seSubtitle").val(); 					//Заголовок блока
@@ -234,8 +325,7 @@ $("#sePanel").keyup(function(){
 
 	seText += '</ul></div>'; //Финальная строка
 
-	$("textarea#product_block_translations_ru_contents").val(seText);
-	$("textarea#product_price_block_translations_ru_contents").val(seText);
+	insert_text('se', seText);
 
 	addBlockSe(); //Добавялем на всякий еще один текстовый блок
 });
@@ -259,8 +349,6 @@ $( "#pvPanel" ).draggable();
 $("#pv-sh").click(function() {
 	$(".content-block-panel").hide();
 	$("#pvPanel").show();
-	show_textarea();
-	select_block('5000248', '4000024', '270');
 });
 
 //Собираем разметку
@@ -278,14 +366,11 @@ $('#pvPanel').keyup(function(){
 	var pvText = strings[0] + strings[1] + strings[2] + strings[3];
 
 	if ($( "input[id='pvSubtitle4']" ).val() !== "" || $( "textarea[id='pvText4']" ).val() !== "") //Если в 4 колонке есть что-нибудь, то
-	{
 		pvText += strings[4]; //Добавляем строку с содержимым 4 колонки
-	}
+
 	pvText += strings[5]; //Добавляем финальную строку
 
-	$("textarea#product_block_translations_ru_contents").val(pvText);
-	$("textarea#product_price_block_translations_ru_contents").val(pvText);
-
+	insert_text('pv', pvText);
 });
 
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
@@ -311,8 +396,6 @@ var langLabels = [
 $("#sv-sh").click(function() {
 	$(".content-block-panel").hide();
 	$("#svPanel").show();
-	show_textarea();
-	select_block('5000253', '4000029', '275');
 });
 
 //Переводим/Наименовываем placeholder'ы формы
@@ -350,9 +433,7 @@ function makeSvBlock(){
 		$("input").each(function(){
 			if ((($(this).attr('tabindex'))*1) === i && $(this).val() !== "") //Ищем наше поле и если оно не пустое то,
 			{
-				//alert(($(this).attr('tabindex'))*1 + " Номер поля");
 				svText = svText + strings[i]; //Добавляем строку с содержимым этого поля
-				//alert(strings[i] + " Строка i");
 				counter++; //Счетчик для определения пары столбцов
 				if (counter === 2) //Если столбец второй то,
 				{
@@ -364,8 +445,7 @@ function makeSvBlock(){
 	}
 	svText = svText + strings[10]; //Добавляем финальную строку
 
-	$("textarea#product_block_translations_ru_contents").val(svText);
-	$("textarea#product_price_block_translations_ru_contents").val(svText);
+	insert_text('sv', svText);
 }
 
 //Разбираем текст вставленный таблицей на строки
@@ -473,32 +553,40 @@ $(".content-block-panel")
 });
 
 
-//==========================================================================================================================================================//
+
+//===================================================
+// __________
+// \______   \_____ _______  ______ ___________
+//  |     ___/\__  \\_  __ \/  ___// __ \_  __ \
+//  |    |     / __ \|  | \/\___ \\  ___/|  | \/
+//  |____|    (____  /__|  /____  >\___  >__|
+//                 \/           \/     \/
+//===================================================
+//
 // Зависимости:
-// js       : select_block(by, ru, ua) - выбираем в выпадайке соответствующий контент-блок по id (для каждой страны свой); getPageType() - узнать тип редактируемой страницы
-// css      : .content-block-panel
+// js       : getPageType() - узнать тип редактируемой страницы
+//			: insert_text(code, text) - по коду контент-блока [dk, ci, pv, ot, h, se, sv] вставить текст
 // settings : положение блока на странице; ($("#rezultPanel").offset(settings.offset.rezultPanel);)
+//
+//===================================================
 
 //МЕНЮ
-$("ul.top-nav").prepend("<li data-toggle='dropdown'><a href='#' id='open-textarea' aria-expanded='false'><i class='fa fa-file-word-o'></i> Разобрать документ</a><div style='position:absolute;'><textarea id='docText' style='box-shadow: 0 6px 12px rgba(0,0,0,.175); display: none; width: 250px; height: 150px; border-bottom-left-radius: 3px; border-bottom-right-radius: 3px; padding:5px; margin-top:1px;' placeholder='Вставьте содержимое документа в это поле'></textarea></div></li>");
-$("#open-textarea").click(function(){
-	$( "#docText" ).fadeIn(1, function(){
+$("ul.top-nav").prepend("<li data-toggle='dropdown'><a href='#' id='doc-textarea-button' aria-expanded='false'><i class='fa fa-file-word-o'></i> Разобрать документ</a><div class='doc-textarea-holder'><textarea id='doc-text' placeholder='Вставьте содержимое документа в это поле'></textarea></div></li>");
+$("#doc-textarea-button").click(function(){
+	$( "#doc-text" ).fadeIn(1, function(){
 		$(this).focus();
 	});
 });
-$("#docText").focusout(function(){
-	$("#docText").delay(50).fadeOut(0);
+$("#doc-text").focusout(function(){
+	$("#doc-text").delay(50).fadeOut(0);
 });
-
-//СТИЛИ
-$("body").append("<style>#rezultPanel{display:none; max-width: 370px; max-height: max-content;} #rezultPanel .first-row { padding: 0 0 5px 0; font-size: 13pt; } #rezultPanel .row { border-radius: 3px; border: solid 1px lightgrey; margin: 2px 0 0 0; padding: 5px; background-color: #f9f9f9; } #rezultPanel #buttons { float: right; } #rezultPanel button{margin-left: 5px;} #rezultPanel button.paste-meta-info-button{width:100%; height:30px; margin: 5px 5px 0 0;} </style>");
 
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //ПАНЕЛЬ РЕЗУЛЬТАТА
 $("body").prepend("<div id='rezultPanel' class='content-block-panel'><div class='first-row'><button type='button' class='close'>×</button><span></span></div><div id='rows'></div><div class='form-actions'></div></div>");
-$( "#rezultPanel" ).draggable();
+$("#rezultPanel").draggable();
 $("#rezultPanel").offset(settings.offset.rezultPanel);
-$( "#rezultPanel .close" ).on("click", function(){$( "#rezultPanel").hide(); clearRezultPanelRow();});
+$("#rezultPanel .close").on("click", function(){$("#rezultPanel").hide(); $("#rezultPanel .row:not(first-child)").remove();});
 
 //После drag'n'drop панели сохраняем координаты панели в базу
 var isDragging = false;
@@ -519,27 +607,9 @@ $("#rezultPanel")
 	}
 });
 
-//Массив объектов (контент-блоков)
-var blocks = [];
-/* = [{
-code: "",
-name: "",
-text: ""
-}];
-*/
-
 //Объект для META-информации и заголовков
 var meta = {};
-
-//По вставке текста разбираем текст по строкам
-$("textarea#docText").on("input",function(){
-
-	var strings = $('textarea#docText').val().split('\n'); //Разбираем текст по строкам
-	var number = 0; //Порядковый номер блока
-	var titles = ""; //Строка для названий всех найденных META-заголовков
-
-	//Очищаем объект мета-заголовков
-	meta = {
+/* = {
 		title: "",
 		description: "",
 		keywords: "",
@@ -549,59 +619,75 @@ $("textarea#docText").on("input",function(){
 		announcement: "",
 		description_for_marketing: ""
 	};
+*/
+
+//Массив объектов (контент-блоков)
+var blocks = [];
+/* = [{
+		code: "",
+		name: "",
+		text: ""
+	}];
+*/
+
+//По вставке текста разбираем текст по строкам и ищем заголовки и контент-блоки
+$("textarea#doc-text").on("input", function(){
 
 	//Очищаем панель результата
-	clearRezultPanelRow();
+	$("#rezultPanel .row:not(first-child)").remove();
 
-	//Очищаем массив объектов контент-блоков
-	blocks = [];
+	var strings = $('textarea#doc-text').val().split('\n'); //Разбираем текст по строкам
 
+	meta = {}; //Очищаем объект мета-заголовков
+	var titles_names = ""; //Строка для названий всех найденных META-заголовков
 	//Поиск META-заголовков
 	for(let i=0; i<=strings.length; i++) {
 		switch(true) {
 			case /Title	/.test(strings[i]):
 				meta.title = strings[i].slice(6);
-				titles += "Title, ";
+				titles_names += "Title, ";
 				break;
 			case /Description	/.test(strings[i]):
 				meta.description = strings[i].slice(12);
-				titles += "Description, ";
+				titles_names += "Description, ";
 				break;
 			case /Заголовок в каталоге для товаров \/ Название партнера	/.test(strings[i]):
 				meta.title_for_catalog = strings[i].slice(53);
-				titles += (getPageType() == "product" || getPageType() == "price") ? "Крошка, Наименование, Наименование для каталога, " : "Крошка, Наименование партнера, Краткое наименование, ";
+				titles_names += (getPageType() == "product" || getPageType() == "price") ? "Крошка, Наименование, Наименование для каталога, " : "Крошка, Наименование партнера, Краткое наименование, ";
 				break;
 			case /Заголовок H1 \(только для товаров\)	/.test(strings[i]):
 				meta.h1 = strings[i].slice(34);
-				titles += "Заголовок H1, ";
+				titles_names += "Заголовок H1, ";
 				break;
 			case /Заголовок для рекламы \(только для товаров\) 25 символов	/.test(strings[i]):
 				meta.title_for_marketing = strings[i].slice(55);
-				titles += (getPageType() == "product" || getPageType() == "price") ? "Наименование для маркетинга, " : "";
+				titles_names += (getPageType() == "product" || getPageType() == "price") ? "Наименование для маркетинга, " : "";
 				break;
 			case /Анонс \(аннотация\) для товаров \/ Лид для партнера/.test(strings[i]):
 				while(strings[i+1]==="")
 					i++;
 				meta.announcement = strings[i+1];
-				titles += "Аннотация, ";
+				titles_names += "Аннотация, ";
 				break;
 			case /Описание для маркетинга/.test(strings[i]):
 				while(strings[i+1]==="")
 					i++;
 				meta.description_for_marketing = strings[i+1];
-				titles += "Описание для маркетинга";
+				titles_names += "Описание для маркетинга";
 				break;
-			case /.*-sh/.test(strings[i]):
-				console.log("Finished at: "+ i);
-				console.log(meta);
-				i = Infinity;
+			case /.*-sh/.test(strings[i]): //Если нашли начало контент-блока
+				i = Infinity; //Присваиваем i бесконечность, чтобы выйти из цикла и не проверять дальше текст
 				break;
 		}
 	}
+	console.log(meta);
 
-	if(titles.length>0) //Если заголовки нашлись
-		addMetaPanelRow(titles); //Добавим запись и кнопку на их вставку в панельку результата
+	if(titles_names.length>0) //Если заголовки нашлись
+		addMetaPanelRow(titles_names); //Добавим запись и кнопку на их вставку в панельку результата
 
+	blocks = []; //Очищаем массив объектов контент-блоков
+	var number = 0; //Порядковый номер контент-блока
+	//Поиск контент-блоков и добавление названий и кнпок контент-блоков на панельку результата
 	strings.forEach(function(item, i) {
 		switch (item) {
 			case "dk-sh":
@@ -641,21 +727,17 @@ $("textarea#docText").on("input",function(){
 				break;
 		}
 	});
+	console.log(blocks);
 
 	$(".content-block-panel").hide();
-	$("#rezultPanel div.first-row span").html("<b>Найдено контент-блоков: <b>"+blocks.length+"</b>");
+	$("#rezultPanel div.first-row span").html("Найдено контент-блоков: "+blocks.length);
 	$("#rezultPanel").show();
-	$("textarea#docText").fadeOut(700);
+	$("textarea#doc-text").fadeOut(800);
 });
 
-//Очистка панели результата
-function clearRezultPanelRow() {
-	$("#rezultPanel .row:not(first-child)").remove();
-}
-
-//Вставка META-заголовков по клику на кнопку
-function addMetaPanelRow(titles){
-	$("#rezultPanel #rows").append('<div class="row">Найдены заголовки: <b>'+titles+'<b><div id="buttons"><button class="btn btn-xs btn-default paste-meta-info-button">Вставить заголовки</button></div></div>');
+//Добавление строки с кнопкой вставки META-заголовков на панель результата
+function addMetaPanelRow(titles_names){
+	$("#rezultPanel #rows").append('<div class="row">Найдены заголовки: <b>'+titles_names+'</b><button class="btn btn-xs btn-default paste-meta-info-button">Вставить заголовки</button></div>');
 	$("button.paste-meta-info-button").on("click", function(){
 		let pagetype = getPageType();
 		if(pagetype==="product")
@@ -718,33 +800,12 @@ function addMetaPanelRow(titles){
 	});
 }
 
-//Добавление строки на панель результата, вставка блоков по кликам на соотв. кнопки
+//Добавление строки с кнопкой вставки текста на панель результата
 function addRezultPanelRow(number, code, name) {
-	$("#rezultPanel #rows").append('<div class="row">' + name + '<div id="buttons"><button class="open-editor btn btn-xs btn-default" data-code="'+code+'" data-number="'+number+'">Вставить текст</button></div></div>');
+	$("#rezultPanel #rows").append('<div class="row">' + name + '<button class="insert-text btn btn-xs btn-default" data-code="'+code+'" data-number="'+number+'">Вставить текст</button></div>');
 
-	//Нажатие кнопки ОТКРЫТЬ РЕДАКТОР БЛОКА
-	$("button.open-editor").on("click", function(){
-		switch ($(this).data("code")) {
-			case "dk": select_block('5000246', '4000022', '268');
-				break;
-			case "ci": select_block('5000247', '4000023', '269');
-				break;
-			case "pv": select_block('5000248', '4000024', '270');
-				break;
-			case "ot": select_block('5000249', '4000025', '271');
-				break;
-			case "h" : select_block('5000250', '4000026', '276');
-				break;
-			case "se": select_block('5000252', '4000031', '274');
-				break;
-			case "sv": select_block('5000253', '4000029', '275');
-				break;
-		}
-
-		$("textarea#product_block_translations_ru_contents").val(blocks[$(this).data("number")].text);
-		$("textarea#product_price_block_translations_ru_contents").val(blocks[$(this).data("number")].text);
-
-		$("a.re-icon.re-html").click().delay(1000).click();
+	$("button.insert-text").on("click", function(){
+		insert_text($(this).data("code"), blocks[$(this).data("number")].text); //Вставляет текст из соотв. объекта массива blocks
 	});
 }
 
@@ -799,16 +860,17 @@ function makePvText(start, arr){
 
 	var strings = [
 		'<div class="detail-desc-features clear"><h2>'+ arr[0] +'</h2><ul>',
-		'<li><figure><img src="http://images.daroo.gift/daroo.by/gallery/editor/2016/02/03/56b1e66d2ece6.jpg"><br></figure><h3>'+arr[2].split('\t')[0]+'<br></h3>'+arr[3].split('\t')[0]+'</li>',
-		'<li><figure><img src="http://images.daroo.gift/daroo.by/gallery/editor/2016/02/03/56b1e66d2ece6.jpg"><br></figure><h3>'+arr[2].split('\t')[1]+'<br></h3>'+arr[3].split('\t')[1]+'</li>',
-		'<li><figure><img src="http://images.daroo.gift/daroo.by/gallery/editor/2016/02/03/56b1e66d2ece6.jpg"><br></figure><h3>'+arr[2].split('\t')[2]+'<br></h3>'+arr[3].split('\t')[2]+'</li>',
+		'<li><figure><img src="http://images.daroo.gift/daroo.ru/gallery/editor/2018/01/12/5a58c61b50bf3.jpg"><br></figure><h3>'+arr[2].split('\t')[0]+'<br></h3>'+arr[3].split('\t')[0]+'</li>',
+		'<li><figure><img src="http://images.daroo.gift/daroo.ru/gallery/editor/2018/01/12/5a58c65320868.jpg"><br></figure><h3>'+arr[2].split('\t')[1]+'<br></h3>'+arr[3].split('\t')[1]+'</li>',
+		'<li><figure><img src="http://images.daroo.gift/daroo.ru/gallery/editor/2018/01/12/5a58c66630874.jpg"><br></figure><h3>'+arr[2].split('\t')[2]+'<br></h3>'+arr[3].split('\t')[2]+'</li>',
 		'</ul></div>'
 	];
 
 	var pv_text = strings[0] + strings[1] + strings[2] + strings[3];
 
-	if (arr[2].split('\t')[3].length || arr[3].split('\t')[3].length) //Если в 4 колонке есть что-нибудь, то
-		pv_text += '<li><figure><img src="http://images.daroo.gift/daroo.by/gallery/editor/2016/02/03/56b1e66d2ece6.jpg"><br></figure><h3>'+arr[2].split('\t')[3]+'<br></h3>'+arr[3].split('\t')[3]+'</li>'; //Добавляем строку с содержимым 4 колонки
+
+	if ( /\S/.test(arr[2].split('\t')[3]) || /\S/.test(arr[3].split('\t')[3])) //Если в 4 колонке есть что-нибудь кроме пробелов, то
+		pv_text += '<li><figure><img src="http://images.daroo.gift/daroo.ru/gallery/editor/2018/01/12/5a58c675a1fc8.jpg"><br></figure><h3>'+arr[2].split('\t')[3]+'<br></h3>'+arr[3].split('\t')[3]+'</li>'; //Добавляем строку с содержимым 4 колонки
 
 	pv_text += strings[4]; //Добавляем финальную строку
 
@@ -829,10 +891,11 @@ function makeOtText(start, arr){
 			return true; //Выходим из цикла
 		}
 	});
+
 	for(let i = arr.length-1;i>=0; i--) //Подрезаем пустые строки с конца массива
 	{
-		if(arr[i]==="")
-			arr = arr.slice(0, i);
+		if(!/\S/.test(arr[i]) || arr[i].length < 2) //Если строка состоит только из пробелов или её длина меньше 2 симв.
+			arr = arr.slice(0, i); //То удаляем строку
 		else
 			break;
 	}
@@ -878,10 +941,11 @@ function makeHText(start, arr){
 			return true; //Выходим из цикла
 		}
 	});
+
 	for(let i = arr.length-1;i>=0; i--) //Подрезаем пустые строки с конца массива
 	{
-		if(arr[i]==="")
-			arr = arr.slice(0, i);
+		if(!/\S/.test(arr[i]) || arr[i].length < 2) //Если строка состоит только из пробелов или её длина меньше 2 симв.
+			arr = arr.slice(0, i); //То удаляем строку
 		else
 			break;
 	}
@@ -924,10 +988,11 @@ function makeSeText(start, arr){
 			return true; //Выходим из цикла
 		}
 	});
+
 	for(let i = arr.length-1;i>=0; i--) //Подрезаем пустые строки с конца массива
 	{
-		if(arr[i]==="")
-			arr = arr.slice(0, i);
+		if(!/\S/.test(arr[i]) || arr[i].length < 2) //Если строка состоит только из пробелов или её длина меньше 2 симв.
+			arr = arr.slice(0, i); //То удаляем строку
 		else
 			break;
 	}
