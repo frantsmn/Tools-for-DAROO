@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Front - PageInfo
 // @namespace    PageInfo
-// @version      3.3
+// @version      3.4
 // @description  Добавляет на страницу некоторую информацию и ссылку на редактирование карточки товара/цены/партнера
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Front_-_PageInfo.meta.js
 // @grant        GM_getValue
@@ -16,6 +16,7 @@
 // @include      *daroo.by/gomel*
 // @include      *daroo.by/grodno*
 // @include      *daroo.by/mogilev*
+// @include      *daroo.by/polotsk*
 // @include      *daroo.ru/msk*
 // @include      *daroo.ru/spb*
 // @include      *daroo.ru/nsk*
@@ -92,17 +93,20 @@
 
 	//Ищем ссылку на каноническую страницу и добавлем в меню, если нашли
 	$( document ).find("link[rel='canonical']").each(function(){
+	//alert($(this).attr('href'));
 		if ($(this).attr('href') !== undefined)
 			$('#page-url-info').after('<div id="page-canonical-info" class="page-menu-el"><a href='+$(this).attr('href')+' target="_blank">Canonical</a>: <input value='+$(this).attr('href').split("/").slice(-1)[0]+'></div>');
 	});
 
 	if (page.type) //Если мы на странице цены/карточки/партнера
 		$("#edit-info").append('<a id="edit-button" href=\"https://'+window.location.hostname+'/manager/'+page.type.type+'/edit/'+google_tag_params.local_id+'" target="_blank" class="page-menu-el">Редактировать '+page.type.str1+'</a>');
+
 	var pri = /(\/life\/)/;
-	if (pri.exec(window.location.href))
+	if (pri.exec(window.location.href)) //Если мы на странице блога
 	{
 		$("#edit-info").append('<a id="edit-button" href=\"https://'+window.location.hostname+'/manager/blog/edit/'+google_tag_params.local_id+'" target="_blank" class="page-menu-el">Редактировать запись</a>');
 	}
+
 	if (list.length>1) //Если количество элементов в списке истории больше 1
 		$("#edit-info").prepend('<div id="page-history-info" class="page-menu-el">History</div>');
 
@@ -191,7 +195,7 @@
 		'#metatext-for-table{margin-left:10px; margin-left: 10px; height: 79px; margin-top: 2px; border: solid #eaeaea 1px; border-radius: 2px; resize: none;} #copyButton{height: 85px; margin-top: 2px; margin-left:0px; background-color:white; cursor:pointer;}</style>';
 	var meta = '<div id="meta"><table><tr><td><b>Title:</b><br><b>Description:</b><br><b>Keywords:</b></td>'+
 		'<td><input value="'+$("title").html()+'"><br><input value="'+$('meta[name="description"]').attr('content')+'"><br><input value="'+$('meta[name="keywords"]').attr('content')+'">'+
-		'</td><td><textarea id="metatext-for-table">'+document.location.href+'&#9;'+$("title").html()+'&#9;'+$("h1[itemprop='name']").html()+'&#9;'+$('meta[name="description"]').attr('content')+'&#9;'+$('meta[name="keywords"]').attr('content')+'&#9;'+ date +'</textarea></td><td><button id="copyButton" class="page-menu-el">Скопировать для вставки в Google Таблицы</button></td></tr></table></div>';
+		'</td><td><textarea id="metatext-for-table">'+document.location.href+'&#9;'+$("title").html()+'&#9;'+$("h1[itemprop='name']").html()+'&#9;'+$('meta[name="description"]').attr('content')+'&#9;'+ date +'</textarea></td><td><button id="copyButton" class="page-menu-el">Скопировать для вставки в Google Таблицы</button></td></tr></table></div>';
 	$("head").append(style_meta);
 
 	//Отображаем блок Meta согласно настройкам
