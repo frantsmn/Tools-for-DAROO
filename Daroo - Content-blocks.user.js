@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      2.4
+// @version      2.5
 // @include      *daroo*.*/manager/*
-// @description  Удобные формы для добавления контент-блоков в редактор сайта. Парсинг документа на заголовки, META-заголовки и контент-блоки с последующей их вставкой в текстовый редактор сайта.
+// @description  Формы для добавления контент-блоков. Парсинг документа на заголовки, META-заголовки и контент-блоки с последующей их вставкой в текстовый редактор сайта.
 // @updateURL 	 https://openuserjs.org/meta/frantsmn/Daroo_-_Content-blocks.meta.js
 // @author       Frants Mitskun
 // @grant        GM_getValue
@@ -610,18 +610,18 @@ $("#rezultPanel")
 });
 
 //Объект для META-информации и заголовков
-var meta = {};
-/* = {
-		title: "",
-		description: "",
-		keywords: "",
-		title_for_catalog: "",
-		h1: "",
-		title_for_marketing: "",
-		announcement: "",
-		description_for_marketing: ""
-	};
-*/
+var meta = {
+/*
+	title: "",
+	description: "",
+	keywords: "",
+	title_for_catalog: "",
+	h1: "",
+	title_for_marketing: "",
+	lid: "",
+	description_for_marketing: ""
+	*/
+};
 
 //Массив объектов (контент-блоков)
 var blocks = [];
@@ -686,6 +686,9 @@ $("textarea#doc-text").on("input", function(){
 
 	if(titles_names.length>0) //Если заголовки нашлись
 		addMetaPanelRow(titles_names); //Добавим запись и кнопку на их вставку в панельку результата
+
+	if(meta.lid != null) //Если есть Лид
+		addLidTextPanelRow(); //Добавим запись и кнопку на вставку Лида в панельку результата
 
 	blocks = []; //Очищаем массив объектов контент-блоков
 	var number = 0; //Порядковый номер контент-блока
@@ -757,6 +760,7 @@ function addMetaPanelRow(titles_names){
 			$("input#product_seo_translations_ru_metaBreadcrumbs").css("border-color", "#00c14b").val(meta.title_for_catalog);
 
 			//Описание для маркетинга
+			$("div.redactor-editor").hide();
 			$("textarea#product_description_translations_ru_marketingDescription").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.description_for_marketing);
 		}
 
@@ -775,6 +779,7 @@ function addMetaPanelRow(titles_names){
 			$("input#product_price_seo_translations_ru_metaBreadcrumbs").css("border-color", "#00c14b").val(meta.title_for_catalog);
 
 			//Описание для маркетинга
+			$("div.redactor-editor").hide();
 			$("textarea#product_price_description_translations_ru_marketingDescription").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.description_for_marketing);
 		}
 
@@ -790,19 +795,21 @@ function addMetaPanelRow(titles_names){
 			$("textarea#supplier_seo_translations_ru_metaDescription").css("border-color", "#00c14b").val(meta.description);
 			$("input#supplier_seo_translations_ru_metaBreadcrumbs").css("border-color", "#00c14b").val(meta.title_for_catalog);
 
-			//Аннотация и описание для маркетинга
+			//Аннотация (Лид для партнера) и описание для маркетинга
 			$("div.redactor-editor").hide();
 			$("textarea#supplier_description_translations_ru_annotation").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.lid);
 			$("textarea#supplier_description_translations_ru_marketingDescription").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.description_for_marketing);
 		}
 	});
+}
 
+//Добавление строки с кнопкой вставки лида (текста для баннера) на панель результата
+function addLidTextPanelRow(){
 	if(getPageType()==="product" || getPageType()==="price")
 	{
-		//Добавление строки с кнопкой вставки лида (текста для баннера) на панель результата
 		$("#rezultPanel #rows").append('<div class="row"><b>Лид (текст для баннера)</b><button class="btn btn-xs btn-default paste-lid-text-button">Вставить лид</button></div>');
 		$("button.paste-lid-text-button").on("click", function(){
-		var pagetype = getPageType();
+			var pagetype = getPageType();
 			if(pagetype==="product")
 			{
 				//Лид
