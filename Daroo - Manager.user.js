@@ -4,7 +4,7 @@
 // @include      *daroo*.*/manager/*
 // @version      1.1
 // @description  Исправления и улучшения для админки DAROO
-// @updateURL
+// @updateURL	 https://openuserjs.org/meta/frantsmn/Daroo_-_Manager.meta.js
 // @author       Frants Mitskun
 // @license		 MIT
 // @copyright 	 2017, frantsmn (https://openuserjs.org/users/frantsmn)
