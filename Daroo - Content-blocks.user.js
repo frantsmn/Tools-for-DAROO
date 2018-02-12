@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      2.3
+// @version      2.4
 // @include      *daroo*.*/manager/*
-// @description  Удобные формы для добавления контент-блоков в редактор сайта. Парсинг документа на заголовки, META-заголовки и контент-блоки с последующей их вставкой в редактор сайта.
+// @description  Удобные формы для добавления контент-блоков в редактор сайта. Парсинг документа на заголовки, META-заголовки и контент-блоки с последующей их вставкой в текстовый редактор сайта.
 // @updateURL 	 https://openuserjs.org/meta/frantsmn/Daroo_-_Content-blocks.meta.js
 // @author       Frants Mitskun
 // @grant        GM_getValue
@@ -80,7 +80,9 @@ margin: 0 0 0 10px;
 float: right;
 }
 
-#rezultPanel button.paste-meta-info-button {
+#rezultPanel button.paste-meta-info-button,
+#rezultPanel button.paste-lid-text-button {
+min-width:140px;
 height: 30px;
 margin: 5px 0 0 5px;
 }
@@ -125,9 +127,9 @@ var settings = GM_getValue("settings") ? GM_getValue("settings") :
 
 //ОПРЕДЕЛЕНИЕ ТИПА РЕДАКТИРУЕМОЙ СТРАНИЦЫ
 function getPageType(){
-	if( $('input#product__token').length )
+	if( $('input#product__token').length || $('input#productBanner__token').length )
 		return "product";
-	if( $('input#product_price__token').length )
+	if( $('input#product_price__token').length || $('input#productPriceBanner__token').length )
 		return "price";
 	if( $('input#supplier__token').length )
 		return "supplier";
@@ -663,11 +665,11 @@ $("textarea#doc-text").on("input", function(){
 				meta.title_for_marketing = strings[i].slice(55);
 				titles_names += (getPageType() == "product" || getPageType() == "price") ? "Наименование для маркетинга, " : "";
 				break;
-			case /Анонс \(аннотация\) для товаров \/ Лид для партнера/.test(strings[i]):
+			case /Лид для товара \/ Лид для партнера/.test(strings[i]):
 				while(strings[i+1]==="")
 					i++;
-				meta.announcement = strings[i+1];
-				titles_names += "Аннотация, ";
+				meta.lid = strings[i+1];
+				titles_names += (getPageType() == "product" || getPageType() == "price") ? "" : "Аннотация, ";
 				break;
 			case /Описание для маркетинга/.test(strings[i]):
 				while(strings[i+1]==="")
@@ -737,7 +739,7 @@ $("textarea#doc-text").on("input", function(){
 
 //Добавление строки с кнопкой вставки META-заголовков на панель результата
 function addMetaPanelRow(titles_names){
-	$("#rezultPanel #rows").append('<div class="row">Найдены заголовки: <b>'+titles_names+'</b><button class="btn btn-xs btn-default paste-meta-info-button">Вставить заголовки</button></div>');
+	$("#rezultPanel #rows").append('<div class="row"><b>'+titles_names+'</b><button class="btn btn-xs btn-default paste-meta-info-button">Вставить заголовки</button></div>');
 	$("button.paste-meta-info-button").on("click", function(){
 		let pagetype = getPageType();
 		if(pagetype==="product")
@@ -754,9 +756,7 @@ function addMetaPanelRow(titles_names){
 			$("textarea#product_seo_translations_ru_metaDescription").css("border-color", "#00c14b").val(meta.description);
 			$("input#product_seo_translations_ru_metaBreadcrumbs").css("border-color", "#00c14b").val(meta.title_for_catalog);
 
-			//Аннотация и описание для маркетинга
-			$("div.redactor-editor").hide();
-			$("textarea#product_description_translations_ru_annotation").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.announcement);
+			//Описание для маркетинга
 			$("textarea#product_description_translations_ru_marketingDescription").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.description_for_marketing);
 		}
 
@@ -774,9 +774,7 @@ function addMetaPanelRow(titles_names){
 			$("textarea#product_price_seo_translations_ru_metaDescription").css("border-color", "#00c14b").val(meta.description);
 			$("input#product_price_seo_translations_ru_metaBreadcrumbs").css("border-color", "#00c14b").val(meta.title_for_catalog);
 
-			//Аннотация и описание для маркетинга
-			$("div.redactor-editor").hide();
-			$("textarea#product_price_description_translations_ru_annotation").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.announcement);
+			//Описание для маркетинга
 			$("textarea#product_price_description_translations_ru_marketingDescription").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.description_for_marketing);
 		}
 
@@ -794,10 +792,34 @@ function addMetaPanelRow(titles_names){
 
 			//Аннотация и описание для маркетинга
 			$("div.redactor-editor").hide();
-			$("textarea#supplier_description_translations_ru_annotation").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.announcement);
+			$("textarea#supplier_description_translations_ru_annotation").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.lid);
 			$("textarea#supplier_description_translations_ru_marketingDescription").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.description_for_marketing);
 		}
 	});
+
+	if(getPageType()==="product" || getPageType()==="price")
+	{
+		//Добавление строки с кнопкой вставки лида (текста для баннера) на панель результата
+		$("#rezultPanel #rows").append('<div class="row"><b>Лид (текст для баннера)</b><button class="btn btn-xs btn-default paste-lid-text-button">Вставить лид</button></div>');
+		$("button.paste-lid-text-button").on("click", function(){
+		var pagetype = getPageType();
+			if(pagetype==="product")
+			{
+				//Лид
+				$("input#productBanner_translations_ru_name").val("Баннер");
+				$("textarea#productBanner_translations_ru_description").val(meta.lid);
+				$("input.field-active[name='productBanner[visible]']").bootstrapSwitch("state", true);
+			}
+
+			if(pagetype==="price")
+			{
+				//Лид
+				$("input#productPriceBanner_translations_ru_name").val("Баннер");
+				$("textarea#productPriceBanner_translations_ru_description").val(meta.lid);
+				$("input.field-active[name='productPriceBanner[visible]']").bootstrapSwitch("state", true);
+			}
+		});
+	}
 }
 
 //Добавление строки с кнопкой вставки текста на панель результата
@@ -869,7 +891,7 @@ function makePvText(start, arr){
 	var pv_text = strings[0] + strings[1] + strings[2] + strings[3];
 
 
-	if ( /\S/.test(arr[2].split('\t')[3]) || /\S/.test(arr[3].split('\t')[3])) //Если в 4 колонке есть что-нибудь кроме пробелов, то
+	if ( /\s/.test(arr[2].split('\t')[3]) || /\s/.test(arr[3].split('\t')[3])) //Если в 4 колонке есть что-нибудь кроме пробелов, то
 		pv_text += '<li><figure><img src="http://images.daroo.gift/daroo.ru/gallery/editor/2018/01/12/5a58c675a1fc8.jpg"><br></figure><h3>'+arr[2].split('\t')[3]+'<br></h3>'+arr[3].split('\t')[3]+'</li>'; //Добавляем строку с содержимым 4 колонки
 
 	pv_text += strings[4]; //Добавляем финальную строку
