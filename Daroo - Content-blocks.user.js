@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      2.5
+// @version      2.6
 // @include      *daroo*.*/manager/*
 // @description  Формы для добавления контент-блоков. Парсинг документа на заголовки, META-заголовки и контент-блоки с последующей их вставкой в текстовый редактор сайта.
 // @updateURL 	 https://openuserjs.org/meta/frantsmn/Daroo_-_Content-blocks.meta.js
@@ -73,6 +73,30 @@ border: solid 1px lightgray;
 margin: 2px 0 0 0;
 padding: 5px;
 background-color: #f9f9f9;
+}
+
+#rezultPanel .row span{
+display: inline-block;
+min-width: 10px;
+padding: 3px 7px;
+margin-right:2px;
+font-size: 12px;
+font-weight: 700;
+line-height: 1;
+color: #fff;
+text-align: center;
+white-space: nowrap;
+vertical-align: middle;
+background-color: #6c757d;
+border-radius: 3px;
+}
+
+#rezultPanel .row span.seo{
+background-color: #007bff;
+}
+
+#rezultPanel .row span.text{
+background-color: #28a745;
 }
 
 #rezultPanel button {
@@ -408,21 +432,21 @@ $("html").click(function(){
 });
 
 //Собираем разметку
-$("input").keyup(function(){makeSvBlock();});
+$("#svPanel input").keyup(function(){makeSvBlock();});
 
 function makeSvBlock(){
 
 	var strings=[
 		'<br><div class="detail-faq-block infoscroll-content"><div class="row">',
-		'<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-01.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[1]+'</h3><p>'+$("input[tabindex='1']").val()+'</p></div></dd></dl></div>',
-		'<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-06.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[2]+'</h3><p>'+$("input[tabindex='2']").val()+'</p></div></dd></dl></div>',
-		'<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-02.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[3]+'</h3><p>'+$("input[tabindex='3']").val()+'</p></div></dd></dl></div>',
-		'<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-07.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[4]+'</h3><p>'+$("input[tabindex='4']").val()+'</p></div></dd></dl></div>',
-		'<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-03.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[5]+'</h3><p>'+$("input[tabindex='5']").val()+'</p></div></dd></dl></div>',
-		'<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-08.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[6]+'</h3><p>'+$("input[tabindex='6']").val()+'</p></div></dd></dl></div>',
-		'<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-04.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[7]+'</h3><p>'+$("input[tabindex='7']").val()+'</p></div></dd></dl></div>',
-		'<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-09.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[8]+'</h3><p>'+$("input[tabindex='8']").val()+'</p></div></dd></dl></div>',
-		'<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-05.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[9]+'</h3><p>'+$("input[tabindex='9']").val()+'</p></div></dd></dl></div>',
+		'<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-01.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[1]+'</h3><p>'+$("#svPanel input[tabindex='1']").val()+'</p></div></dd></dl></div>',
+		'<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-06.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[2]+'</h3><p>'+$("#svPanel input[tabindex='2']").val()+'</p></div></dd></dl></div>',
+		'<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-02.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[3]+'</h3><p>'+$("#svPanel input[tabindex='3']").val()+'</p></div></dd></dl></div>',
+		'<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-07.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[4]+'</h3><p>'+$("#svPanel input[tabindex='4']").val()+'</p></div></dd></dl></div>',
+		'<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-03.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[5]+'</h3><p>'+$("#svPanel input[tabindex='5']").val()+'</p></div></dd></dl></div>',
+		'<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-08.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[6]+'</h3><p>'+$("#svPanel input[tabindex='6']").val()+'</p></div></dd></dl></div>',
+		'<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-04.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[7]+'</h3><p>'+$("#svPanel input[tabindex='7']").val()+'</p></div></dd></dl></div>',
+		'<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-09.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[8]+'</h3><p>'+$("#svPanel input[tabindex='8']").val()+'</p></div></dd></dl></div>',
+		'<div class="col"><dl><dt><figure><img src="/img/design/desktop/faq-img-05.png"></figure></dt><dd><div class="desc"><h3>'+langLabels[9]+'</h3><p>'+$("#svPanel input[tabindex='9']").val()+'</p></div></dd></dl></div>',
 		'</div></div>',
 		'</div><div class="row">'
 	];
@@ -568,7 +592,7 @@ $(".content-block-panel")
 // Зависимости:
 // js       : getPageType() - узнать тип редактируемой страницы
 //			: insert_text(code, text) - по коду контент-блока [dk, ci, pv, ot, h, se, sv] вставить текст
-// settings : положение блока на странице; ($("#rezultPanel").offset(settings.offset.rezultPanel);)
+// settings : Положение панельки на странице; ($("#rezultPanel").offset(settings.offset.rezultPanel);)
 //
 //===================================================
 
@@ -611,7 +635,7 @@ $("#rezultPanel")
 
 //Объект для META-информации и заголовков
 var meta = {
-/*
+	/*
 	title: "",
 	description: "",
 	keywords: "",
@@ -647,35 +671,35 @@ $("textarea#doc-text").on("input", function(){
 		switch(true) {
 			case /Title	/.test(strings[i]):
 				meta.title = strings[i].slice(6);
-				titles_names += "Title, ";
+				titles_names += "<span class='seo'>Мета-заголовок</span>";
 				break;
 			case /Description	/.test(strings[i]):
 				meta.description = strings[i].slice(12);
-				titles_names += "Description, ";
+				titles_names += "<span class='seo'>Мета-описание</span>";
 				break;
 			case /Заголовок в каталоге для товаров \/ Название партнера	/.test(strings[i]):
 				meta.title_for_catalog = strings[i].slice(53);
-				titles_names += (getPageType() == "product" || getPageType() == "price") ? "Крошка, Наименование, Наименование для каталога, " : "Крошка, Наименование партнера, Краткое наименование, ";
+				titles_names += (getPageType() == "product" || getPageType() == "price") ? "<span class='seo'>Крошка</span><span>Наименование</span><span>Наименование для каталога</span>" : "<span class='seo'>Крошка</span><span>Наименование</span><span>Краткое наименование</span>";
 				break;
 			case /Заголовок H1 \(только для товаров\)	/.test(strings[i]):
 				meta.h1 = strings[i].slice(34);
-				titles_names += "Заголовок H1, ";
+				titles_names += (getPageType() == "product" || getPageType() == "price") ? "<span>Заголовок H1</span>" : "";
 				break;
 			case /Заголовок для рекламы \(только для товаров\) 25 символов	/.test(strings[i]):
 				meta.title_for_marketing = strings[i].slice(55);
-				titles_names += (getPageType() == "product" || getPageType() == "price") ? "Наименование для маркетинга, " : "";
+				titles_names += (getPageType() == "product" || getPageType() == "price") ? "<span>Наименование для маркетинга</span>" : "";
 				break;
 			case /Лид для товара \/ Лид для партнера/.test(strings[i]):
 				while(strings[i+1]==="")
 					i++;
 				meta.lid = strings[i+1];
-				titles_names += (getPageType() == "product" || getPageType() == "price") ? "" : "Аннотация, ";
+				titles_names += (getPageType() == "product" || getPageType() == "price") ? "" : "<span class='text'>Аннотация</span>";
 				break;
 			case /Описание для маркетинга/.test(strings[i]):
 				while(strings[i+1]==="")
 					i++;
 				meta.description_for_marketing = strings[i+1];
-				titles_names += "Описание для маркетинга";
+				titles_names += "<span class='text'>Описание для маркетинга</span>";
 				break;
 			case /.*-sh/.test(strings[i]): //Если нашли начало контент-блока
 				i = Infinity; //Присваиваем i бесконечность, чтобы выйти из цикла и не проверять дальше текст
