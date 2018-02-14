@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      2.7
+// @version      2.8
 // @include      *daroo*.*/manager/*
 // @description  Формы для добавления контент-блоков. Парсинг документа на заголовки, META-заголовки и контент-блоки с последующей их вставкой в текстовый редактор сайта.
 // @updateURL 	 https://openuserjs.org/meta/frantsmn/Daroo_-_Content-blocks.meta.js
@@ -114,7 +114,7 @@ clear: right;
 }
 
 #rezultPanel button.add-new-banner-button{
-	margin-top: 0px;
+margin-top: 0px;
 }
 
 #rezultPanel .close {
@@ -125,11 +125,11 @@ margin-left: 10px;
 
 /* textarea в меню для парсера */
 
-div.doc-textarea-holder {
+div#doc-textarea-holder {
 position: absolute;
 }
 
-div.doc-textarea-holder #doc-text {
+div#doc-textarea-holder #doc-text {
 display: none;
 margin-top: 1px;
 width: 250px;
@@ -154,22 +154,23 @@ var settings = GM_getValue("settings") ? GM_getValue("settings") :
 	}
 };
 
-
 //ОПРЕДЕЛЕНИЕ ТИПА РЕДАКТИРУЕМОЙ СТРАНИЦЫ
-function getPageType(){
+function getPageType(param){
 	switch (true){
 		case $('input#product__token').length>0 :
-			return "product";
-		case $('input#productBanner__token').length>0 :
-			return "product";
-		case $('input#product_price__token').length>0 :
-			return "price";
-		case $('input#productPriceBanner__token').length>0 :
-			return "price";
+			if (param=="type") return "product";
+			if (param=="name") return "карточка товара";
+			return {type:"product", name:"карточка товара"};
+
 		case $('input#supplier__token').length>0 :
-			return "supplier";
+			if (param=="type") return "supplier";
+			if (param=="name") return "карточка партнера";
+			return {type:"supplier", name:"карточка партнера"};
+
 		default :
-			return false;
+			if (param=="type") return "product";
+			if (param=="name") return "карточка товара";
+			return {type:"product", name:"карточка товара"};
 	}
 }
 
@@ -181,14 +182,12 @@ function insert_text(code, text){
 		if(location.host === "daroo.by")
 		{
 			$("select#product_block_content").val(by).change();
-			$("select#price_block_content").val(by).change();
 			$("select#supplier_block_content").val(by).change();
 		}
 		else
 			if(location.host === "daroo.ru")
 			{
 				$("select#product_block_content").val(ru).change();
-				$("select#price_block_content").val(ru).change();
 				$("select#supplier_block_content").val(ru).change();
 			}
 	}
@@ -212,7 +211,6 @@ function insert_text(code, text){
 	}
 
 	$("textarea#product_block_translations_ru_contents").val(text); //Вставляем текст в редактор кода для карточки товара или карточки партнера
-	$("textarea#product_price_block_translations_ru_contents").val(text); //Вставляем текст в редактор кода для карточки цены
 	$(".redactor-editor").html(text); //Вставляем текст в визуальный редактор
 }
 
@@ -594,38 +592,59 @@ $(".content-block-panel")
 
 
 
-//===================================================
+
+//=================================================
 // __________
 // \______   \_____ _______  ______ ___________
 //  |     ___/\__  \\_  __ \/  ___// __ \_  __ \
 //  |    |     / __ \|  | \/\___ \\  ___/|  | \/
 //  |____|    (____  /__|  /____  >\___  >__|
 //                 \/           \/     \/
-//===================================================
+//====================================================================
 //
 // Зависимости:
-// js       : getPageType() - узнать тип редактируемой страницы
+// js       : getPageType("type") - узнать тип редактируемой страницы. Параметры "type" и "name". Без параметров возвращает объект {type: "product", name:"карточка товара"}
 //			: insert_text(code, text) - по коду контент-блока [dk, ci, pv, ot, h, se, sv] вставить текст
 // settings : Положение панельки на странице; ($("#rezultPanel").offset(settings.offset.rezultPanel);)
 //
-//===================================================
+//=======================================================================================
 
+
+
+//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //МЕНЮ
-$("ul.top-nav").prepend("<li data-toggle='dropdown'><a href='#' id='doc-textarea-button' aria-expanded='false'><i class='fa fa-file-word-o'></i> Разобрать документ</a><div class='doc-textarea-holder'><textarea id='doc-text' placeholder='Вставьте содержимое документа в это поле'></textarea></div></li>");
+$("ul.top-nav").prepend("<li data-toggle='dropdown' id='doc-textarea-dropdown'><a href='#' id='doc-textarea-button' aria-expanded='false'><i class='fa fa-file-word-o'></i> Разобрать документ</a><div id='doc-textarea-holder'></div></li>");
+
+//При клике на кнопку меню "Разобрать документ"
 $("#doc-textarea-button").click(function(){
-	$( "#doc-text" ).fadeIn(1, function(){
-		$(this).focus();
+
+	//Создаем поле для текста с пояснением в tooltip о типе карточки
+	$("#doc-textarea-holder").html("<textarea id='doc-text' placeholder='Вставьте содержимое документа в это поле' data-toggle='tooltip' data-trigger='manual' data-html='true' data-placement='left' data-original-title='Текст будет разобран как <b>"+ getPageType("name") +"</b>'></textarea>");
+
+	//Отображаем поле для текста
+	$("#doc-text").fadeIn(1, function(){
+		$(this).focus().tooltip('show');
 	});
+
+	//Передаем содержимое поля парсеру при input и скрываем поле
+	$("#doc-text").on("input", function(){
+		parseDoc($(this).val());
+		$(this).delay(50).tooltip('hide').fadeOut(0);
+	});
+
+	//Скрываем поле для текста при focusout
+	$("#doc-text").on("focusout",function(){
+		$("#doc-text").delay(50).tooltip('hide').fadeOut(0);
+	});
+
 });
-$("#doc-text").focusout(function(){
-	$("#doc-text").delay(50).fadeOut(0);
-});
+
+
 
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //ПАНЕЛЬ РЕЗУЛЬТАТА
 $("body").prepend("<div id='rezultPanel' class='content-block-panel'><div class='first-row'><button type='button' class='close'>×</button><span></span></div><div id='rows'></div><div class='form-actions'></div></div>");
-$("#rezultPanel").draggable();
-$("#rezultPanel").offset(settings.offset.rezultPanel);
+$("#rezultPanel").draggable().offset(settings.offset.rezultPanel);
 $("#rezultPanel .close").on("click", function(){$("#rezultPanel").hide(); $("#rezultPanel .row:not(first-child)").remove();});
 
 //После drag'n'drop панели сохраняем координаты панели в базу
@@ -647,9 +666,14 @@ $("#rezultPanel")
 	}
 });
 
+
+
+//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+//ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
+
 //Объект для META-информации и заголовков
-var meta = {
-	/*
+var meta = {};
+/*
 	title: "",
 	description: "",
 	keywords: "",
@@ -659,7 +683,6 @@ var meta = {
 	lid: "",
 	description_for_marketing: ""
 	*/
-};
 
 //Массив объектов (контент-блоков)
 var blocks = [];
@@ -670,16 +693,25 @@ var blocks = [];
 	}];
 */
 
-//По вставке текста разбираем текст по строкам и ищем заголовки и контент-блоки
-$("textarea#doc-text").on("input", function(){
+
+
+//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+//ПАРСЕР со вставкой результатов в панель результата
+
+function parseDoc(text){
 
 	//Очищаем панель результата
 	$("#rezultPanel .row:not(first-child)").remove();
 
-	var strings = $('textarea#doc-text').val().split('\n'); //Разбираем текст по строкам
+	//Очищаем объект мета-заголовков
+	meta = {};
 
-	meta = {}; //Очищаем объект мета-заголовков
-	var titles_names = ""; //Строка для названий всех найденных META-заголовков
+	//Разбираем текст по строкам
+	var strings = text.split('\n');
+
+	//Строка для названий всех найденных META-заголовков
+	var titles_names = "";
+
 	//Поиск META-заголовков
 	for(let i=0; i<=strings.length; i++) {
 		switch(true) {
@@ -693,21 +725,21 @@ $("textarea#doc-text").on("input", function(){
 				break;
 			case /Заголовок в каталоге для товаров \/ Название партнера	/.test(strings[i]):
 				meta.title_for_catalog = strings[i].slice(53);
-				titles_names += (getPageType() == "product" || getPageType() == "price") ? "<span class='seo'>Крошка</span><span>Наименование</span><span>Наименование для каталога</span>" : "<span class='seo'>Крошка</span><span>Наименование</span><span>Краткое наименование</span>";
+				titles_names += (getPageType("type") == "product") ? "<span class='seo'>Крошка</span><span>Наименование</span><span>Наименование для каталога</span>" : "<span class='seo'>Крошка</span><span>Наименование</span><span>Краткое наименование</span>";
 				break;
 			case /Заголовок H1 \(только для товаров\)	/.test(strings[i]):
 				meta.h1 = strings[i].slice(34);
-				titles_names += (getPageType() == "product" || getPageType() == "price") ? "<span>Заголовок H1</span>" : "";
+				titles_names += (getPageType("type") == "product") ? "<span>Заголовок H1</span>" : "";
 				break;
 			case /Заголовок для рекламы \(только для товаров\) 25 символов	/.test(strings[i]):
 				meta.title_for_marketing = strings[i].slice(55);
-				titles_names += (getPageType() == "product" || getPageType() == "price") ? "<span>Наименование для маркетинга</span>" : "";
+				titles_names += (getPageType("type") == "product") ? "<span>Наименование для маркетинга</span>" : "";
 				break;
 			case /Лид для товара \/ Лид для партнера/.test(strings[i]):
 				while(strings[i+1]==="")
 					i++;
 				meta.lid = strings[i+1];
-				titles_names += (getPageType() == "product" || getPageType() == "price") ? "" : "<span class='text'>Аннотация</span>";
+				titles_names += (getPageType("type") == "product") ? "" : "<span class='text'>Аннотация</span>";
 				break;
 			case /Описание для маркетинга/.test(strings[i]):
 				while(strings[i+1]==="")
@@ -725,10 +757,11 @@ $("textarea#doc-text").on("input", function(){
 	if(titles_names.length>0) //Если заголовки нашлись
 		addMetaPanelRow(titles_names); //Добавим запись и кнопку на их вставку в панельку результата
 
-	if(meta.lid != null) //Если есть Лид
+	if(meta.lid != null && getPageType("type")==="product") //Если есть Лид и мы на странице редактирования карточки
 		addLidTextPanelRow(); //Добавим запись и кнопку на вставку Лида в панельку результата
 
 	blocks = []; //Очищаем массив объектов контент-блоков
+
 	var number = 0; //Порядковый номер контент-блока
 	//Поиск контент-блоков и добавление названий и кнпок контент-блоков на панельку результата
 	strings.forEach(function(item, i) {
@@ -775,17 +808,22 @@ $("textarea#doc-text").on("input", function(){
 	$(".content-block-panel").hide();
 	$("#rezultPanel div.first-row span").html("Найдено контент-блоков: "+blocks.length);
 	$("#rezultPanel").show();
-	$("textarea#doc-text").fadeOut(800);
-});
+}
+
+
+
+//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+//Функции добавления результатов поиска на панель результата
 
 //Добавление строки с кнопкой вставки META-заголовков на панель результата
 function addMetaPanelRow(titles_names){
 	$("#rezultPanel #rows").append('<div class="row" data-toggle="tooltip" data-html="true" data-placement="bottom" title="<span class=\'glyphicon glyphicon-stop\' aria-hidden=\'true\' style=\'color:#007bff;\'></span> SEO-заголовки<br><span class=\'glyphicon glyphicon-stop\' aria-hidden=\'true\' style=\'color:#6c757d;\'></span> Заголовки<br><span class=\'glyphicon glyphicon-stop\' aria-hidden=\'true\' style=\'color:#28a745;\'></span> Тексты">'+titles_names+'<button class="btn btn-xs btn-default paste-meta-info-button">Вставить заголовки</button></div>');
-	//Инициализируем tooltip'ы
-	$('[data-toggle="tooltip"]').tooltip({delay: { "show": 800, "hide": 100 }});
+
+	//Инициализируем tooltip'ы для панельки результата
+	$('#rezultPanel [data-toggle="tooltip"]').tooltip({delay: { "show": 800, "hide": 100 }});
 
 	$("button.paste-meta-info-button").on("click", function(){
-		if(getPageType()==="product")
+		if(getPageType("type")==="product")
 		{
 			//Заголовки
 			$("input#product_translations_ru_name").css("border-color", "#00c14b").val(meta.title_for_catalog);
@@ -804,26 +842,7 @@ function addMetaPanelRow(titles_names){
 			$("textarea#product_description_translations_ru_marketingDescription").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.description_for_marketing);
 		}
 
-		if(getPageType()==="price")
-		{
-			//Заголовки
-			$("input#product_price_translations_ru_name").css("border-color", "#00c14b").val(meta.title_for_catalog);
-			$("input#product_price_translations_ru_header").css("border-color", "#00c14b").val(meta.h1);
-			$("input#product_price_translations_ru_marketingName").css("border-color", "#00c14b").val(meta.title_for_marketing);
-			$("input#product_price_translations_ru_catalogName").css("border-color", "#00c14b").val(meta.title_for_catalog);
-
-			//SEO
-			$("input#product_price_seo_translations_ru_metaTitle").css("border-color", "#00c14b").val(meta.title);
-			/*keywords*/
-			$("textarea#product_price_seo_translations_ru_metaDescription").css("border-color", "#00c14b").val(meta.description);
-			$("input#product_price_seo_translations_ru_metaBreadcrumbs").css("border-color", "#00c14b").val(meta.title_for_catalog);
-
-			//Описание для маркетинга
-			$("div.redactor-editor").hide();
-			$("textarea#product_price_description_translations_ru_marketingDescription").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.description_for_marketing);
-		}
-
-		if(getPageType()==="supplier")
+		if(getPageType("type")==="supplier")
 		{
 			//Заголовки
 			$("input#supplier_translations_ru_name").css("border-color", "#00c14b").val(meta.title_for_catalog);
@@ -844,42 +863,21 @@ function addMetaPanelRow(titles_names){
 }
 
 //Добавление строки с кнопкой вставки лида (текста для баннера) на панель результата
-
 function addLidTextPanelRow(){
-	console.log(getPageType());
-	if (getPageType()!=="supplier")
-	{
 		$("#rezultPanel #rows").append('<div class="row"><b>Лид (текст для баннера)</b><button class="btn btn-xs btn-default add-new-banner-button">Добавить новый баннер</button><button class="btn btn-xs btn-default paste-lid-text-button">Вставить лид</button></div>');
 		$("button.paste-lid-text-button").on("click", function(){
-			if(getPageType()==="product")
-			{
 				$("input#productBanner_translations_ru_name").val("Баннер");
 				$("textarea#productBanner_translations_ru_description").val(meta.lid);
 				$("input.field-active[name='productBanner[visible]']").bootstrapSwitch("state", true);
-			}
-
-			if(getPageType()==="price")
-			{
-				$("input#productPriceBanner_translations_ru_name").val("Баннер");
-				$("textarea#productPriceBanner_translations_ru_description").val(meta.lid);
-				$("input.field-active[name='productPriceBanner[visible]']").bootstrapSwitch("state", true);
-			}
 		});
 
 		$("button.add-new-banner-button").on("click", function(){
-			if(getPageType()==="product")
-			{
+			if(getPageType("type")==="product")
 				$("a[id='product-banner-create'] button").click();
-			}
-			if(getPageType()==="price")
-			{
-				$("a[id='product-price-banner-create'] button").click();
-			}
 		});
-	}
 }
 
-//Добавление строки с кнопкой вставки текста на панель результата
+//Добавление строки с кнопкой вставки текста (контент-блоков) на панель результата
 function addRezultPanelRow(number, code, name) {
 	$("#rezultPanel #rows").append('<div class="row">' + name + '<button class="insert-text btn btn-xs btn-default" data-code="'+code+'" data-number="'+number+'">Вставить текст</button></div>');
 
@@ -887,6 +885,10 @@ function addRezultPanelRow(number, code, name) {
 		insert_text($(this).data("code"), blocks[$(this).data("number")].text); //Вставляет текст из соотв. объекта массива blocks
 	});
 }
+
+
+//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+//Функции для парсинга контент-блоков
 
 //===============================================================================================
 //  ДВЕ КОЛОНКИ
