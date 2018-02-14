@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      2.6
+// @version      2.7
 // @include      *daroo*.*/manager/*
 // @description  Формы для добавления контент-блоков. Парсинг документа на заголовки, META-заголовки и контент-блоки с последующей их вставкой в текстовый редактор сайта.
 // @updateURL 	 https://openuserjs.org/meta/frantsmn/Daroo_-_Content-blocks.meta.js
@@ -10,7 +10,7 @@
 // @grant        GM_setValue
 // @grant        GM_deleteValue
 // @grant        GM_addStyle
-// @license	 MIT
+// @license	 	 MIT
 // @copyright 	 2018, frantsmn (https://openuserjs.org/users/frantsmn)
 // ==/UserScript==
 
@@ -79,7 +79,7 @@ background-color: #f9f9f9;
 display: inline-block;
 min-width: 10px;
 padding: 3px 7px;
-margin-right:2px;
+margin-right: 2px;
 font-size: 12px;
 font-weight: 700;
 line-height: 1;
@@ -105,10 +105,16 @@ float: right;
 }
 
 #rezultPanel button.paste-meta-info-button,
-#rezultPanel button.paste-lid-text-button {
-min-width:140px;
+#rezultPanel button.paste-lid-text-button,
+#rezultPanel button.add-new-banner-button{
+min-width: 150px;
 height: 30px;
 margin: 5px 0 0 5px;
+clear: right;
+}
+
+#rezultPanel button.add-new-banner-button{
+	margin-top: 0px;
 }
 
 #rezultPanel .close {
@@ -151,12 +157,20 @@ var settings = GM_getValue("settings") ? GM_getValue("settings") :
 
 //ОПРЕДЕЛЕНИЕ ТИПА РЕДАКТИРУЕМОЙ СТРАНИЦЫ
 function getPageType(){
-	if( $('input#product__token').length || $('input#productBanner__token').length )
-		return "product";
-	if( $('input#product_price__token').length || $('input#productPriceBanner__token').length )
-		return "price";
-	if( $('input#supplier__token').length )
-		return "supplier";
+	switch (true){
+		case $('input#product__token').length>0 :
+			return "product";
+		case $('input#productBanner__token').length>0 :
+			return "product";
+		case $('input#product_price__token').length>0 :
+			return "price";
+		case $('input#productPriceBanner__token').length>0 :
+			return "price";
+		case $('input#supplier__token').length>0 :
+			return "supplier";
+		default :
+			return false;
+	}
 }
 
 //ВСТАВКА КОНТЕНТ-БЛОКА В РЕДАКТОР
@@ -766,10 +780,12 @@ $("textarea#doc-text").on("input", function(){
 
 //Добавление строки с кнопкой вставки META-заголовков на панель результата
 function addMetaPanelRow(titles_names){
-	$("#rezultPanel #rows").append('<div class="row"><b>'+titles_names+'</b><button class="btn btn-xs btn-default paste-meta-info-button">Вставить заголовки</button></div>');
+	$("#rezultPanel #rows").append('<div class="row" data-toggle="tooltip" data-html="true" data-placement="bottom" title="<span class=\'glyphicon glyphicon-stop\' aria-hidden=\'true\' style=\'color:#007bff;\'></span> SEO-заголовки<br><span class=\'glyphicon glyphicon-stop\' aria-hidden=\'true\' style=\'color:#6c757d;\'></span> Заголовки<br><span class=\'glyphicon glyphicon-stop\' aria-hidden=\'true\' style=\'color:#28a745;\'></span> Тексты">'+titles_names+'<button class="btn btn-xs btn-default paste-meta-info-button">Вставить заголовки</button></div>');
+	//Инициализируем tooltip'ы
+	$('[data-toggle="tooltip"]').tooltip({delay: { "show": 800, "hide": 100 }});
+
 	$("button.paste-meta-info-button").on("click", function(){
-		let pagetype = getPageType();
-		if(pagetype==="product")
+		if(getPageType()==="product")
 		{
 			//Заголовки
 			$("input#product_translations_ru_name").css("border-color", "#00c14b").val(meta.title_for_catalog);
@@ -788,7 +804,7 @@ function addMetaPanelRow(titles_names){
 			$("textarea#product_description_translations_ru_marketingDescription").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.description_for_marketing);
 		}
 
-		if(pagetype==="price")
+		if(getPageType()==="price")
 		{
 			//Заголовки
 			$("input#product_price_translations_ru_name").css("border-color", "#00c14b").val(meta.title_for_catalog);
@@ -807,7 +823,7 @@ function addMetaPanelRow(titles_names){
 			$("textarea#product_price_description_translations_ru_marketingDescription").css({"display":"block", "height":"100px", "padding":"10px"}).val(meta.description_for_marketing);
 		}
 
-		if(pagetype==="supplier")
+		if(getPageType()==="supplier")
 		{
 			//Заголовки
 			$("input#supplier_translations_ru_name").css("border-color", "#00c14b").val(meta.title_for_catalog);
@@ -828,26 +844,36 @@ function addMetaPanelRow(titles_names){
 }
 
 //Добавление строки с кнопкой вставки лида (текста для баннера) на панель результата
+
 function addLidTextPanelRow(){
-	if(getPageType()==="product" || getPageType()==="price")
+	console.log(getPageType());
+	if (getPageType()!=="supplier")
 	{
-		$("#rezultPanel #rows").append('<div class="row"><b>Лид (текст для баннера)</b><button class="btn btn-xs btn-default paste-lid-text-button">Вставить лид</button></div>');
+		$("#rezultPanel #rows").append('<div class="row"><b>Лид (текст для баннера)</b><button class="btn btn-xs btn-default add-new-banner-button">Добавить новый баннер</button><button class="btn btn-xs btn-default paste-lid-text-button">Вставить лид</button></div>');
 		$("button.paste-lid-text-button").on("click", function(){
-			var pagetype = getPageType();
-			if(pagetype==="product")
+			if(getPageType()==="product")
 			{
-				//Лид
 				$("input#productBanner_translations_ru_name").val("Баннер");
 				$("textarea#productBanner_translations_ru_description").val(meta.lid);
 				$("input.field-active[name='productBanner[visible]']").bootstrapSwitch("state", true);
 			}
 
-			if(pagetype==="price")
+			if(getPageType()==="price")
 			{
-				//Лид
 				$("input#productPriceBanner_translations_ru_name").val("Баннер");
 				$("textarea#productPriceBanner_translations_ru_description").val(meta.lid);
 				$("input.field-active[name='productPriceBanner[visible]']").bootstrapSwitch("state", true);
+			}
+		});
+
+		$("button.add-new-banner-button").on("click", function(){
+			if(getPageType()==="product")
+			{
+				$("a[id='product-banner-create'] button").click();
+			}
+			if(getPageType()==="price")
+			{
+				$("a[id='product-price-banner-create'] button").click();
 			}
 		});
 	}
