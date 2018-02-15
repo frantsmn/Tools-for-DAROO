@@ -2,9 +2,9 @@
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
 // @include      *daroo*.*/manager/*
-// @version      1.1
+// @version      1.2
 // @description  Исправления и улучшения для админки DAROO
-// @updateURL	 https://openuserjs.org/meta/frantsmn/Daroo_-_Manager.meta.js
+// @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Manager.meta.js
 // @author       Frants Mitskun
 // @license		 MIT
 // @copyright 	 2017, frantsmn (https://openuserjs.org/users/frantsmn)
@@ -79,7 +79,10 @@ function checkContacts(){
 	if ($("#product_price_contacts div.checkbox").length === 1 && !$("#product_price_contacts div.checkbox").find("input:checkbox").prop("checked"))
 	{
 		$("#product_price_contacts div.checkbox").find("input:checkbox").prop( "checked", true );
-		$("div#message").show().append('<div id="ok" class="alert alert-success checkbox-message" style="display:block !important; opacity:0.2; marginTop: -5px;">Чекбокс контакта был включен! <b style="color:maroon">Сохраните изменения!</b></div>');
+		$("div#message").show().append('<div id="ok" class="alert alert-success checkbox-message" style="display:block !important; opacity:0.5; text-align:center;">Чекбокс контакта был включен! <b style="color:maroon">🡇 Сохраните изменения 🡇</b> <button class="btn btn-primary btn-block" id="save-contact" style="margin-top:10px;">Сохранить</button></div>');
 		$( ".checkbox-message" ).animate({opacity: "1"}, 700 );
+		$("button#save-contact").on('click', function(){
+			$("#tab-contacts button.btn.btn-primary").click();
+		});
 	}
 }
