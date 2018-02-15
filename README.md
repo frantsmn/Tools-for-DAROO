@@ -1,6 +1,11 @@
 # userscrips
 _Юзерскрипты для сайтов DAROO_
 
+[Установить скрипты](https://openuserjs.org/users/frantsmn/scripts) [openuserjs.org/users/frantsmn/scripts](https://openuserjs.org/users/frantsmn/scripts)
+
+
+##Описание
+
 ### DAROO - Front - PageInfo
 _Отображает дополнительную информацию и добавляет функционал на страницы сайта_
 
