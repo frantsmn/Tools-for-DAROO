@@ -981,7 +981,7 @@ function makeOtText(start, arr){
 			break;
 	}
 
-	var ot_text = '<div class="full-desc"><div class="desc">';
+	var ot_text = '<div class="full-desc"><div class="desc row-text">';
 	if (arr[0].length) //Если есть заголовок
 		ot_text += '<h2>' + arr[0] + '</h2>'; //Вставляем заголовок в итоговый текст
 
