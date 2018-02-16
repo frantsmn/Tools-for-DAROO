@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      2.8
+// @version      2.9
 // @include      *daroo*.*/manager/*
 // @description  Формы для добавления контент-блоков. Парсинг документа на заголовки, META-заголовки и контент-блоки с последующей их вставкой в текстовый редактор сайта.
 // @updateURL 	 https://openuserjs.org/meta/frantsmn/Daroo_-_Content-blocks.meta.js
