@@ -2,7 +2,7 @@
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
 // @include      *daroo*.*/manager/*
-// @version      1.4
+// @version      1.5
 // @description  Исправления и улучшения для админки DAROO
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Manager.meta.js
 // @author       Frants Mitskun
@@ -93,9 +93,9 @@ function checkContacts(){
 
 function restyleBlog(){
 
-if (/https:\/\/daroo*.*manager\/blog\/edit*.*/.test(window.location.href ) && !$("body").hasClass("restyled"))
+if (/https:\/\/daroo*.*manager\/blog\/edit*.*/.test(window.location.href ) && !$("ul#tabs").hasClass("restyled"))
 {
-$("body").addClass("restyled");
+$("ul#tabs").addClass("restyled");
 	GM_addStyle(
 `
 /*Общие исправления*/
