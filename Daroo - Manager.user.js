@@ -2,7 +2,7 @@
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
 // @include      *daroo*.*/manager/*
-// @version      1.3
+// @version      1.4
 // @description  Исправления и улучшения для админки DAROO
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Manager.meta.js
 // @author       Frants Mitskun
@@ -123,10 +123,9 @@ div.container h1 {
 	z-index: 1030;
 	color: #ffffffe8;
 	font-size: 27px;
-	transition: left .3s linear;
 	cursor: pointer;
 	border-bottom: dashed 2px #222;
-	transition: all .5s ease-out;
+	transition: border-bottom .5s ease-out, color .5s ease-out;
 }
 
 div.container h1:hover{
