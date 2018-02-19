@@ -116,21 +116,40 @@ $("body").addClass("restyled");
 }
 /*Заголовок статьи на шапке*/
 
-div.container h1 {
-	left: 224px;
-	position: fixed;
-	top: -9px;
-	z-index: 1030;
-	color: #ffffffe8;
-	font-size: 27px;
-	cursor: pointer;
-	border-bottom: dashed 2px #222;
-	transition: border-bottom .5s ease-out, color .5s ease-out;
+div.container h1{
+	display:none;
 }
 
-div.container h1:hover{
+div.navbar-header{
+	z-index: -1 !important;
+}
+
+ul.navbar-right li{
+	z-index: 1 !important;
+	background-image: linear-gradient(to bottom,#3c3c3c 0,#222 100%) !important;
+}
+
+ul.navbar-right li:first-child:before{
+	content:"";
+	width: 50px;
+	height: 100%;
+	left:-50px;
+	position:absolute;
+	background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(47,47,47,0.93) 89%, rgba(47,47,47,1) 96%);
+}
+
+a#brand-name {
+font-size: 22px;
+	margin-left: 210px;
+	border-bottom: dashed 2px #222;
+	transition: border-bottom .5s ease-out, color .5s ease-out;
+	position: absolute;
+    overflow: hidden;
+
+}
+
+a#brand-name:hover{
 	transition: all .2s ease-out;
-	border-bottom: dashed 2px #337ab7;
 	color: white;
 }
 /*Вкладки локалей*/
@@ -276,9 +295,7 @@ form#product-block-cont div#tab-regions:before{
 		$("form#product-block-cont").show();
 	});
 
-		$(".container h1").on("click", function(){
-		window.open($("#tab-main table tr:first-child td a").attr('href'));
-	});
+	$("div.navbar-header").html("<a class='navbar-brand' id='brand-name' href="+$("#tab-main table tr:first-child td a").attr('href')+">"+$(".container h1").html()+"</a>");
 }
 
 
