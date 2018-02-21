@@ -1,7 +1,7 @@
 # userscrips
-_[Юзерскрипты](https://openuserjs.org/users/frantsmn/scripts) для [DAROO](https://daroo.by)_
+_Юзерскрипты для [DAROO](https://daroo.by)_
 
-Для установки используйте расширение **[Tampermonkey](http://tampermonkey.net/)**
+Для установки **[скриптов](https://openuserjs.org/users/frantsmn/scripts)** используйте расширение **[Tampermonkey](http://tampermonkey.net/)**
 
 
 ## Описание
