@@ -2,7 +2,7 @@
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
 // @include      *daroo*.*/manager/*
-// @version      1.5
+// @version      1.6
 // @description  Исправления и улучшения для админки DAROO
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Manager.meta.js
 // @author       Frants Mitskun
@@ -152,6 +152,46 @@ a#brand-name:hover{
 	transition: all .2s ease-out;
 	color: white;
 }
+
+@keyframes slide {
+  from {
+    right: 100%;
+  }
+
+  to {
+    right: -100%;
+  }
+}
+
+.navbar-brand:before{
+    content: " ";
+    display: block;
+    background: linear-gradient(to right, rgba(36,36,36,1) 0%,rgba(36,36,36,0) 20%,rgba(36,36,36,0) 80%,rgba(36,36,36,1) 100%);
+    width: 100%;
+    height: 3px;
+    position: absolute;
+    bottom: 4px;
+	z-index: 99999;
+	right:0;
+}
+
+.navbar-brand:after{
+    content: " ";
+    display: block;
+    background: linear-gradient(to right, rgba(36,36,36,1) 1%,rgba(255,255,255,1) 50%,rgba(36,36,36,1) 100%);
+    width: 100%;
+    height: 1px;
+    position: absolute;
+    bottom: 5px;
+    right: 100%;
+}
+
+.navbar-brand:hover:after{
+  	animation-name: slide;
+	animation-timing-function: cubic-bezier(.42,0,.58,1);
+	animation-duration: 1.2s;
+}
+
 /*Вкладки локалей*/
 
 ul.a2lix_translationsLocales.nav.nav-tabs {
@@ -279,6 +319,15 @@ form#product-block-cont div#tab-regions:before{
 #tab-regions .alert{
 	display: none;
 }
+
+/**/
+/*		TAB SNIPPETS*/
+/**/
+
+div#tab-snippets table td img{
+	width: 504px !important;
+	height: 216px !important;
+}
 `
 	);
 
@@ -295,7 +344,7 @@ form#product-block-cont div#tab-regions:before{
 		$("form#product-block-cont").show();
 	});
 
-	$("div.navbar-header").html("<a class='navbar-brand' id='brand-name' href="+$("#tab-main table tr:first-child td a").attr('href')+">"+$(".container h1").html()+"</a>");
+	$("div.navbar-header").html("<a class='navbar-brand' id='brand-name' href="+$("#tab-main table tr:first-child td a").attr('href')+" target='_blank'>"+$(".container h1").html()+"</a>");
 }
 
 
