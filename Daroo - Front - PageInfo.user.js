@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Front - PageInfo
 // @namespace    PageInfo
-// @version      3.4
+// @version      3.5
 // @description  Добавляет на страницу некоторую информацию и ссылку на редактирование карточки товара/цены/партнера
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Front_-_PageInfo.meta.js
 // @grant        GM_getValue
@@ -93,7 +93,7 @@
 
 	//Ищем ссылку на каноническую страницу и добавлем в меню, если нашли
 	$( document ).find("link[rel='canonical']").each(function(){
-	//alert($(this).attr('href'));
+		//alert($(this).attr('href'));
 		if ($(this).attr('href') !== undefined)
 			$('#page-url-info').after('<div id="page-canonical-info" class="page-menu-el"><a href='+$(this).attr('href')+' target="_blank">Canonical</a>: <input value='+$(this).attr('href').split("/").slice(-1)[0]+'></div>');
 	});
@@ -238,5 +238,33 @@
 			document.execCommand('copy');
 		});
 	}
+
+	//Функция подсчета цен в карточке
+	function count_prices(){
+		var prices = 0;
+		var promos = 0;
+		$(".accordion-content [itemprop='offers']")
+			.each(function(){
+			prices++;
+			if ($(this).find(".accordion-content-discount").children().length > 0)
+				promos++;
+		});
+		return {all: prices, prices:prices-promos, promos: promos};
+	}
+
+	//Счетчик цен на баннере
+	$("body").append("<style>#prices-counter{"+
+					 "float:left; position:absolute; margin-top:5px; margin-left:5px; padding:5px;"+
+					 "background:rgba(52, 52, 52, 0.7); color:white; border:1px dashed orange; border-radius:3px; z-index:9999999 !important;}#prices-counter div{background-color: black; margin-top: 4px; border-radius: 2px; border: solid gray 1px; padding: 4px 6px;} #prices-counter span{color:orange; font-weight: bold;}"+
+					 "</style>");
+
+	$("ul.details-slider").find("li").each(function(){
+		$(this).prepend("<div id=\"prices-counter\">"+
+						"Счетчик цен<div>"+
+						"Акций: <span>"+ count_prices().promos +"</span><br>"+
+						"Обычных: <span>"+ count_prices().prices +"</span><br>"+
+						"Всего цен: <span>"+ count_prices().all + "</span></div>"+
+						"</div>");
+	});
 
 })();
