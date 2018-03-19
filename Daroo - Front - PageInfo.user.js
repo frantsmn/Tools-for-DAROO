@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Front - PageInfo
 // @namespace    PageInfo
-// @version      3.6
+// @version      3.7
 // @description  Добавляет на страницу некоторую информацию и ссылку на редактирование карточки товара/цены/партнера
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Front_-_PageInfo.meta.js
 // @grant        GM_getValue
@@ -52,7 +52,7 @@ function get_type(){
 		obj = Product.get('type') === "price" ? {type:"price", str1:"Редактировать ценовое предложение", str2:"Ценовое предложение"} : {};
 
 	if ($('.card-partner').length)
-		obj = {type:"supplier", str1:"карточку партнера", str2:"Партнер"};
+		obj = {type:"supplier", str1:"Редактировать карточку партнера", str2:"Партнер"};
 
 	if(/(\/life\/)/.exec(window.location.href) !== null)
 		obj = {type:"blog", str1:"Редактировать запись", str2:"Запись блога"};
