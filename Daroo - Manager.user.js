@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
-// @include      *daroo*.*/manager/*
-// @version      1.6
+// @include      */manager/*
+// @version      1.7
 // @description  Исправления и улучшения для админки DAROO
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Manager.meta.js
 // @author       Frants Mitskun
@@ -22,6 +22,7 @@ setTimeout(function run() {
 	tableImprove();
 	checkContacts();
 	restyleBlog();
+	categoryTableImprove();
 
 	setTimeout(run, 1000);
 }, 1000);
@@ -74,6 +75,30 @@ function tableImprove(){
 	}
 }
 
+//======================================================================================================== categoryTableImprove
+
+function categoryTableImprove(){
+	if($("#grid_results_taxonomy_grid").length && $("#grid_results_taxonomy_grid").hasClass("improved") === false){
+		$("#grid_results_taxonomy_grid tbody").find("tr").each(function(){
+
+			var id = $(this).attr("id") ? parseInt(($(this).attr("id")).slice(9)) : '';
+			var route = $(this).find("td.ig-grid-cell-router-route").html() ? $(this).find("td.ig-grid-cell-router-route").html().trim() : '';
+			var mainCategory  = $(this).find("td.ig-grid-cell-ct-name").html().length && $(this).find("td.ig-grid-cell-ct-name").html().includes(' ...... ') ? true : false;
+			var categoryName = $(this).find("td.ig-grid-cell-ct-name").html();
+
+			$(this).find("td:first-child").html('<a href="/manager/category/product/edit/'+ id +'" target="_blank"><input type="button" value="Edit" style="margin:0px; margin-left:4px; width:50px; height:22px;" class="btn btn-primary btn-xs"/></a>');
+			$(this).find("td.ig-grid-cell-router-route").html('<a href="http://'+ window.location.hostname +'/minsk/' + route +'" target="_blank">'+ route +'</a>');
+
+			if(mainCategory){
+				$(this).find("td.ig-grid-cell-ct-name").html("<b><span style='font-size:14px'>"+categoryName+"</span></b>");
+				$(this).find("td.ig-grid-cell-ct-name").css({"background-color":"#f3f3f3"});
+			}
+		});
+
+		$("#grid_results_taxonomy_grid").addClass("improved");
+	}
+}
+
 //======================================================================================================== checkContacts
 
 //Включает чекбокс контакта на цене, если он 1
@@ -93,200 +118,200 @@ function checkContacts(){
 
 function restyleBlog(){
 
-if (/https:\/\/daroo*.*manager\/blog\/edit*.*/.test(window.location.href ) && !$("ul#tabs").hasClass("restyled"))
-{
-$("ul#tabs").addClass("restyled");
-	GM_addStyle(
-`
+	if (/https:\/\/daroo*.*manager\/blog\/edit*.*/.test(window.location.href ) && !$("ul#tabs").hasClass("restyled"))
+	{
+		$("ul#tabs").addClass("restyled");
+		GM_addStyle(
+			`
 /*Общие исправления*/
 
 #body-contents {
-	margin-top: 50px !important;
+margin-top: 50px !important;
 }
 
 .container {
-	min-width: 800px !important;
+min-width: 800px !important;
 }
 
 #body-contents,
 .container {
-	margin-left: 0px;
-	margin-right: 0px;
-	padding: 0px;
+margin-left: 0px;
+margin-right: 0px;
+padding: 0px;
 }
 /*Заголовок статьи на шапке*/
 
 div.container h1{
-	display:none;
+display:none;
 }
 
 div.navbar-header{
-	z-index: -1 !important;
+z-index: -1 !important;
 }
 
 ul.navbar-right li{
-	z-index: 1 !important;
-	background-image: linear-gradient(to bottom,#3c3c3c 0,#222 100%) !important;
+z-index: 1 !important;
+background-image: linear-gradient(to bottom,#3c3c3c 0,#222 100%) !important;
 }
 
 ul.navbar-right li:first-child:before{
-	content:"";
-	width: 50px;
-	height: 100%;
-	left:-50px;
-	position:absolute;
-	background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(47,47,47,0.93) 89%, rgba(47,47,47,1) 96%);
+content:"";
+width: 50px;
+height: 100%;
+left:-50px;
+position:absolute;
+background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(47,47,47,0.93) 89%, rgba(47,47,47,1) 96%);
 }
 
 a#brand-name {
 font-size: 22px;
-	margin-left: 210px;
-	border-bottom: dashed 2px #222;
-	transition: border-bottom .5s ease-out, color .5s ease-out;
-	position: absolute;
-    overflow: hidden;
+margin-left: 210px;
+border-bottom: dashed 2px #222;
+transition: border-bottom .5s ease-out, color .5s ease-out;
+position: absolute;
+overflow: hidden;
 
 }
 
 a#brand-name:hover{
-	transition: all .2s ease-out;
-	color: white;
+transition: all .2s ease-out;
+color: white;
 }
 
 @keyframes slide {
-  from {
-    right: 100%;
-  }
+from {
+right: 100%;
+}
 
-  to {
-    right: -100%;
-  }
+to {
+right: -100%;
+}
 }
 
 .navbar-brand:before{
-    content: " ";
-    display: block;
-    background: linear-gradient(to right, rgba(36,36,36,1) 0%,rgba(36,36,36,0) 20%,rgba(36,36,36,0) 80%,rgba(36,36,36,1) 100%);
-    width: 100%;
-    height: 3px;
-    position: absolute;
-    bottom: 4px;
-	z-index: 99999;
-	right:0;
+content: " ";
+display: block;
+background: linear-gradient(to right, rgba(36,36,36,1) 0%,rgba(36,36,36,0) 20%,rgba(36,36,36,0) 80%,rgba(36,36,36,1) 100%);
+width: 100%;
+height: 3px;
+position: absolute;
+bottom: 4px;
+z-index: 99999;
+right:0;
 }
 
 .navbar-brand:after{
-    content: " ";
-    display: block;
-    background: linear-gradient(to right, rgba(36,36,36,1) 1%,rgba(255,255,255,1) 50%,rgba(36,36,36,1) 100%);
-    width: 100%;
-    height: 1px;
-    position: absolute;
-    bottom: 5px;
-    right: 100%;
+content: " ";
+display: block;
+background: linear-gradient(to right, rgba(36,36,36,1) 1%,rgba(255,255,255,1) 50%,rgba(36,36,36,1) 100%);
+width: 100%;
+height: 1px;
+position: absolute;
+bottom: 5px;
+right: 100%;
 }
 
 .navbar-brand:hover:after{
-  	animation-name: slide;
-	animation-timing-function: cubic-bezier(.42,0,.58,1);
-	animation-duration: 1.2s;
+animation-name: slide;
+animation-timing-function: cubic-bezier(.42,0,.58,1);
+animation-duration: 1.2s;
 }
 
 /*Вкладки локалей*/
 
 ul.a2lix_translationsLocales.nav.nav-tabs {
-	display: none;
+display: none;
 }
 /**/
 /*		GRID*/
 /**/
 
 form#product-block-cont {
-	display: grid;
-	grid-template-columns: auto 1fr;
-	grid-gap: 15px;
+display: grid;
+grid-template-columns: auto 1fr;
+grid-gap: 15px;
 }
 /**/
 /*		TAB MAIN*/
 /**/
 
 #tab-main {
-	grid-column-start: 1;
-	grid-column-end: 2;
-	grid-row-start: 1;
-	grid-row-end: 4;
+grid-column-start: 1;
+grid-column-end: 2;
+grid-row-start: 1;
+grid-row-end: 4;
 }
 
 #tab-main{
-	max-width: 1000px !important;
+max-width: 1000px !important;
 }
 
 #tab-main table {
-	width: 100% !important;
+width: 100% !important;
 }
 
 #tab-main tbody tr td:first-child {
-	width: 40% !important;
-	min-width: 300px !important;
+width: 40% !important;
+min-width: 300px !important;
 }
 
 #tab-main tbody tr td:nth-child(2n) {
-	width: 60% !important;
+width: 60% !important;
 }
 
 span.select2.select2-container.select2-container--default {
-	width: 100% !important;
+width: 100% !important;
 }
 
 button[data-id="blog_blogCatalogCategory"] {
-	overflow: hidden !important;
-	width: 100% !important;
-	height: 34px !important;
-	white-space: normal !important;
+overflow: hidden !important;
+width: 100% !important;
+height: 34px !important;
+white-space: normal !important;
 }
 
 button[data-id="blog_blogCatalogCategory"]:hover {
-	height: auto !important;
-	overflow: hidden !important;
+height: auto !important;
+overflow: hidden !important;
 }
 /**/
 /*		TAB SEO*/
 /**/
 
 li>[name="#tab-seo"] {
-	display: none;
+display: none;
 }
 
 form#product-block-cont div#tab-seo {
-	display: block !important;
-	grid-column-start: 2;
-	grid-column-end: 3;
-	grid-row-start: 1;
-	grid-row-end: 2;
-	padding: 10px;
-	border: 1px dashed lightgrey;
-	border-radius: 5px;
+display: block !important;
+grid-column-start: 2;
+grid-column-end: 3;
+grid-row-start: 1;
+grid-row-end: 2;
+padding: 10px;
+border: 1px dashed lightgrey;
+border-radius: 5px;
 }
 
 form#product-block-cont div#tab-seo:before{
-	content:"SEO-заголовки";
-	font-size:20px;
-	top: -6px;
-    position: relative;
-	color: #c7c7c7;
+content:"SEO-заголовки";
+font-size:20px;
+top: -6px;
+position: relative;
+color: #c7c7c7;
 }
 
 #tabs-content div#tab-seo .col-md-6 {
-	width: 100% !important;
-	min-width: 350px;
+width: 100% !important;
+min-width: 350px;
 }
 
 label[for="blog_seo_translations_ru_metaKeywords"] {
-	display: none !important;
+display: none !important;
 }
 
 textarea#blog_seo_translations_ru_metaKeywords {
-	display: none;
+display: none;
 }
 
 /**/
@@ -294,30 +319,30 @@ textarea#blog_seo_translations_ru_metaKeywords {
 /**/
 
 li>[name="#tab-regions"] {
-	display: none;
+display: none;
 }
 
 form#product-block-cont div#tab-regions {
-	display: block !important;
-	grid-column-start: 2;
-	grid-column-end: 3;
-	grid-row-start: 2;
-	grid-row-end: 3;
-	padding: 10px;
-	border: 1px dashed lightgrey;
-	border-radius: 5px;
+display: block !important;
+grid-column-start: 2;
+grid-column-end: 3;
+grid-row-start: 2;
+grid-row-end: 3;
+padding: 10px;
+border: 1px dashed lightgrey;
+border-radius: 5px;
 }
 
 form#product-block-cont div#tab-regions:before{
-	content:"Регионы для отображения записи";
-	font-size:20px;
-	top: -6px;
-    position: relative;
-	color: #c7c7c7;
+content:"Регионы для отображения записи";
+font-size:20px;
+top: -6px;
+position: relative;
+color: #c7c7c7;
 }
 
 #tab-regions .alert{
-	display: none;
+display: none;
 }
 
 /**/
@@ -325,27 +350,27 @@ form#product-block-cont div#tab-regions:before{
 /**/
 
 div#tab-snippets table td img{
-	width: 504px !important;
-	height: 216px !important;
+width: 504px !important;
+height: 216px !important;
 }
 `
-	);
+		);
 
-	//Переключение вкладок на странице редактирования блога
-	$("a[href='#gallery']").on("click", function(){
-		$("form#product-block-cont").hide();
-	});
+		//Переключение вкладок на странице редактирования блога
+		$("a[href='#gallery']").on("click", function(){
+			$("form#product-block-cont").hide();
+		});
 
-	$("a[href='#snippets']").on("click", function(){
-		$("form#product-block-cont").hide();
-	});
+		$("a[href='#snippets']").on("click", function(){
+			$("form#product-block-cont").hide();
+		});
 
-	$("a[href='#main']").on("click", function(){
-		$("form#product-block-cont").show();
-	});
+		$("a[href='#main']").on("click", function(){
+			$("form#product-block-cont").show();
+		});
 
-	$("div.navbar-header").html("<a class='navbar-brand' id='brand-name' href="+$("#tab-main table tr:first-child td a").attr('href')+" target='_blank'>"+$(".container h1").html()+"</a>");
-}
+		$("div.navbar-header").html("<a class='navbar-brand' id='brand-name' href="+$("#tab-main table tr:first-child td a").attr('href')+" target='_blank'>"+$(".container h1").html()+"</a>");
+	}
 
 
 }
