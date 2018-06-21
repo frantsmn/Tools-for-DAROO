@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Front - PageInfo
 // @namespace    PageInfo
-// @version      3.8
+// @version      3.9
 // @description  Добавляет на страницу некоторую информацию и ссылку на редактирование карточки товара/цены/партнера
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Front_-_PageInfo.meta.js
 // @grant        GM_getValue
@@ -21,6 +21,7 @@
 // @include      *daroo.ru/spb*
 // @include      *daroo.ru/nsk*
 // @include      *daroo.ru/ekb*
+// @run-at	 document-end
 // @license		 MIT
 // @copyright 	 2017, frantsmn (https://openuserjs.org/users/frantsmn)
 // ==/UserScript==
