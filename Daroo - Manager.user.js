@@ -2,7 +2,7 @@
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
 // @include      */manager/*
-// @version      1.7
+// @version      1.8
 // @description  Исправления и улучшения для админки DAROO
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Manager.meta.js
 // @author       Frants Mitskun
@@ -23,6 +23,8 @@ setTimeout(function run() {
 	checkContacts();
 	restyleBlog();
 	categoryTableImprove();
+	categoryPageImprove();
+	landingTableImprove();
 
 	setTimeout(run, 1000);
 }, 1000);
@@ -83,15 +85,33 @@ function categoryTableImprove(){
 
 			var id = $(this).attr("id") ? parseInt(($(this).attr("id")).slice(9)) : '';
 			var route = $(this).find("td.ig-grid-cell-router-route").html() ? $(this).find("td.ig-grid-cell-router-route").html().trim() : '';
-			var mainCategory  = $(this).find("td.ig-grid-cell-ct-name").html().length && $(this).find("td.ig-grid-cell-ct-name").html().includes(' ...... ') ? true : false;
-			var categoryName = $(this).find("td.ig-grid-cell-ct-name").html();
+			var primaryCategory  = $(this).find("td.ig-grid-cell-ct-name").html().length && $(this).find("td.ig-grid-cell-ct-name").html().includes(' ...... ') ? true : false;
+			var secondaryCategory  = $(this).find("td.ig-grid-cell-ct-name").html().length && $(this).find("td.ig-grid-cell-ct-name").html().includes(' ............ ') ? true : false;
+			var tertiaryCategory  = $(this).find("td.ig-grid-cell-ct-name").html().length && $(this).find("td.ig-grid-cell-ct-name").html().includes(' .................. ') ? true : false;
+			var categoryName = $(this).find("td.ig-grid-cell-ct-name").html().length ? $(this).find("td.ig-grid-cell-ct-name").html().replace(/\./g,'').trim() : '';
 
-			$(this).find("td:first-child").html('<a href="/manager/category/product/edit/'+ id +'" target="_blank"><input type="button" value="Edit" style="margin:0px; margin-left:4px; width:50px; height:22px;" class="btn btn-primary btn-xs"/></a>');
-			$(this).find("td.ig-grid-cell-router-route").html('<a href="http://'+ window.location.hostname +'/minsk/' + route +'" target="_blank">'+ route +'</a>');
+			$(this).find("td:last-child div").prepend('<a href="/manager/category/product/edit/'+ id +'" target="_blank"><input type="button" value="Edit" style="margin:0px; width:50px; height:22px;" class="btn btn-primary btn-xs"/></a>').css({"width":"auto"});
+			$(this).find("button[title='Редактирование']").each(function(){$(this).remove();});
+			$(this).find("td.ig-grid-cell-router-route").html('<a href="http://'+ window.location.hostname +'/spb/' + route +'" target="_blank">'+ route +'</a>');
 
-			if(mainCategory){
-				$(this).find("td.ig-grid-cell-ct-name").html("<b><span style='font-size:14px'>"+categoryName+"</span></b>");
-				$(this).find("td.ig-grid-cell-ct-name").css({"background-color":"#f3f3f3"});
+			console.log(categoryName);
+
+			if(!categoryName.includes('...') && !/.*Каталог.*/.test(categoryName) && !/.*Без категории.*/.test(categoryName) && !/.*Акции и скидки.*/.test(categoryName) && !/.*Акции и скидки.*/.test(categoryName) && !/.*Подарочные наборы.*/.test(categoryName)){
+				$(this).find("td.ig-grid-cell-ct-name").html("<span>" + categoryName + "</span>");
+
+				if(primaryCategory){
+					$(this).find("td.ig-grid-cell-ct-name").css({"font-size":"14px","font-weight":"bold","background-color":"rgba(46, 108, 162, 0.30)","border-top":"1px solid black"});
+				}
+				if(secondaryCategory){
+					$(this).find("td.ig-grid-cell-ct-name").css({"font-size":"14px","padding-left":"30px","background-color":"rgba(46, 108, 162, 0.10)"});
+				}
+				if(tertiaryCategory){
+					$(this).find("td.ig-grid-cell-ct-name").css({"font-style":"italic","padding-left":"60px","background-color":"rgba(46, 108, 162, 0.01)"});
+				}
+			}
+			else{
+				$(this).find("td.ig-grid-cell-ct-name").html("<span>" + categoryName + "</span>");
+				$(this).find("td.ig-grid-cell-ct-name").css({"color":"lightgrey"});
 			}
 		});
 
@@ -99,13 +119,49 @@ function categoryTableImprove(){
 	}
 }
 
+//======================================================================================================== landingTableImprove
+
+function landingTableImprove(){
+	if($("#grid_results_landing_page_grid").length && !$("a.im-link").length){
+		$("#grid_results_landing_page_grid tbody").find("tr").each(function(){
+			var id = $(this).attr("id") ? parseInt(($(this).attr("id")).slice(9)) : '';
+			var url = "http://" + window.location.hostname + "/manager/landing/page/edit/"+ id;
+			$(this).find("td:last-child div").prepend('<a href="'+url+'" target="_blank" class="im-link"><input type="button" value="Edit" style="margin:0px; width:50px; height:22px;" class="btn btn-primary btn-xs"/></a>').css({"width":"auto"});
+		});
+	}
+}
+
+
+//======================================================================================================== categoryPageImprove
+
+function categoryPageImprove(){
+	if ($('#category_router_route').hasClass("improved") === false){
+
+		var route = $('#category_router_route').val();
+		$('#category_router_route')
+			.after('<span id="category_router_route_link"><a style="border: solid 1px #c3c3c3;border-radius:  4px;padding: 5px 10px 4px;position:  relative;top: 3px;display: inline;" href="http://'+ window.location.hostname +'/spb/' + route +'" target="_blank">'+ route +'</a></span>');
+
+
+		$('#category_router_route').on('input', function(){
+			var route = $('#category_router_route').val();
+			$('#category_router_route_link')
+				.html('<a style="border: solid 1px #c3c3c3;border-radius:  4px;padding: 5px 10px 4px;position:  relative;top: 3px;display: inline;" href="http://'+ window.location.hostname +'/spb/' + route +'" target="_blank">'+ route +'</a>');
+		});
+
+		$('#category_router_route').addClass("improved");
+
+	}
+}
+
+
 //======================================================================================================== checkContacts
 
 //Включает чекбокс контакта на цене, если он 1
 function checkContacts(){
-	if ($("#product_price_contacts div.checkbox").length === 1 && !$("#product_price_contacts div.checkbox").find("input:checkbox").prop("checked"))
+	if ($("#product_price_contact div.checkbox").length === 1 && !$("#product_price_contact div.checkbox").find("input:checkbox").prop("checked"))
 	{
-		$("#product_price_contacts div.checkbox").find("input:checkbox").prop( "checked", true );
+	alert();
+		$("#product_price_contact div.checkbox").find("input:checkbox").prop( "checked", true );
 		$("div#message").show().append('<div id="ok" class="alert alert-success checkbox-message" style="display:block !important; opacity:0.5; text-align:center;">Чекбокс контакта был включен! <b style="color:maroon">🡇 Сохраните изменения 🡇</b> <button class="btn btn-primary btn-block" id="save-contact" style="margin-top:10px;">Сохранить</button></div>');
 		$( ".checkbox-message" ).animate({opacity: "1"}, 700 );
 		$("button#save-contact").on('click', function(){
