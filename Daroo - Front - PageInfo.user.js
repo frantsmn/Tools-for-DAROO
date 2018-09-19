@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Daroo - Front - PageInfo
 // @namespace    PageInfo
-// @version      4.2
+// @version      4.3
 // @description  Добавляет на страницу некоторую информацию и ссылку на редактирование карточки товара/цены/партнера
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Front_-_PageInfo.meta.js
+// @author       Frants Mitskun
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_deleteValue
-// @author       Frants Mitskun
 // @include      *daroo.by/life*
 // @include      *daroo.ru/life*
 // @include      *daroo.by/minsk*
@@ -28,20 +28,17 @@
 
 //GM_deleteValue("history");
 
-
-
 $(function(){
 
-	var d = new Date();
-	var time = d.toLocaleTimeString();
-	var date = d.toLocaleDateString();
-
-	var settings = GM_getValue("settings") ? GM_getValue("settings") : {show_meta : false, show_history : false};
-	var list = GM_getValue("history") ? GM_getValue("history") : [];
+	 var d = new Date();
+	 var time = d.toLocaleTimeString();
+	 var date = d.toLocaleDateString();
+	 var settings = GM_getValue("settings") ? GM_getValue("settings") : {show_meta : false, show_history : false};
+	// var list = GM_getValue("history") ? GM_getValue("history") : [];
 
 	var page = {
 		id          : google_tag_params.local_id,
-		title       : $("div.nav :last").html(),
+		// title       : $("div.nav :last").html(),
 		url         : window.location.href,
 		time        : time.slice(0, -3)+"  "+date.slice(0, 6)+date.slice(8, 10),
 		type        : get_type(),
@@ -49,7 +46,7 @@ $(function(){
 	};
 
 	if (page.id == null){
-		alert("Для работы кнопок редактирования карточки - обновите страницу. Если данная ошибка появляется слишком часто, сообщите об этом разработчику скрипта DAROO-Front-PageInfo\n ERROR:\n local_id = " + google_tag_params.local_id + "\n page.id = " + page.id);
+		alert("Для работы кнопок редактирования карточки - обновите страницу. Если данная ошибка появляется слишком часто, сообщите об этом разработчику скрипта DAROO-Front-PageInfo \n ERROR:\n local_id = " + google_tag_params.local_id + "\n page.id = " + page.id);
 	}
 
 	//Возвращает тип страницы {type, str1, str2} //Используется для page.type
@@ -157,8 +154,8 @@ width: 80px;}
 	}
 
 	//Кнопка таблицы последних посещенных страниц
-	if (list.length > 1) //Если количество элементов в списке истории больше 1
-		$("#edit-info").prepend('<div id="page-history-info" class="page-menu-el">История</div>');
+	// if (list.length > 1) //Если количество элементов в списке истории больше 1
+	// 	$("#edit-info").prepend('<div id="page-history-info" class="page-menu-el">История</div>');
 
 	//Кнопка META-информации о странице
 	$("#edit-info").prepend('<div id="page-meta-info" class="page-menu-el">Мета</div>');
@@ -204,75 +201,79 @@ width: 80px;}
 	function copying_by_button(){
 		var textarea = document.getElementById("metatext-for-table");
 		var copyButton= document.getElementById("copyButton");
+		try{
 		copyButton.addEventListener('click', function(e) {
 			textarea.select();
 			document.execCommand('copy');
 		});
+		} catch(e) {}
+
+
 	}
 
 
 	//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 	//ТАБЛИЦА ПОСЛЕДНИХ ПОСЕЩЕННЫХ СТРАНИЦ
 
-	try {
-		if (page.type.type == "supplier" || page.type.type == "product" || page.type.type == "price")
-		{
-			for(var i = list.length-1;i>=0;i--) //Проверяем на наличие такой же записи
-			{
-				console.log("Search for doubles. #"+i);
-				if(list[i].id === page.id && list[i].hostname === page.hostname)
-				{
-					list.splice(i, 1);
-					console.log("Double was founded at #"+i);
-					break;
-				}
-			}
-			if (list.length-1 === 15) //Если список достиг ограничения
-			{
-				list.splice(0, 1); //Удаляем последний элемент
-				console.log("Limit was reached! First item was deleted from list.");
-			}
+// 	try {
+// 		if (page.type.type == "supplier" || page.type.type == "product" || page.type.type == "price")
+// 		{
+// 			for(var i = list.length-1;i>=0;i--) //Проверяем на наличие такой же записи
+// 			{
+// 				console.log("Search for doubles. #"+i);
+// 				if(list[i].id === page.id && list[i].hostname === page.hostname)
+// 				{
+// 					list.splice(i, 1);
+// 					console.log("Double was founded at #"+i);
+// 					break;
+// 				}
+// 			}
+// 			if (list.length-1 === 15) //Если список достиг ограничения
+// 			{
+// 				list.splice(0, 1); //Удаляем последний элемент
+// 				console.log("Limit was reached! First item was deleted from list.");
+// 			}
 
-			list.push(page); //Добавляем новую запись
-			GM_setValue("history", list); //Сохраняем в базу
-			console.log(list);
-		}
-	} catch(e) {
-		console.log(e);
-	}
+// 			list.push(page); //Добавляем новую запись
+// 			GM_setValue("history", list); //Сохраняем в базу
+// 			console.log(list);
+// 		}
+// 	} catch(e) {
+// 		console.log(e);
+// 	}
 
-	//Разметка таблицы истории
-	var style_table = '<style>#history{padding: 0 40px; border-bottom: 1px solid #ededed;} #history table{width:100%;} #history table th{background-color:#ffeaf7; text-align: left; padding:0 0 0 5px; font-weight:bold;} #history table tr{border-bottom:1px solid #ededed;} #history tr:last-child{border-bottom:0px !important;} #history table td{padding:2px 2px 2px 5px} #history table tr td > img{vertical-align:middle;}</style>';
-	var table_start = '<div id="history"><table><tr><th> </th><th>id</th><th>Тип</th><th>Наименование</th><th>Адрес</th><th>Ред.</th><th>Время</th></tr>';
-	var table_end = '</table></div>';
-	$("head").append(style_table);
+// 	//Разметка таблицы истории
+// 	var style_table = '<style>#history{padding: 0 40px; border-bottom: 1px solid #ededed;} #history table{width:100%;} #history table th{background-color:#ffeaf7; text-align: left; padding:0 0 0 5px; font-weight:bold;} #history table tr{border-bottom:1px solid #ededed;} #history tr:last-child{border-bottom:0px !important;} #history table td{padding:2px 2px 2px 5px} #history table tr td > img{vertical-align:middle;}</style>';
+// 	var table_start = '<div id="history"><table><tr><th> </th><th>id</th><th>Тип</th><th>Наименование</th><th>Адрес</th><th>Ред.</th><th>Время</th></tr>';
+// 	var table_end = '</table></div>';
+// 	$("head").append(style_table);
 
-	//Собираем таблицу
-	function createTable(){
-		var table = table_start;
-		for (var i=list.length-2;i>=0;i--)
-			table += '<tr><td>'+ flag(list[i].hostname) +'</td><td>'+list[i].id+'</td><td>'+list[i].type.str2+'</td><td>'+list[i].title+'</td><td><a href="'+list[i].url+'" target="_blank">'+list[i].url+'</a></td><td><a href=\"https://'+list[i].hostname+'/manager/'+list[i].type.type+'/edit/'+list[i].id+'" target="_blank">Ред.</a></td><td>'+list[i].time+'</td></tr>';
-		return table += table_end;
-	}
+// 	//Собираем таблицу
+// 	function createTable(){
+// 		var table = table_start;
+// 		for (var i=list.length-2;i>=0;i--)
+// 			table += '<tr><td>'+ flag(list[i].hostname) +'</td><td>'+list[i].id+'</td><td>'+list[i].type.str2+'</td><td>'+list[i].title+'</td><td><a href="'+list[i].url+'" target="_blank">'+list[i].url+'</a></td><td><a href=\"https://'+list[i].hostname+'/manager/'+list[i].type.type+'/edit/'+list[i].id+'" target="_blank">Ред.</a></td><td>'+list[i].time+'</td></tr>';
+// 		return table += table_end;
+// 	}
 
-	//Возвращает картинку флага
-	function flag(str){
-		return str === "daroo.by" ? '<img src="https://daroo.by/img/flags/by.png">' : str === "daroo.ru" ? '<img src="https://daroo.by/img/flags/ru.png">' : '<img src="https://daroo.by/img/flags/ua.png">';
-	}
+// 	//Возвращает картинку флага
+// 	function flag(str){
+// 		return str === "daroo.by" ? '<img src="https://daroo.by/img/flags/by.png">' : str === "daroo.ru" ? '<img src="https://daroo.by/img/flags/ru.png">' : '<img src="https://daroo.by/img/flags/ua.png">';
+// 	}
 
-	//Отображаем/прячем таблицу по кнопке
-	$("#page-history-info").click(function(){
-		if(!$("#history").length)
-		{
-			$("div.textBlock").prepend(createTable());
-			$("#page-history-info").addClass("__a");
-		}
-		else
-		{
-			$("#history").remove();
-			$("#page-history-info").removeClass("__a");
-		}
-	});
+// 	//Отображаем/прячем таблицу по кнопке
+// 	$("#page-history-info").click(function(){
+// 		if(!$("#history").length)
+// 		{
+// 			$("div.textBlock").prepend(createTable());
+// 			$("#page-history-info").addClass("__a");
+// 		}
+// 		else
+// 		{
+// 			$("#history").remove();
+// 			$("#page-history-info").removeClass("__a");
+// 		}
+// 	});
 
 
 	//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
@@ -306,11 +307,10 @@ border: solid 1px rgba(255, 255, 255, 0.8);
 `;
 	$("head").append(catalog_card_style);
 
-	$("body").on("hover", "div.catalog-card", function(){
+	$(document).on("hover", "div.catalog-card", function(){
 		if (!$(this).hasClass("penAdded")){
 			var id = $(this).data("card-id");
-			$(this).find(".catalog-card-statuses").append('<a class="edit-card" href="https://'+window.location.hostname+'/manager/product/edit/'+id+'" target="_blank"></a>');
-			$(this).addClass("penAdded");
+			$(this).addClass("penAdded").find(".catalog-card-statuses").append('<a class="edit-card" href="https://'+window.location.hostname+'/manager/product/edit/'+id+'" target="_blank"></a>');
 		}
 	});
 
