@@ -2,7 +2,7 @@
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
 // @include      */manager/*
-// @version      1.8
+// @version      1.9
 // @description  Исправления и улучшения для админки DAROO
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Manager.meta.js
 // @author       Frants Mitskun
@@ -160,7 +160,6 @@ function categoryPageImprove(){
 function checkContacts(){
 	if ($("#product_price_contact div.checkbox").length === 1 && !$("#product_price_contact div.checkbox").find("input:checkbox").prop("checked"))
 	{
-	alert();
 		$("#product_price_contact div.checkbox").find("input:checkbox").prop( "checked", true );
 		$("div#message").show().append('<div id="ok" class="alert alert-success checkbox-message" style="display:block !important; opacity:0.5; text-align:center;">Чекбокс контакта был включен! <b style="color:maroon">🡇 Сохраните изменения 🡇</b> <button class="btn btn-primary btn-block" id="save-contact" style="margin-top:10px;">Сохранить</button></div>');
 		$( ".checkbox-message" ).animate({opacity: "1"}, 700 );
