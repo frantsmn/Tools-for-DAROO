@@ -2,7 +2,7 @@
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
 // @include      */manager/*
-// @version      1.9
+// @version      2.0
 // @description  Исправления и улучшения для админки DAROO
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Manager.meta.js
 // @author       Frants Mitskun
