@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      3.0
+// @version      3.1
 // @include      *daroo*.*/manager/*
 // @description  Формы для добавления контент-блоков. Парсинг документа на заголовки, META-заголовки и контент-блоки с последующей их вставкой в текстовый редактор сайта.
 // @updateURL 	 https://openuserjs.org/meta/frantsmn/Daroo_-_Content-blocks.meta.js
@@ -194,19 +194,19 @@ function insert_text(code, text){
 
 	//Выбираем необходимый блок согласно кодовому имени
 	switch (code) {
-		case "dk": select('Две колонки', 'Две колонки');
+		case "dk": select('two_columns', 'two_columns');
 			break;
-		case "ci": select('Цитата', 'Цитата');
+		case "ci": select('quote', 'quote');
 			break;
-		case "pv": select('Преимущества/возможности', 'Преимущества/возможности');
+		case "pv": select('advantages_opportunities', 'advantages_opportunities');
 			break;
-		case "ot": select('Подзаголовок', 'Подзаголовок');
+		case "ot": select('subtitle', 'subtitle');
 			break;
-		case "h" : select('Характеристики', 'Характеристики 3 блока');
+		case "h" : select('characteristics', 'Характеристики 3 блока');
 			break;
-		case "se": select('Структура/этапы', 'Структура/этапы 2 блока');
+		case "se": select('structure_milestones', 'Структура-этапы 2 блока');
 			break;
-		case "sv": select('Сервисные возможности', 'Сервисные возможности');
+		case "sv": select('service_block', 'service_block');
 			break;
 	}
 
