@@ -2,7 +2,7 @@
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
 // @include      */manager/*
-// @version      2.0
+// @version      2.1
 // @description  Исправления и улучшения для админки DAROO
 // @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Manager.meta.js
 // @author       Frants Mitskun
@@ -12,172 +12,199 @@
 // ==/UserScript==
 
 //Ссылки из МЕНЮ открываются не в фрейме
-$("#admin-nav").find('a.admin-nav-item').each(function(){$(this).removeClass("admin-nav-item");});
+$("#admin-nav").find('a.admin-nav-item').each(function () {
+    $(this).removeClass("admin-nav-item");
+});
 
 //========================================================================================================
 
 //Запуск всех функций по таймауту
 setTimeout(function run() {
 
-	tableImprove();
-	checkContacts();
-	restyleBlog();
-	categoryTableImprove();
-	categoryPageImprove();
-	landingTableImprove();
+    tableImprove();
+    checkContacts();
+    restyleBlog();
+    categoryTableImprove();
+    categoryPageImprove();
+    landingTableImprove();
+    commentsTableImprove();
 
-	setTimeout(run, 1000);
+    setTimeout(run, 1000);
 }, 1000);
- 
+
 //======================================================================================================== tableImprove
 
 //ТОЛЬКО ДЛЯ ТАБЛИЦЫ ТОПОВ — Функция проверяет активный элемент в выпадающем списке городов и возвращает часть урла (msk, spb, ...)
-function tops_city(){
-	if (~$("#select2--container").text().indexOf('Москва'))
-		return "msk";
-	if (~$("#select2--container").text().indexOf('Санкт-Петербург'))
-		return "spb";
-	if (~$("#select2--container").text().indexOf('Екатеринбург'))
-		return "ekb";
-	if (~$("#select2--container").text().indexOf('Новосибирск'))
-		return "nsk";
-	if (~$("#select2--container").text().indexOf('Минск'))
-		return "minsk";
-	/* - - - */
+function tops_city() {
+    if ($("#select2--container").text().indexOf('Москва'))
+        return "msk";
+    if ($("#select2--container").text().indexOf('Санкт-Петербург'))
+        return "spb";
+    if ($("#select2--container").text().indexOf('Екатеринбург'))
+        return "ekb";
+    if ($("#select2--container").text().indexOf('Новосибирск'))
+        return "nsk";
+    if ($("#select2--container").text().indexOf('Минск'))
+        return "minsk";
 }
 
-//Ссылки на редактирование страниц карточек и цен в таблицах + ссылки на страницу товара из таблицы топов
 
-function tableImprove(){
-	if($("table#grid_results_product_grid").length || $("table#grid_results_product_price_grid").length || $("form#top-form").length || $("#product-contents").length || $("#grid_results_supplier_grid").length )  /*Для страницы с таблицей ( ЦЕН || КАРТОЧЕК || ТОПОВ || ЦЕН в карточке товара)*/
-	{
-		$("table").find("tr").each(function()
-								   {
-			if (!$(this).hasClass("link-added"))
-			{
-				$(this).addClass("link-added");
-				var id = $(this).find(".ig-grid-cell-id").text().trim();
-				var route = $(this).find(".ig-grid-cell-price").length ? "http://" + window.location.hostname + "/manager/price/edit/" + id : "http://" + window.location.hostname + "/manager/product/edit/" + id;
-				$(this).find(".ig-grid-cell-id").html('<a href="'+ route +'" target="_blank"><input type="button" value="Edit" style="margin:0px; margin-left:4px; width:50px; height:22px;" class="btn btn-primary btn-xs"/></a>');
+//======================================================================================================== tableImprove — Ссылки на редактирование страниц карточек и цен в таблицах + ссылки на страницу товара из таблицы топов
 
-				if (window.location.href.indexOf("manager/tops/create")>0)
-				{
-					$(this).find(".route").prepend('<a href="http://'+ window.location.hostname +'/' + tops_city() + '/'+ $(this).find(".route").text().trim() +'" target="_blank" style="display:inline-block;"><input type="button" value="Open" style="margin-left:2px; width:45px; height:20px;" class="btn btn-xs btn-primary"/></a>');
-				}
-			}
-		});
+function tableImprove() {
+    /*Для страницы с таблицей ( ЦЕН || КАРТОЧЕК || ТОПОВ || ЦЕН в карточке товара)*/
+    if ($("table#grid_results_product_grid").length || $("table#grid_results_product_price_grid").length || $("form#top-form").length || $("#product-contents").length || $("#grid_results_supplier_grid").length) {
+        $("table").find("tr").each(function () {
+            if (!$(this).hasClass("link-added")) {
+                var id = $(this).find(".ig-grid-cell-id").text().trim();
+                var route = $(this).find(".ig-grid-cell-price").length ? "http://" + window.location.hostname + "/manager/price/edit/" + id : "http://" + window.location.hostname + "/manager/product/edit/" + id;
+                $(this).find(".ig-grid-cell-id").html('<a href="' + route + '" target="_blank"><input type="button" value="Edit" style="margin:0px; margin-left:4px; width:50px; height:22px;" class="btn btn-primary btn-xs"/></a>');
 
-		//Кнопки редактирования для таблицы цен на странице редактирования карточки товара
-		if (!$("#tab-prices").hasClass("link-added"))
-			$("#tab-prices").find("tr").each(function(){
-				if(typeof $(this).attr('data-sort-id') !== "undefined")
-					$(this).append('<td align="center"><a href="/manager/price/edit/'+ $(this).attr('data-sort-id') +'" target="_blank"><input type="button" value="Edit" style="margin:2px; margin-left:4px; width:50px; height:22px;" class="btn btn-xs btn-primary"/></a></td>');
-				$("#tab-prices").addClass("link-added");
-			});
-	}
+                if (window.location.href.indexOf("manager/tops/create") > 0) {
+                    $(this).find(".route").prepend('<a href="http://' + window.location.hostname + '/' + tops_city() + '/' + $(this).find(".route").text().trim() + '" target="_blank" style="display:inline-block;"><input type="button" value="Open" style="margin-left:2px; width:45px; height:20px;" class="btn btn-xs btn-primary"/></a>');
+                }
+                $(this).addClass("link-added");
+            }
+        });
+
+        //Кнопки редактирования для таблицы цен на странице редактирования карточки товара
+        if (!$("#tab-prices").hasClass("link-added")) {
+            $("#tab-prices").find("tr").each(function () {
+                if (typeof $(this).attr('data-sort-id') !== "undefined")
+                    $(this).append('<td align="center"><a href="/manager/price/edit/' + $(this).attr('data-sort-id') + '" target="_blank"><input type="button" value="Edit" style="margin:2px; margin-left:4px; width:50px; height:22px;" class="btn btn-xs btn-primary"/></a></td>');
+                $("#tab-prices").addClass("link-added");
+            });
+        }
+    }
 }
 
 //======================================================================================================== categoryTableImprove
 
-function categoryTableImprove(){
-	if($("#grid_results_taxonomy_grid").length && $("#grid_results_taxonomy_grid").hasClass("improved") === false){
-		$("#grid_results_taxonomy_grid tbody").find("tr").each(function(){
+function categoryTableImprove() {
+    if ($("#grid_results_taxonomy_grid").length && !$("#grid_results_taxonomy_grid").hasClass("improved")) {
 
-			var id = $(this).attr("id") ? parseInt(($(this).attr("id")).slice(9)) : '';
-			var route = $(this).find("td.ig-grid-cell-router-route").html() ? $(this).find("td.ig-grid-cell-router-route").html().trim() : '';
-			var primaryCategory  = $(this).find("td.ig-grid-cell-ct-name").html().length && $(this).find("td.ig-grid-cell-ct-name").html().includes(' ...... ') ? true : false;
-			var secondaryCategory  = $(this).find("td.ig-grid-cell-ct-name").html().length && $(this).find("td.ig-grid-cell-ct-name").html().includes(' ............ ') ? true : false;
-			var tertiaryCategory  = $(this).find("td.ig-grid-cell-ct-name").html().length && $(this).find("td.ig-grid-cell-ct-name").html().includes(' .................. ') ? true : false;
-			var categoryName = $(this).find("td.ig-grid-cell-ct-name").html().length ? $(this).find("td.ig-grid-cell-ct-name").html().replace(/\./g,'').trim() : '';
+        $("#grid_results_taxonomy_grid tbody").find("tr").each(function () {
+            let id = $(this).attr("id") ? parseInt(($(this).attr("id")).slice(9)) : '';
+            let route = $(this).find("td.ig-grid-cell-router-route").html() ? $(this).find("td.ig-grid-cell-router-route").html().trim() : '';
+            let primaryCategory = $(this).find("td.ig-grid-cell-ct-name").length && $(this).find("td.ig-grid-cell-ct-name").html().includes(' ...... ') ? true : false;
+            let secondaryCategory = $(this).find("td.ig-grid-cell-ct-name").length && $(this).find("td.ig-grid-cell-ct-name").html().includes(' ............ ') ? true : false;
+            let tertiaryCategory = $(this).find("td.ig-grid-cell-ct-name").length && $(this).find("td.ig-grid-cell-ct-name").html().includes(' .................. ') ? true : false;
+            let categoryName = $(this).find("td.ig-grid-cell-ct-name").length ? $(this).find("td.ig-grid-cell-ct-name").html().replace(/\./g, '').trim() : '';
 
-			$(this).find("td:last-child div").prepend('<a href="/manager/category/product/edit/'+ id +'" target="_blank"><input type="button" value="Edit" style="margin:0px; width:50px; height:22px;" class="btn btn-primary btn-xs"/></a>').css({"width":"auto"});
-			$(this).find("button[title='Редактирование']").each(function(){$(this).remove();});
-			$(this).find("td.ig-grid-cell-router-route").html('<a href="http://'+ window.location.hostname +'/spb/' + route +'" target="_blank">'+ route +'</a>');
+            $(this).find("td:last-child div").prepend('<a href="/manager/category/product/edit/' + id + '" target="_blank"><input type="button" value="Edit" style="margin:0px; width:50px; height:22px;" class="btn btn-primary btn-xs"/></a>')
+			.css({
+                "width": "auto"
+            });
+            $(this).find("button[title='Редактирование']").each(function () {
+                $(this).remove();
+            });
+            $(this).find("td.ig-grid-cell-router-route").html('<a href="http://' + window.location.hostname + '/spb/' + route + '" target="_blank">' + route + '</a>');
 
-			console.log(categoryName);
+            if (!categoryName.includes('...') && !/.*Каталог.*/.test(categoryName) && !/.*Без категории.*/.test(categoryName) && !/.*Акции и скидки.*/.test(categoryName) && !/.*Акции и скидки.*/.test(categoryName) && !/.*Подарочные наборы.*/.test(categoryName)) {
+                $(this).find("td.ig-grid-cell-ct-name").html("<span>" + categoryName + "</span>");
 
-			if(!categoryName.includes('...') && !/.*Каталог.*/.test(categoryName) && !/.*Без категории.*/.test(categoryName) && !/.*Акции и скидки.*/.test(categoryName) && !/.*Акции и скидки.*/.test(categoryName) && !/.*Подарочные наборы.*/.test(categoryName)){
-				$(this).find("td.ig-grid-cell-ct-name").html("<span>" + categoryName + "</span>");
+                if (primaryCategory) {
+                    $(this).find("td.ig-grid-cell-ct-name").css({
+                        "font-size": "14px",
+                        "font-weight": "bold",
+                        "background-color": "rgba(46, 108, 162, 0.30)",
+                        "border-top": "1px solid black"
+                    });
+                }
+                if (secondaryCategory) {
+                    $(this).find("td.ig-grid-cell-ct-name").css({
+                        "font-size": "14px",
+                        "padding-left": "30px",
+                        "background-color": "rgba(46, 108, 162, 0.10)"
+                    });
+                }
+                if (tertiaryCategory) {
+                    $(this).find("td.ig-grid-cell-ct-name").css({
+                        "font-style": "italic",
+                        "padding-left": "60px",
+                        "background-color": "rgba(46, 108, 162, 0.01)"
+                    });
+                }
+            } else {
+                $(this).find("td.ig-grid-cell-ct-name").html("<span>" + categoryName + "</span>");
+                $(this).find("td.ig-grid-cell-ct-name").css({
+                    "color": "lightgrey"
+                });
+            }
+        });
+        $("#grid_results_taxonomy_grid").addClass("improved");
+    }
+}
 
-				if(primaryCategory){
-					$(this).find("td.ig-grid-cell-ct-name").css({"font-size":"14px","font-weight":"bold","background-color":"rgba(46, 108, 162, 0.30)","border-top":"1px solid black"});
-				}
-				if(secondaryCategory){
-					$(this).find("td.ig-grid-cell-ct-name").css({"font-size":"14px","padding-left":"30px","background-color":"rgba(46, 108, 162, 0.10)"});
-				}
-				if(tertiaryCategory){
-					$(this).find("td.ig-grid-cell-ct-name").css({"font-style":"italic","padding-left":"60px","background-color":"rgba(46, 108, 162, 0.01)"});
-				}
-			}
-			else{
-				$(this).find("td.ig-grid-cell-ct-name").html("<span>" + categoryName + "</span>");
-				$(this).find("td.ig-grid-cell-ct-name").css({"color":"lightgrey"});
-			}
-		});
+//======================================================================================================== commentsTableImprove
 
-		$("#grid_results_taxonomy_grid").addClass("improved");
-	}
+function commentsTableImprove() {
+    if ($("#grid_results_comments_grid").length && $("#grid_results_comments_grid").hasClass("improved") === false) {
+        $("#grid_results_comments_grid tbody").find("tr").each(function () {
+            var id = $(this).attr("id") ? Number(($(this).attr("id")).slice(9)) : '';
+            $(this).find("td:last-child div").prepend('<a href="/manager/comments/edit/' + id + '" target="_blank"><input type="button" value="Edit" style="margin:0px; width:50px; height:22px;" class="btn btn-primary btn-xs"/></a>').css({
+                "width": "auto"
+            });
+            $(this).find("button[title='Редактирование']").each(function () {
+                $(this).remove();
+            });
+        });
+        $("#grid_results_comments_grid").addClass("improved");
+    }
 }
 
 //======================================================================================================== landingTableImprove
 
-function landingTableImprove(){
-	if($("#grid_results_landing_page_grid").length && !$("a.im-link").length){
-		$("#grid_results_landing_page_grid tbody").find("tr").each(function(){
-			var id = $(this).attr("id") ? parseInt(($(this).attr("id")).slice(9)) : '';
-			var url = "http://" + window.location.hostname + "/manager/landing/page/edit/"+ id;
-			$(this).find("td:last-child div").prepend('<a href="'+url+'" target="_blank" class="im-link"><input type="button" value="Edit" style="margin:0px; width:50px; height:22px;" class="btn btn-primary btn-xs"/></a>').css({"width":"auto"});
-		});
-	}
+function landingTableImprove() {
+    if ($("#grid_results_landing_page_grid").length && !$("a.im-link").length) {
+        $("#grid_results_landing_page_grid tbody").find("tr").each(function () {
+            var id = $(this).attr("id") ? parseInt(($(this).attr("id")).slice(9)) : '';
+            var url = "http://" + window.location.hostname + "/manager/landing/page/edit/" + id;
+            $(this).find("td:last-child div").prepend('<a href="' + url + '" target="_blank" class="im-link"><input type="button" value="Edit" style="margin:0px; width:50px; height:22px;" class="btn btn-primary btn-xs"/></a>').css({
+                "width": "auto"
+            });
+        });
+    }
 }
-
 
 //======================================================================================================== categoryPageImprove
 
-function categoryPageImprove(){
-	if ($('#category_router_route').hasClass("improved") === false){
-
-		var route = $('#category_router_route').val();
-		$('#category_router_route')
-			.after('<span id="category_router_route_link"><a style="border: solid 1px #c3c3c3;border-radius:  4px;padding: 5px 10px 4px;position:  relative;top: 3px;display: inline;" href="http://'+ window.location.hostname +'/spb/' + route +'" target="_blank">'+ route +'</a></span>');
-
-
-		$('#category_router_route').on('input', function(){
-			var route = $('#category_router_route').val();
-			$('#category_router_route_link')
-				.html('<a style="border: solid 1px #c3c3c3;border-radius:  4px;padding: 5px 10px 4px;position:  relative;top: 3px;display: inline;" href="http://'+ window.location.hostname +'/spb/' + route +'" target="_blank">'+ route +'</a>');
-		});
-
-		$('#category_router_route').addClass("improved");
-
-	}
+function categoryPageImprove() {
+    if (!$('#category_router_route').hasClass("improved")) {
+        var route = $('#category_router_route').val();
+        $('#category_router_route')
+            .after('<span id="category_router_route_link"><a style="border: solid 1px #c3c3c3;border-radius:  4px;padding: 5px 10px 4px;position:  relative;top: 3px;display: inline;" href="http://' + window.location.hostname + '/spb/' + route + '" target="_blank">' + route + '</a></span>');
+        $('#category_router_route').on('input', function () {
+            var route = $('#category_router_route').val();
+            $('#category_router_route_link')
+                .html('<a style="border: solid 1px #c3c3c3;border-radius:  4px;padding: 5px 10px 4px;position:  relative;top: 3px;display: inline;" href="http://' + window.location.hostname + '/spb/' + route + '" target="_blank">' + route + '</a>');
+        });
+        $('#category_router_route').addClass("improved");
+    }
 }
 
+//======================================================================================================== checkContacts — Включает чекбокс контакта на цене, если он 1
 
-//======================================================================================================== checkContacts
-
-//Включает чекбокс контакта на цене, если он 1
-function checkContacts(){
-	if ($("#product_price_contact div.checkbox").length === 1 && !$("#product_price_contact div.checkbox").find("input:checkbox").prop("checked"))
-	{
-		$("#product_price_contact div.checkbox").find("input:checkbox").prop( "checked", true );
-		$("div#message").show().append('<div id="ok" class="alert alert-success checkbox-message" style="display:block !important; opacity:0.5; text-align:center;">Чекбокс контакта был включен! <b style="color:maroon">🡇 Сохраните изменения 🡇</b> <button class="btn btn-primary btn-block" id="save-contact" style="margin-top:10px;">Сохранить</button></div>');
-		$( ".checkbox-message" ).animate({opacity: "1"}, 700 );
-		$("button#save-contact").on('click', function(){
-			$("#tab-contacts button.btn.btn-primary").click();
-		});
-	}
+function checkContacts() {
+    if ($("#product_price_contact div.checkbox").length === 1 && !$("#product_price_contact div.checkbox").find("input:checkbox").prop("checked")) {
+        $("#product_price_contact div.checkbox").find("input:checkbox").prop("checked", true);
+        $("div#message").show().append('<div id="ok" class="alert alert-success checkbox-message" style="display:block !important; opacity:0.5; text-align:center;">Чекбокс контакта был включен! <b style="color:maroon">🡇 Сохраните изменения 🡇</b> <button class="btn btn-primary btn-block" id="save-contact" style="margin-top:10px;">Сохранить</button></div>');
+        $(".checkbox-message").animate({
+            opacity: "1"
+        }, 700);
+        $("button#save-contact").on('click', function () {
+            $("#tab-contacts button.btn.btn-primary").click();
+        });
+    }
 }
 
 //======================================================================================================== restyleBlog
 
-function restyleBlog(){
+function restyleBlog() {
 
-	if (/https:\/\/daroo*.*manager\/blog\/edit*.*/.test(window.location.href ) && !$("ul#tabs").hasClass("restyled"))
-	{
-		$("ul#tabs").addClass("restyled");
-		GM_addStyle(
-			`
+    if (/https:\/\/daroo*.*manager\/blog\/edit*.*/.test(window.location.href) && !$("ul#tabs").hasClass("restyled")) {
+        $("ul#tabs").addClass("restyled");
+        GM_addStyle(`
 /*Общие исправления*/
 
 #body-contents {
@@ -408,24 +435,21 @@ div#tab-snippets table td img{
 width: 504px !important;
 height: 216px !important;
 }
-`
-		);
+`);
 
-		//Переключение вкладок на странице редактирования блога
-		$("a[href='#gallery']").on("click", function(){
-			$("form#product-block-cont").hide();
-		});
+        //Переключение вкладок на странице редактирования блога
+        $("a[href='#gallery']").on("click", function () {
+            $("form#product-block-cont").hide();
+        });
 
-		$("a[href='#snippets']").on("click", function(){
-			$("form#product-block-cont").hide();
-		});
+        $("a[href='#snippets']").on("click", function () {
+            $("form#product-block-cont").hide();
+        });
 
-		$("a[href='#main']").on("click", function(){
-			$("form#product-block-cont").show();
-		});
+        $("a[href='#main']").on("click", function () {
+            $("form#product-block-cont").show();
+        });
 
-		$("div.navbar-header").html("<a class='navbar-brand' id='brand-name' href="+$("#tab-main table tr:first-child td a").attr('href')+" target='_blank'>"+$(".container h1").html()+"</a>");
-	}
-
-
+        $("div.navbar-header").html("<a class='navbar-brand' id='brand-name' href=" + $("#tab-main table tr:first-child td a").attr('href') + " target='_blank'>" + $(".container h1").html() + "</a>");
+    }
 }
