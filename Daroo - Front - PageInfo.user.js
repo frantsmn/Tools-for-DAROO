@@ -1,40 +1,27 @@
 // ==UserScript==
 // @name         Daroo - Front - PageInfo
 // @namespace    PageInfo
-// @version      4.3
-// @description  Добавляет на страницу некоторую информацию и ссылку на редактирование карточки товара/цены/партнера
-// @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Front_-_PageInfo.meta.js
+// @version      4.4
+// @description  Добавляет на страницы сайта DAROO вспомогательные ссылки и информацию (для редактора/контент-менеджера)
+// @updateURL    https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Front%20-%20PageInfo.user.js
 // @author       Frants Mitskun
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_deleteValue
-// @include      *daroo.by/life*
-// @include      *daroo.ru/life*
-// @include      *daroo.by/minsk*
-// @include      *daroo.by/brest*
-// @include      *daroo.by/vitebsk*
-// @include      *daroo.by/gomel*
-// @include      *daroo.by/grodno*
-// @include      *daroo.by/mogilev*
-// @include      *daroo.by/polotsk*
-// @include      *daroo.ru/msk*
-// @include      *daroo.ru/spb*
-// @include      *daroo.ru/nsk*
-// @include      *daroo.ru/ekb*
+// @include      *daroo.*
+// @exclude		 *daroo.*/manager*
 // @run-at	 document-end
 // @license		 MIT
-// @copyright 	 2017, frantsmn (https://openuserjs.org/users/frantsmn)
+// @copyright 	 2017-2019, frantsmn (https://github.com/frantsmn/userscripts)
 // ==/UserScript==
 
-//GM_deleteValue("history");
 
 $(function(){
 
-	 var d = new Date();
-	 var time = d.toLocaleTimeString();
-	 var date = d.toLocaleDateString();
-	 var settings = GM_getValue("settings") ? GM_getValue("settings") : {show_meta : false, show_history : false};
-	// var list = GM_getValue("history") ? GM_getValue("history") : [];
+	var d = new Date();
+	var time = d.toLocaleTimeString();
+	var date = d.toLocaleDateString();
+	var settings = GM_getValue("settings") ? GM_getValue("settings") : {show_meta : false};
 
 	var page = {
 		id          : google_tag_params.local_id,
@@ -202,10 +189,10 @@ width: 80px;}
 		var textarea = document.getElementById("metatext-for-table");
 		var copyButton= document.getElementById("copyButton");
 		try{
-		copyButton.addEventListener('click', function(e) {
-			textarea.select();
-			document.execCommand('copy');
-		});
+			copyButton.addEventListener('click', function(e) {
+				textarea.select();
+				document.execCommand('copy');
+			});
 		} catch(e) {}
 
 
@@ -213,75 +200,10 @@ width: 80px;}
 
 
 	//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-	//ТАБЛИЦА ПОСЛЕДНИХ ПОСЕЩЕННЫХ СТРАНИЦ
-
-// 	try {
-// 		if (page.type.type == "supplier" || page.type.type == "product" || page.type.type == "price")
-// 		{
-// 			for(var i = list.length-1;i>=0;i--) //Проверяем на наличие такой же записи
-// 			{
-// 				console.log("Search for doubles. #"+i);
-// 				if(list[i].id === page.id && list[i].hostname === page.hostname)
-// 				{
-// 					list.splice(i, 1);
-// 					console.log("Double was founded at #"+i);
-// 					break;
-// 				}
-// 			}
-// 			if (list.length-1 === 15) //Если список достиг ограничения
-// 			{
-// 				list.splice(0, 1); //Удаляем последний элемент
-// 				console.log("Limit was reached! First item was deleted from list.");
-// 			}
-
-// 			list.push(page); //Добавляем новую запись
-// 			GM_setValue("history", list); //Сохраняем в базу
-// 			console.log(list);
-// 		}
-// 	} catch(e) {
-// 		console.log(e);
-// 	}
-
-// 	//Разметка таблицы истории
-// 	var style_table = '<style>#history{padding: 0 40px; border-bottom: 1px solid #ededed;} #history table{width:100%;} #history table th{background-color:#ffeaf7; text-align: left; padding:0 0 0 5px; font-weight:bold;} #history table tr{border-bottom:1px solid #ededed;} #history tr:last-child{border-bottom:0px !important;} #history table td{padding:2px 2px 2px 5px} #history table tr td > img{vertical-align:middle;}</style>';
-// 	var table_start = '<div id="history"><table><tr><th> </th><th>id</th><th>Тип</th><th>Наименование</th><th>Адрес</th><th>Ред.</th><th>Время</th></tr>';
-// 	var table_end = '</table></div>';
-// 	$("head").append(style_table);
-
-// 	//Собираем таблицу
-// 	function createTable(){
-// 		var table = table_start;
-// 		for (var i=list.length-2;i>=0;i--)
-// 			table += '<tr><td>'+ flag(list[i].hostname) +'</td><td>'+list[i].id+'</td><td>'+list[i].type.str2+'</td><td>'+list[i].title+'</td><td><a href="'+list[i].url+'" target="_blank">'+list[i].url+'</a></td><td><a href=\"https://'+list[i].hostname+'/manager/'+list[i].type.type+'/edit/'+list[i].id+'" target="_blank">Ред.</a></td><td>'+list[i].time+'</td></tr>';
-// 		return table += table_end;
-// 	}
-
-// 	//Возвращает картинку флага
-// 	function flag(str){
-// 		return str === "daroo.by" ? '<img src="https://daroo.by/img/flags/by.png">' : str === "daroo.ru" ? '<img src="https://daroo.by/img/flags/ru.png">' : '<img src="https://daroo.by/img/flags/ua.png">';
-// 	}
-
-// 	//Отображаем/прячем таблицу по кнопке
-// 	$("#page-history-info").click(function(){
-// 		if(!$("#history").length)
-// 		{
-// 			$("div.textBlock").prepend(createTable());
-// 			$("#page-history-info").addClass("__a");
-// 		}
-// 		else
-// 		{
-// 			$("#history").remove();
-// 			$("#page-history-info").removeClass("__a");
-// 		}
-// 	});
+	//ВСПОМОГАТЕЛЬНЫЕ ЭЛЕМЕНТЫ НА СНИППЕТЕ КАРТОЧКИ ТОВАРА
 
 
-	//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-	//ВСПОМОГАТЕЛЬНЫЕ ЭЛЕМЕНТЫ
-
-	//Кнопка редактирования товара на сниппете в каталоге
-
-	var catalog_card_style = `
+	let catalog_card_style = `
 <style>
 .catalog-card-image .edit-card{
 display: block;
@@ -303,16 +225,84 @@ transition: background .2s ease, border .2s ease;
 background-color: rgba(0, 0, 0, 0.8);
 border: solid 1px rgba(255, 255, 255, 0.8);
 }
+
+.jsonInput {
+position: absolute;
+top: 0;
+right: 40px;
+height: 30px;
+width: 100px;
+background: rgba(0, 0, 0, 0.5);
+border-radius: 5px;
+border: solid 1px rgba(255, 255, 255, 0.5);
+transition: background .2s ease, border .2s ease;
+padding: 0 0 0 5px;
+color: white;
+}
+
+.jsonInput:hover{
+background-color: rgba(0, 0, 0, 0.8);
+border: solid 1px rgba(255, 255, 255, 0.8);
+}
+
 </style>
 `;
+
 	$("head").append(catalog_card_style);
 
-	$(document).on("hover", "div.catalog-card", function(){
-		if (!$(this).hasClass("penAdded")){
-			var id = $(this).data("card-id");
-			$(this).addClass("penAdded").find(".catalog-card-statuses").append('<a class="edit-card" href="https://'+window.location.hostname+'/manager/product/edit/'+id+'" target="_blank"></a>');
-		}
+	$( document ).ready(function() {
+		$(".catalog-card:not(.penAdded), .big-catalog-card:not(.penAdded)").each(function () {
+			addEditButton(this);
+			addTextarea(this);
+		});
 	});
+
+	$(document).on('mouseenter', ".catalog-card:not(.penAdded)", function () {
+		$(".catalog-card:not(.penAdded), .big-catalog-card:not(.penAdded)").each(function () {
+			addEditButton(this);
+			addTextarea(this);
+		});
+	});
+
+	//Функция добавляет textarea c json-инорфмацией для рассылки
+	function addTextarea(item){
+		let _ = $(item);
+		if (!_.hasClass("jsonInputAdded")){
+			const data = JSON.stringify({
+				title: _.find('.cc-name p').text(),
+				image: _.find('.catalog-card-image a img').attr('data-src'),
+				link: _.find('.catalog-card-image a')[0].href,
+				isNew: _.find('.catalog-card-statuses').has('.cc-new').length ? true : false,
+				discount: _.find('.catalog-card-statuses').has('.cc-promo').length ? _.find('.catalog-card-image a .cc-promo').text() : false,
+				price: _.find('.catalog-card-content .cc-price').text().replace(/\n?/g, ""),
+				partner: _.find('.catalog-card-content .cc-partner').text(),
+				rating: _.find('.catalog-card-content .cc-popularity').has('.cc-rating').length ? _.find('.catalog-card-content .cc-popularity .cc-rating').text() : 'Рейтинг 4/5',
+			});
+
+			const a = $(document.createElement('input'))
+			.val(data)
+			.addClass('jsonInput')
+			.hover(function(){
+				$(this).select();
+			});
+
+			_.addClass("jsonInputAdded").find(".catalog-card-statuses").append(a);
+		}
+	}
+
+	//Функция добавляет кнопку редактирования карточки товара
+	function addEditButton (item){
+		let _ = $(item);
+		if (!_.hasClass("penAdded")){
+			let id = $(this).data("card-id");
+
+			_.addClass("penAdded").find(".catalog-card-statuses").append('<a class="edit-card" href="https://'+window.location.hostname+'/manager/product/edit/'+id+'" target="_blank"></a>');
+		}
+	}
+
+
+	//=======================================================================================================
+
 
 	//Кнопки редактирования цен в аккордеон цен на карточке
 	$("div.accordion-content-buy").each(function(){
