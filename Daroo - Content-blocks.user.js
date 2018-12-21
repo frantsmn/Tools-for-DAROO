@@ -1,17 +1,17 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      3.1
+// @version      3.2
 // @include      *daroo*.*/manager/*
 // @description  Формы для добавления контент-блоков. Парсинг документа на заголовки, META-заголовки и контент-блоки с последующей их вставкой в текстовый редактор сайта.
-// @updateURL 	 https://openuserjs.org/meta/frantsmn/Daroo_-_Content-blocks.meta.js
+// @updateURL 	 https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Content-blocks.user.js
 // @author       Frants Mitskun
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_deleteValue
 // @grant        GM_addStyle
 // @license	 	 MIT
-// @copyright 	 2018, frantsmn (https://openuserjs.org/users/frantsmn)
+// @copyright 	 2017-2019, frantsmn (https://github.com/frantsmn/userscripts)
 // ==/UserScript==
 
 //GM_deleteValue("settings");
