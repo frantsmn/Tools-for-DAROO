@@ -2,13 +2,13 @@
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
 // @include      */manager/*
-// @version      2.1
+// @version      2.2
 // @description  Исправления и улучшения для админки DAROO
-// @updateURL    https://openuserjs.org/meta/frantsmn/Daroo_-_Manager.meta.js
+// @updateURL    https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Manager.user.js
 // @author       Frants Mitskun
 // @grant		 GM_addStyle
 // @license		 MIT
-// @copyright 	 2017, frantsmn (https://openuserjs.org/users/frantsmn)
+// @copyright 	 2017-2019, frantsmn (https://github.com/frantsmn/userscripts)
 // ==/UserScript==
 
 //Ссылки из МЕНЮ открываются не в фрейме
