@@ -1,0 +1,39 @@
+main {
+    display: flex !important;
+    flex-wrap: nowrap;
+    height: 100vh;
+    padding: 5px;
+}
+
+section {
+    width: 50%;
+    margin: 5px;
+    border: solid 1px #ced4da;
+    border-radius: .25rem;
+    overflow: auto;
+}
+
+section#constructor {
+    min-width: 600px;
+    padding: 20px;
+}
+
+section#view {
+    min-width: 460px;
+}
+
+
+/*Исправления для bootstrap*/
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.form-group .input-group {
+    margin-bottom: 0 !important;
+}
+
+.big-checkbox {
+    width: 20px;
+    height: 20px;
+}

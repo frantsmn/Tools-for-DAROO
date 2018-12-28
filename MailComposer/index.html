@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+    crossorigin="anonymous">
+
+  <script src="composer.js" defer></script>
+
+  <title>Daroo Mail Composer</title>
+</head>
+
+<body>
+  <main>
+    <section id="constructor">
+
+      <!-- Текст перед баннером -->
+      <div class="form-group">
+          <h5>Текст перед баннером</h5>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">HTML</span>
+          </div>
+          <textarea class="form-control" id="beforeDescription-text">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolore aut nulla quod minus cupiditate temporibus consequatur omnis accusamus odio sapiente!</textarea>
+        </div>
+      </div>
+
+      <br>
+
+      <!-- Баннер -->
+      <div class="form-group">
+          <h5>Баннер</h5>
+          Адрес к папке в ftp: <b>http://lists.daroo.gift/mails/</b>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Путь к изображению</span>
+          </div>
+          <input id="banner-image" type="text" class="form-control" placeholder="Полный путь к картинке">
+        </div>
+
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Ссылка на страницу</span>
+          </div>
+          <input id="banner-link" type="text" class="form-control" placeholder="Полный путь к странице">
+        </div>
+      </div>
+
+      <br>
+
+      <!-- Текст после баннера -->
+      <div class="form-group">
+          <h5>Текст после баннера</h5>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">HTML</span>
+          </div>
+          <textarea class="form-control" id="afterDescription-text">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolore aut nulla quod minus cupiditate temporibus consequatur omnis accusamus odio sapiente!</textarea>
+        </div>
+      </div>
+
+      <br>
+
+      <!-- Промокод -->
+      <div class="form-group">
+          <h5>Промокод</h5>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Промокод</span>
+
+          </div>
+          <input id="promo-code" type="text" class="form-control">
+        </div>
+
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">HTML</span>
+          </div>
+          <textarea id="promo-text" class="form-control"></textarea>
+        </div>
+      </div>
+
+      <br>
+
+      <!-- Товары -->
+      <div class="form-group">
+          <h5>Список товаров</h5>
+        <div id="items-table" class="d-flex flex-wrap">
+
+          <div class="item-form form-group w-50 p-2" data-itempos="1">
+            <h5 class="text-center">Позиция 1</h5>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">JSON<br></span>
+              </div>
+              <input type="text" placeholder="JSON со сниппета товара" class="form-control">
+            </div>
+          </div>
+
+        </div>
+
+        <button id="add-item" type="button" class="btn btn-primary btn-sm m-2">Добавить позицию</button>
+        <button id="remove-item" type="button" class="btn btn-danger btn-sm">Удалить позицию</button>
+
+      </div>
+
+      <br>
+
+      <!-- Кнопка -->
+      <div class="form-group">
+          <h5>Кнопка</h5>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Текст</span>
+          </div>
+          <input id="button-title" type="text" value="Посмотреть еще" class="form-control">
+        </div>
+
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Ссылка</span>
+          </div>
+          <input id="button-link" type="text" class="form-control" placeholder="Полный путь к странице">
+        </div>
+      </div>
+
+      <br>
+      <hr>
+      <br>
+
+      <!-- Итоговая разметка -->
+      <div class="form-group">
+
+        <h5 class="text-center">Итоговая разметка письма</h5>
+        <div class="input-group">
+          <textarea id="result-html" class="form-control" rows="10" readonly></textarea>
+        </div>
+        <br>
+        <h5 class="text-center">Разметка для ниженого колонтитула (статичная)</h5>
+        <div class="input-group">
+          <textarea id="result-html" class="form-control" rows="10" readonly>
+
+            <table width="100%" border="0" cellpadding="0" cellspacing="0" style="font-family: Helvetica, Arial, sans-serif;">
+              <tr>
+                  <td align="center">
+                      <table width="600" border="0" cellpadding="0" cellspacing="0">
+                          <tr>
+                              <td align="center">
+                                  <table border="0" cellpadding="0" cellspacing="0">
+      
+                                      <div class="footer" style="text-align:center; font-size: 70%; color:darkgrey;">
+                                          <p>This message was sent to [EMAIL] by [FROMEMAIL]</p>
+                                          <p>To change your details and to choose which lists to be subscribed to, visit your
+                                              personal <a href="[PREFERENCESURL]" target="_blank" style="text-decoration: none; color:gray;">preferences
+                                                  page</a>.
+                                              Or you can <a href="[UNSUBSCRIBEURL]" target="_blank" style="text-decoration: none; color:gray;">opt-out
+                                                  completely</a> from all future mailings.</p>
+                                          <p><span style="color:white !important;">To forward this message, please do not use
+                                                  the forward button of your email application, because this message was made
+                                                  specifically for you only. Instead use the </span><a href="[FORWARDURL]"
+                                                  target="_blank" style="text-decoration: none; color:white;">forward page</a>
+                                              <span style="color: white !important;">in our newsletter system.</span></p>
+                                      </div>
+      
+                                  </table>
+                              </td>
+                          </tr>
+                      </table>
+                  </td>
+              </tr>
+          </table>
+        
+        </textarea>
+        </div>
+
+      </div>
+
+    </section>
+    <section id="view"></section>
+  </main>
+</body>
+
+
+<script id="mail" type="text/x-handlebars-template">
+
+
+  <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background: #f5f5f5; background-image: url('http://lists.daroo.gift/mails/06-12-2018/bg.png'); background-attachment: fixed; min-width: 450px; font-family: Helvetica, Arial, sans-serif; font-size: 14px; line-height: normal;">
+    <tbody>
+      <tr>
+        <td align="center" valign="top">
+  
+          <!-- CONTENT TABLE start -->
+          <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background: rgba(255, 255, 255, 0.7); box-shadow: 0px 0px 5px #dddddd; max-width: 620px; min-width: 450px; padding-left:10px; padding-right:10px;">
+            <tbody>
+              <tr>
+                <td align="center" valign="top">
+  
+                  <!-- HEADER start -->
+                  <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #944575; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;">
+                    <tbody>
+                      <tr>
+                        <td width="50%" style="padding-left: 30px; padding-right: 5px; text-align: left;">
+                          <a href="http://daroo.by" target="_blank">
+                            <img src="http://daroo.by/images/notification/ru/logo.png" width="120" height="79">
+                          </a>
+                        </td>
+                        <td width="50%" style="padding-right: 30px; padding-left: 5px; text-align: right;">
+                          <a href="http://daroo.by" target="_blank">
+                            <img src="http://daroo.by/images/notification/ru/slogan.png" width="145" height="79">
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <!-- HEADER end -->
+    
+                  <!-- CONTENT start -->
+                  <table cellpadding="0" cellspacing="0" border="0" width="100%">
+    
+                    <!-- MENU start -->
+                    <tbody><tr>
+                      <td>
+                        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                          <tbody><tr>
+                            <td height="50" width="25%" valign="bottom" align="center">
+                              <a href="https://daroo.by/minsk/catalog" target="_blank">
+                                <img src="http://lists.daroo.gift/mails/new_11-09-2018/icons/catalog.png" width="32" height="32">
+                              </a>
+                            </td>
+                            <td height="50" width="25%" valign="bottom" align="center">
+                              <a href="https://daroo.by/minsk/sale" target="_blank">
+                                <img src="http://lists.daroo.gift/mails/new_11-09-2018/icons/promo.png" width="32" height="32">
+                              </a>
+                            </td>
+                            <td height="50" width="25%" valign="bottom" align="center">
+                              <a href="http://daroo.by/minsk/catalog?sortBy=new" target="_blank">
+                                <img src="http://lists.daroo.gift/mails/new_11-09-2018/icons/badge.png" width="32" height="32">
+                              </a>
+                            </td>
+                            <td height="50" width="25%" valign="bottom" align="center">
+                              <a href="https://daroo.by/user/invitation" target="_blank">
+                                <img src="http://lists.daroo.gift/mails/new_11-09-2018/icons/bonus.png" width="32" height="32">
+                              </a>
+                            </td>
+                          </tr>
+    
+                          <tr>
+                            <td width="25%" valign="top" style="padding-top:5px; padding-bottom: 15px; text-align: center;">
+                              <a style="text-decoration: none; color: #3f454b;" href="https://daroo.by/minsk/catalog" target="_blank">Каталог</a>
+                            </td>
+                            <td width="25%" valign="top" style="padding-top:5px; padding-bottom: 15px; text-align: center;">
+                              <a style="text-decoration: none; color: #3f454b;" href="https://daroo.by/minsk/sale" target="_blank">Акции</a>
+                            </td>
+                            <td width="25%" valign="top" style="padding-top:5px;padding-bottom: 15px; text-align: center;">
+                              <a style="text-decoration: none; color: #3f454b;" href="http://daroo.by/minsk/catalog?sortBy=new" target="_blank">Новинки</a>
+                            </td>
+                            <td width="25%" valign="top" style="padding-top:5px;padding-bottom: 15px; text-align: center;">
+                              <a style="text-decoration: none; color: #3f454b;" href="https://daroo.by/user/invitation" target="_blank">Мои
+                                бонусы</a>
+                            </td>
+                          </tr>
+                        </tbody></table>
+                      </td>
+                    </tr>
+                    <!-- MENU end -->
+    
+                    <!-- TEXT BEFORE BANNER start -->
+                    {{#if beforeDescription.text}}
+                    <tr>
+                      <td style="padding-bottom: 10px;">
+                        <table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-radius: 5px; background: rgb(255, 229, 144); box-shadow: 0px 0px 5px #dddddd;">
+                          <tbody><tr>
+                            <td colspan="3" height="80" align="center" valign="middle" style="font-size:20px; line-height: 28px; padding: 20px;">{{{beforeDescription.text}}}</td>
+                          </tr>
+                        </tbody></table>
+                      </td>
+                    </tr>
+                    {{/if}}
+                    <!-- TEXT BEFORE BANNER end -->
+    
+                    <!-- BANNER start -->
+                    <tr>
+                      <td style="padding-bottom: 10px; line-height: 0; ">
+                        <a href="{{banner.link}}" target="_blank"><img src="{{banner.image}}" width="100%" style="border-radius: 5px; "></a>
+                      </td>
+                    </tr>
+                    <!-- BANNER end -->
+                    
+                    <!-- TEXT AFTER BANNER start -->
+                    {{#if afterDescription.text}}
+                    <tr>
+                      <td style="padding-bottom: 10px;">
+                        <table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-radius: 5px; background: rgb(255, 229, 144); box-shadow: 0px 0px 5px #dddddd;">
+                          <tbody>
+                            <tr>
+                              <td colspan="3" height="80" align="center" valign="middle" style="font-size:20px; line-height: 28px; padding: 20px;">{{{afterDescription.text}}}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    {{/if}}
+                    <!-- TEXT AFTER BANNER end -->
+    
+                    <!-- INSTRUCTION start -->
+                    {{#if promo.code}}
+                    <tr>
+                      <td style="padding-bottom: 10px;">
+                        <table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-radius: 5px; background: white; box-shadow: 0px 0px 5px #dddddd;">
+                          <tbody><tr>
+                            <td colspan="3" height="80" align="center" valign="middle" style="font-size:24px;">Как
+                              получить скидку</td>
+                          </tr>
+                          <tr>
+                            <td width="33%" height="60px" align="center" valign="middle"><a href="https://daroo.by/minsk/catalog" target="_blank"><img src="http://lists.daroo.gift/mails/new_11-09-2018/instruction/step1.png" width="70"></a></td>
+                            <td width="33%" height="60px" align="center" valign="middle"><img src="http://lists.daroo.gift/mails/new_11-09-2018/instruction/step2.png" width="70"></td>
+                            <td width="33%" height="60px" align="center" valign="middle"><img src="http://lists.daroo.gift/mails/new_11-09-2018/instruction/step3.png" width="70"></td>
+                          </tr>
+                          <tr>
+                            <td width="33%" height="60px" align="center" valign="middle" style="padding:10px; line-height: 20px;">Выберите
+                              товар<br><b><a href="https://daroo.by/minsk/catalog" target="_blank" style="text-decoration: none; color:#944575;">на
+                                  сайте</a></b></td>
+                            <td width="33%" height="60px" align="center" valign="middle" style="padding:10px; line-height: 20px;">Добавьте
+                              товар<br>в корзину</td>
+                            <td width="33%" height="60px" align="center" valign="middle" style="padding:10px; line-height: 20px;">Введите
+                              промокод<br><b>{{promo.code}}</b></td>
+                          </tr>
+                          <tr>
+                            <td colspan="3">
+                              <small style="text-align: center; display: block; padding-bottom: 15px; padding-top: 10px; padding-left: 10%; padding-right: 10%; color: grey;">
+                                {{{promo.text}}}
+                              </small>
+                            </td>
+                          </tr>
+                        </tbody></table>
+                      </td>
+                    </tr>
+                    {{/if}}
+                    <!-- INSTRUCTION end -->
+    
+                    <!-- ITEM GRID start -->
+                    <tr>
+
+                      <td style="padding-bottom: 10px;">
+                        <table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-radius: 5px; background: white; box-shadow: 0px 0px 5px #dddddd;">
+                          <tbody><tr>
+
+                            {{#each items}}
+                            <!-- ITEM start -->
+                            {{#if title}}
+                            <td width="50%" valign="top" style="padding: 10px;">
+                              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                                <tbody><tr>
+                                  <td>
+                                    <a href="{{link}}" target="_blank">
+                                      <img src="{{image}}" style="width: 100%; border-radius: 3px;">
+                                    </a>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td style="padding-top: 5px; line-height: 20px;"><b>{{title}}</b>
+                                  </td>
+                                </tr>
+                                
+                                {{#if_or isNew discount}}
+                                  <tr><td style="line-height: 25px; padding-top: 5px;">
+                                    {{#if isNew}}
+                                      <span style="background-color: #84b914; padding: 3px 5px; border-radius: 3px; color: white; font-weight: bold; white-space:nowrap;">Новинка</span>
+                                    {{/if}}
+                                    {{#if discount}}
+                                      <span style="background-color: #fdae2f; padding: 3px 5px; border-radius: 3px; color: white; font-weight: bold; white-space:nowrap;">Скидка {{discount}}</span>
+                                    {{/if}}
+                                  </td></tr>
+                                {{/if_or}}
+
+                                <tr>
+                                  <td style="padding-top: 5px; line-height: 20px; color:#fdae2f;"><b>{{price}}</b>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td style="padding-top: 5px; line-height: 20px;"><span style="padding-right: 5px;">{{partner}}</span>
+                                    <span style="white-space:nowrap;"><span style="font-size: 17px; font-weight: bolder; color:#fdae2f; padding-right: 5px;">★</span><span>{{rating}}</span>
+                                    </span>
+                                  </td>
+                                </tr>
+                              </tbody></table>
+                            </td>
+                            {{#if isSecond}}
+                              </tr><tr>
+                            {{/if}}
+                            
+                            {{/if}}
+
+                            <!-- ITEM end -->
+                            {{/each}}
+    
+                            <!-- BUTTON start -->
+                            <td colspan="2" align="center" valign="middle" style="padding: 15px 0 25px;">
+                              <a href="{{button.link}}" target="_blank" style="display: inline-block; background-color: #944575; color:white; text-decoration: none; padding: 15px 30px; border-radius: 3px;">{{button.title}}</a>
+                            </td>
+                            <!-- BUTTON end -->
+    
+                          </tr>
+    
+                        </tbody></table>
+                      </td>
+                    </tr>
+                    <!-- ITEM GRID end -->
+    
+    
+                    <!-- INFO start -->
+                    <tr>
+                      <td>
+                        <!-- Some info text -->
+                      </td>
+                    </tr>
+                    <!-- INFO end -->
+    
+                  </tbody></table>
+                  <!-- CONTENT end -->
+    
+                  <!-- FOOTER start -->
+                  <table cellpadding="0" cellspacing="0" border="0" width="100%" height="80" style="background-color: #944575; border-top-left-radius: 5px; border-top-right-radius: 5px;">
+                    <tbody><tr>
+                      <td align="center" valign="middle" colspan="5" height="60" style="font-size:12px; color:#50263f; padding-left: 10px; padding-right: 10px;">
+                        <a href="https://daroo.by/minsk/catalog" target="_blank" style="text-decoration: none; color:#ffffff; padding-left:0px; padding-right:10px;">Каталог</a>|
+                        <a href="https://daroo.by/minsk/contacts" target="_blank" style="text-decoration: none; color:#ffffff; padding-left:10px; padding-right:10px;">Магазины</a>|
+                        <a href="https://daroo.by/minsk/dostavka-i-oplata" target="_blank" style="text-decoration: none; color:#ffffff; padding-left:10px; padding-right:10px;">Доставка</a>|
+                        <a href="mailto:da@daroo.gift" target="_blank" style="text-decoration: none; color:#ffffff; padding-left:10px; padding-right:0px;">E-mail</a>
+                      </td>
+    
+                    </tr>
+                    <tr>
+                      <td height="20" align="center" style="padding-left: 10px; padding-right: 10px; font-size: 12px; color:#50263f;">
+                        © 2016-2018 ООО «Дару Тек» УНП 192631946
+                      </td>
+                    </tr>
+                  </tbody></table>
+                  <!-- FOOTER end -->
+    
+                </td>
+              </tr>
+            </tbody></table>
+            <!-- CONTENT TABLE end -->
+    
+          </td>
+        </tr>
+      </tbody></table>
+</script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js" integrity="sha256-qlku5J3WO/ehJpgXYoJWC2px3+bZquKChi4oIWrAKoI="
+  crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+  crossorigin="anonymous"></script>
+
+</html>
