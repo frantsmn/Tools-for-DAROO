@@ -1,5 +1,6 @@
 //Предварительный объект для шаблона
 const mail = {
+    background : '',
 
     beforeDescription: {
         text: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolore aut nulla quod minus cupiditate temporibus consequatur omnis accusamus odio sapiente!',
@@ -55,6 +56,8 @@ const mail = {
         link: 'http://daroo.by/minsk/catalog',
     },
 
+    year: new Date().getFullYear()
+
 }
 
 //Сбор данных с шаблона по готовности документа + функции для кнопок "Добавить/Удалить позицию"
@@ -86,12 +89,15 @@ $(document).ready(() => {
 
 //Сбор данных с шаблона по нажатию кнопки
 $('#constructor')
-    .on('keyup', 'input, textarea', collectData)
+    .on('keyup', 'input, textarea:not([id*=result-])', collectData)
     .on('click', 'button', collectData);
 
 //Функция собирает данные с заполненных форм и вставляет готовый шаблон во #view
 function collectData() {
     let _ = mail;
+
+    //Фон (картинка) для рассылки
+    _.background = $('#background').val();
 
     //Текст перед баннером
     _.beforeDescription.text = $('#beforeDescription-text').val();
@@ -142,6 +148,8 @@ function collectData() {
     $('#result-html').text(template(mail));
 }
 
+//###################################################################################
+
 //Helper IF_OR для шаблонизатора
 Handlebars.registerHelper('if_or', function (elem1, elem2, options) {
     if (Handlebars.Utils.isEmpty(elem1) && Handlebars.Utils.isEmpty(elem2)) {
@@ -150,6 +158,8 @@ Handlebars.registerHelper('if_or', function (elem1, elem2, options) {
         return options.fn(this);
     }
 });
+
+//###################################################################################
 
 //Предупреждение о закрытии/перезагрузке вкладки 
 window.onbeforeunload = function (evt) {
