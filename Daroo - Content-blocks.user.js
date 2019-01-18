@@ -448,7 +448,7 @@ class Panel {
 
 		//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 		//ВСТАВКА КОНТЕНТ-БЛОКА В РЕДАКТОР
-		this.insert_text = function (code, text) {
+		this.insertText = function (code, text) {
 
 			//Выбор необходимого контент-блока из выпадайки
 			function select(by, ru) {
@@ -521,6 +521,8 @@ class Panel {
 
 	//Добавление строки с кнопкой вставки текста (контент-блоков) на панель результата
 	addRezultRow(number, code, name) {
+		const insertText = this.insertText;
+
 		$("#rezultPanel #rows").append(`
 			<div class="row">${name}
 				<button class="insert-text btn btn-xs btn-default" data-code="${code}" data-number="${number}">Вставить текст</button>
@@ -528,7 +530,7 @@ class Panel {
 			`);
 
 		$("button.insert-text").on("click", function () {
-			insert_text($(this).data("code"), blocks[$(this).data("number")].text); //Вставляет текст из соотв. объекта массива blocks
+			insertText($(this).data("code"), blocks[$(this).data("number")].text); //Вставляет текст из соотв. объекта массива blocks
 		});
 	}
 }
