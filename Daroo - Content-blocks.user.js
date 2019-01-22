@@ -173,31 +173,39 @@ class Menu {
 
 			//Отображаем поле для текста
 			$("#doc-text").fadeIn(1, function () {
-				$(this).focus().tooltip('show');
-			})
+					$(this).focus().tooltip('show');
+				})
 				//Передаем содержимое поля парсеру при input и скрываем поле
 				.on("input", function () {
 
-
-					//TODO: Тут стоит обращатся к методу (.clear() или .init()) класса Panel, который еще не написан
-					//Очищаем панель результата
-					$("#rezultPanel .row:not(first-child)").remove();
-
+					//Парсить содержимое поля
 					parser.parse($(this).val());
 
-					//TODO:
-					$("#rezultPanel div.first-row span").html(`Найдено контент-блоков: ${parser.blocks.length}`);
-					//TODO:
-					$("#rezultPanel").show();
+					//Очистить панель результата
+					panel.removeRows();
 
+					//Добавить на панель результата инф. о кол-ве найденных контент-блоков
+					panel.addBlocksCounter(parser.blocks.length);
+
+					//Добавить на панель результата кнопку вставки заголовков
+					panel.addMetaRow(parser.meta.titlesHtml);
+
+					//Добавить на панель результата кнопку вставки лида
+					panel.addLidTextRow(parser.meta.lid);
+
+					//Добавить на панель результата контент-блоки
+					panel.addRezultRows(parser.blocks);
+
+					//Показать панель результата
+					panel.show();
+
+					//Скрыть tooltip
 					$(this).delay(50).tooltip('hide').fadeOut(0);
-
 				})
 				//Скрываем поле для текста при focusout
 				.on("focusout", function () {
 					$("#doc-text").delay(50).tooltip('hide').fadeOut(0);
 				});
-
 		});
 	}
 }
@@ -301,10 +309,10 @@ class Panel {
 					$("select#product_block_content").val(by).change();
 					$("select#supplier_block_content").val(by).change();
 				} else
-					if (location.host === "daroo.ru") {
-						$("select#product_block_content").val(ru).change();
-						$("select#supplier_block_content").val(ru).change();
-					}
+				if (location.host === "daroo.ru") {
+					$("select#product_block_content").val(ru).change();
+					$("select#supplier_block_content").val(ru).change();
+				}
 			}
 
 			//Выбираем необходимый блок согласно кодовому имени
@@ -338,45 +346,68 @@ class Panel {
 	}
 
 	//Добавление строки с кнопкой вставки META-заголовков на панель результата
-	addMetaRow(titles_names) {
-		$("#rezultPanel #rows").append(`<div class="row" data-toggle="tooltip" data-html="true" data-placement="bottom" title="<span class='glyphicon glyphicon-stop' aria-hidden='true' style='color:#007bff;'></span> SEO-заголовки<br><span class='glyphicon glyphicon-stop' aria-hidden='true' style='color:#6c757d;'></span> Заголовки<br><span class='glyphicon glyphicon-stop' aria-hidden='true' style='color:#28a745;'></span> Тексты">${titles_names}<button class="btn btn-xs btn-default paste-meta-info-button">Вставить заголовки</button></div>`);
-		//Инициализируем tooltip'ы для панельки результата
-		$('#rezultPanel [data-toggle="tooltip"]').tooltip({
-			delay: {
-				"show": 800,
-				"hide": 100
-			}
-		});
+	addMetaRow(html) {
+		if (html.length > 0) {
+			$("#rezultPanel #rows").append(`<div class="row" data-toggle="tooltip" data-html="true" data-placement="bottom" title="<span class='glyphicon glyphicon-stop' aria-hidden='true' style='color:#007bff;'></span> SEO-заголовки<br><span class='glyphicon glyphicon-stop' aria-hidden='true' style='color:#6c757d;'></span> Заголовки<br><span class='glyphicon glyphicon-stop' aria-hidden='true' style='color:#28a745;'></span> Тексты">${html}<button class="btn btn-xs btn-default paste-meta-info-button">Вставить заголовки</button></div>`);
+			//Инициализируем tooltip'ы для панельки результата
+			$('#rezultPanel [data-toggle="tooltip"]').tooltip({
+				delay: {
+					"show": 800,
+					"hide": 100
+				}
+			});
+		}
 	}
 
 	//Добавление строки с кнопкой вставки лида (текста для баннера) на панель результата
-	addLidTextRow() {
-		$("#rezultPanel #rows").append('<div class="row"><b>Лид (текст для баннера)</b><button class="btn btn-xs btn-default add-new-banner-button">Добавить новый баннер</button><button class="btn btn-xs btn-default paste-lid-text-button">Вставить лид</button></div>');
-		$("button.paste-lid-text-button").on("click", function () {
-			$("input#productBanner_translations_ru_name").val("Баннер");
-			$("textarea#productBanner_translations_ru_description").val(parser.meta.lid);
-			$("input.field-active[name='productBanner[visible]']").bootstrapSwitch("state", true);
-		});
+	addLidTextRow(text) {
+		//Если есть Лид и мы на странице редактирования карточки
+		if (text != null && getPageType("type") === "product") {
 
-		$("button.add-new-banner-button").on("click", function () {
-			if (getPageType("type") === "product")
-				$("a[id='product-banner-create'] button").click();
+			$("#rezultPanel #rows").append('<div class="row"><b>Лид (текст для баннера)</b><button class="btn btn-xs btn-default add-new-banner-button">Добавить новый баннер</button><button class="btn btn-xs btn-default paste-lid-text-button">Вставить лид</button></div>');
+			$("button.paste-lid-text-button").on("click", function () {
+				$("input#productBanner_translations_ru_name").val("Баннер");
+				$("textarea#productBanner_translations_ru_description").val(text);
+				$("input.field-active[name='productBanner[visible]']").bootstrapSwitch("state", true);
+			});
+
+			$("button.add-new-banner-button").on("click", function () {
+				if (getPageType("type") === "product")
+					$("a[id='product-banner-create'] button").click();
+			});
+
+		}
+	}
+
+	//Добавление строк с кнопкой вставки текста (контент-блоков) на панель результата
+	addRezultRows(blocks) {
+		blocks.forEach((item, i) => {
+			const insertText = this.insertText;
+
+			$("#rezultPanel #rows").append(`
+				<div class="row">${item.name}
+					<button class="insert-text btn btn-xs btn-default" data-code="${item.code}" data-number="${i}">Вставить текст</button>
+				</div>
+			`);
+
+			$("button.insert-text").on("click", function () {
+				insertText($(this).data("code"), parser.blocks[$(this).data("number")].text); //Вставляет текст из соотв. объекта массива blocks
+			});
 		});
 	}
 
-	//Добавление строки с кнопкой вставки текста (контент-блоков) на панель результата
-	addRezultRow(number, code, name) {
-		const insertText = this.insertText;
+	//Добавление инормации о кол-ве найденных контент-блоков
+	addBlocksCounter(n) {
+		$("#rezultPanel div.first-row span").html(`Найдено контент-блоков: ${n}`);
+	}
 
-		$("#rezultPanel #rows").append(`
-			<div class="row">${name}
-				<button class="insert-text btn btn-xs btn-default" data-code="${code}" data-number="${number}">Вставить текст</button>
-			</div>
-			`);
+	//Удаление строк с кнопокой вставки текста
+	removeRows() {
+		$("#rezultPanel .row:not(first-child)").remove();
+	};
 
-		$("button.insert-text").on("click", function () {
-			insertText($(this).data("code"), parser.blocks[$(this).data("number")].text); //Вставляет текст из соотв. объекта массива blocks
-		});
+	show() {
+		$("#rezultPanel").show();
 	}
 }
 
@@ -394,7 +425,8 @@ class Parser {
 			h1: "",
 			title_for_marketing: "",
 			lid: "",
-			description_for_marketing: ""
+			description_for_marketing: "",
+			titlesHtml: []
 		}; */
 
 		//Массив контент-блоков
@@ -408,64 +440,57 @@ class Parser {
 	}
 
 	parse(text) {
-
-		//Очищаем объект мета-заголовков
-		this.meta = {};
-
 		//Разбираем текст по строкам
 		let strings = text.split('\n');
 
-		//Строка для названий всех найденных META-заголовков
-		let titles_names = "";
+		//Очищаем объект мета-заголовков
+		this.meta = {
+			titlesHtml: "" //html для вставки на панель результата 
+		};
+
+		//Очищаем массив объектов контент-блоков
+		this.blocks = [];
 
 		//Поиск META-заголовков
 		for (let i = 0; i <= strings.length; i++) {
 			switch (true) {
 				case /Title	/.test(strings[i]):
 					this.meta.title = strings[i].slice(6);
-					titles_names += "<span class='seo'>Мета-заголовок</span>";
+					this.meta.titlesHtml += "<span class='seo'>Мета-заголовок</span>";
 					break;
 				case /Description	/.test(strings[i]):
 					this.meta.description = strings[i].slice(12);
-					titles_names += "<span class='seo'>Мета-описание</span>";
+					this.meta.titlesHtml += "<span class='seo'>Мета-описание</span>";
 					break;
 				case /Заголовок в каталоге для товаров \/ Название партнера	/.test(strings[i]):
 					this.meta.title_for_catalog = strings[i].slice(53);
-					titles_names += (getPageType("type") == "product") ? "<span class='seo'>Крошка</span><span>Наименование</span><span>Наименование для каталога</span>" : "<span class='seo'>Крошка</span><span>Наименование</span><span>Краткое наименование</span>";
+					this.meta.titlesHtml += getPageType("type") === "product" ? "<span class='seo'>Крошка</span><span>Наименование</span><span>Наименование для каталога</span>" : "<span class='seo'>Крошка</span><span>Наименование</span><span>Краткое наименование</span>";
 					break;
 				case /Заголовок H1 \(только для товаров\)	/.test(strings[i]):
 					this.meta.h1 = strings[i].slice(34);
-					titles_names += (getPageType("type") == "product") ? "<span>Заголовок H1</span>" : "";
+					this.meta.titlesHtml += getPageType("type") === "product" ? "<span>Заголовок H1</span>" : "";
 					break;
 				case /Заголовок для рекламы \(только для товаров\) 25 символов	/.test(strings[i]):
 					this.meta.title_for_marketing = strings[i].slice(55);
-					titles_names += (getPageType("type") == "product") ? "<span>Наименование для маркетинга</span>" : "";
+					this.meta.titlesHtml += getPageType("type") === "product" ? "<span>Наименование для маркетинга</span>" : "";
 					break;
 				case /Лид для товара \/ Лид для партнера/.test(strings[i]):
 					while (strings[i + 1] === "")
 						i++;
 					this.meta.lid = strings[i + 1];
-					titles_names += (getPageType("type") == "product") ? "" : "<span class='text'>Аннотация</span>";
+					this.meta.titlesHtml += getPageType("type") === "product" ? "" : "<span class='text'>Аннотация</span>";
 					break;
 				case /Описание для маркетинга/.test(strings[i]):
 					while (strings[i + 1] === "")
 						i++;
 					this.meta.description_for_marketing = strings[i + 1];
-					titles_names += "<span class='text'>Описание для маркетинга</span>";
+					this.meta.titlesHtml += "<span class='text'>Описание для маркетинга</span>";
 					break;
 				case /.*-sh/.test(strings[i]): //Если нашли начало контент-блока
 					i = Infinity; //Присваиваем i бесконечность, чтобы выйти из цикла и не проверять дальше текст
 					break;
 			}
 		}
-
-		if (titles_names.length > 0) //Если заголовки нашлись
-			panel.addMetaRow(titles_names); //Добавим запись и кнопку на их вставку в панельку результата
-
-		if (this.meta.lid != null && getPageType("type") === "product") //Если есть Лид и мы на странице редактирования карточки
-			panel.addLidTextRow(); //Добавим запись и кнопку на вставку Лида в панельку результата
-
-		this.blocks = []; //Очищаем массив объектов контент-блоков
 
 		//Формирование массива контент-блоков и добавление названий и кнопок контент-блоков на панельку результата
 		strings.forEach((item, i) => {
@@ -476,7 +501,6 @@ class Parser {
 						name: "Две колонки",
 						text: blockConstructor.makeDkText(i, strings)
 					});
-					panel.addRezultRow(this.blocks.length - 1, "dk", "Две колонки");
 					break;
 				case "ci-sh":
 					this.blocks.push({
@@ -484,7 +508,6 @@ class Parser {
 						name: "Цитата",
 						text: blockConstructor.makeCiText(i, strings)
 					});
-					panel.addRezultRow(this.blocks.length - 1, "ci", "Цитата");
 					break;
 				case "pv-sh":
 					this.blocks.push({
@@ -492,7 +515,6 @@ class Parser {
 						name: "Преимущества/возможности",
 						text: blockConstructor.makePvText(i, strings)
 					});
-					panel.addRezultRow(this.blocks.length - 1, "pv", "Преимущества/возможности");
 					break;
 				case "ot-sh":
 					this.blocks.push({
@@ -500,7 +522,6 @@ class Parser {
 						name: "Подзаголовок/Обычный текст",
 						text: blockConstructor.makeOtText(i, strings)
 					});
-					panel.addRezultRow(this.blocks.length - 1, "ot", "Подзаголовок/Обычный текст");
 					break;
 				case "h-sh":
 					this.blocks.push({
@@ -508,7 +529,6 @@ class Parser {
 						name: "Характеристики",
 						text: blockConstructor.makeHText(i, strings)
 					});
-					panel.addRezultRow(this.blocks.length - 1, "h", "Характеристики");
 					break;
 				case "se-sh":
 					this.blocks.push({
@@ -516,7 +536,6 @@ class Parser {
 						name: "Структура/этапы",
 						text: blockConstructor.makeSeText(i, strings)
 					});
-					panel.addRezultRow(this.blocks.length - 1, "se", "Структура/этапы");
 					break;
 				case "sv-sh":
 					this.blocks.push({
@@ -524,7 +543,6 @@ class Parser {
 						name: "Сервисные возможности",
 						text: blockConstructor.makeSvText(i, strings)
 					});
-					panel.addRezultRow(this.blocks.length - 1, "sv", "Сервисные возможности");
 					break;
 			}
 		});
@@ -532,7 +550,7 @@ class Parser {
 }
 
 class BlockConstructor {
-	constructor() { }
+	constructor() {}
 
 	//===============================================================================================
 	//  ДВЕ КОЛОНКИ
@@ -608,8 +626,7 @@ class BlockConstructor {
 
 		const regex = /^.{1,2}-sh$/g;
 		arr.some(function (item, i) { //Подрезаем массив по началу следующего блока
-			if (regex.test(item)) //Если нашли начало следующего контент-блока
-			{
+			if (regex.test(item)) { //Если нашли начало следующего контент-блока
 				arr = arr.slice(0, i); //Обрезаем массив
 				return true; //Выходим из цикла
 			}
@@ -624,13 +641,12 @@ class BlockConstructor {
 		}
 
 		let ot_text = '<div class="full-desc"><div class="desc row-text">';
-		if (arr[0].length) //Если есть заголовок
+		if (arr[0].length) { //Если есть заголовок
 			ot_text += `<h2>'${arr[0]}</h2>`; //Вставляем заголовок в итоговый текст
-
+		}
 		for (let i = 1; i <= arr.length - 1; i++) {
 			if (arr[i][0] == '●' || arr[i][0] == '•') {
-				if (ot_text.slice(-11) === '<p><br></p>') //Убираем лишний перенос (если есть), т.к. следующим в тексте идет список
-				{
+				if (ot_text.slice(-11) === '<p><br></p>') { //Убираем лишний перенос (если есть), т.к. следующим в тексте идет список
 					ot_text = ot_text.slice(0, -11);
 				}
 				ot_text += '<ul>';
@@ -654,15 +670,13 @@ class BlockConstructor {
 		arr = arr.slice(++start);
 		const regex = /^.{1,2}-sh$/g;
 		arr.some(function (item, i) { //Подрезаем массив по началу следующего блока
-			if (regex.test(item)) //Если нашли начало следующего контент-блока
-			{
+			if (regex.test(item)) { //Если нашли начало следующего контент-блока
 				arr = arr.slice(0, i); //Обрезаем массив
 				return true; //Выходим из цикла
 			}
 		});
 
-		for (let i = arr.length - 1; i >= 0; i--) //Подрезаем пустые строки с конца массива
-		{
+		for (let i = arr.length - 1; i >= 0; i--) { //Подрезаем пустые строки с конца массива
 			if (!/\S/.test(arr[i]) || arr[i].length < 2) //Если строка состоит только из пробелов или её длина меньше 2 симв.
 				arr = arr.slice(0, i); //То удаляем строку
 			else
@@ -702,8 +716,7 @@ class BlockConstructor {
 		arr = arr.slice(++start);
 		const regex = /^.{1,2}-sh$/g;
 		arr.some(function (item, i) { //Подрезаем массив по началу следующего блока
-			if (regex.test(item)) //Если нашли начало следующего контент-блока
-			{
+			if (regex.test(item)) { //Если нашли начало следующего контент-блока
 				arr = arr.slice(0, i); //Обрезаем массив
 				return true; //Выходим из цикла
 			}
@@ -761,12 +774,9 @@ class BlockConstructor {
 		let counter = 0; //Счетчик пары
 
 		let sv_text = '<div class="detail-faq-block infoscroll-content"><div class="row">'; //Стартовая строка
-		for (let j = 0; j <= sv_strings.label.length; j++) //Перебираем найденные строки и собираем из найденного разметку
-		{
-			if (sv_strings.text[j]) //Если не пустая ячейка
-			{
-				if (counter === 2) //Если был заполнен второй столбец то,
-				{
+		for (let j = 0; j <= sv_strings.label.length; j++) { //Перебираем найденные строки и собираем из найденного разметку
+			if (sv_strings.text[j]) { //Если не пустая ячейка
+				if (counter === 2) { //Если был заполнен второй столбец то,
 					sv_text += '</div><div class="row">'; //Добавим теги перехода на следующюю строку
 					counter = 0; //И обнулим счетчик
 				}
@@ -804,7 +814,6 @@ class BlockConstructor {
 		return sv_text;
 	}
 }
-
 
 const parser = new Parser();
 const blockConstructor = new BlockConstructor();

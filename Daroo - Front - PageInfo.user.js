@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Front - PageInfo
 // @namespace    PageInfo
-// @version      4.5
+// @version      4.6
 // @description  Добавляет на страницы сайта DAROO вспомогательные ссылки и информацию (для редактора/контент-менеджера)
 // @updateURL    https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Front%20-%20PageInfo.user.js
 // @author       Frants Mitskun
@@ -379,7 +379,7 @@ $(function () {
 	function addEditButton(item) {
 		let _ = $(item);
 		if (!_.hasClass("penAdded")) {
-			let id = $(this).data("card-id");
+			let id = _.data("card-id");
 
 			_.addClass("penAdded").find(".catalog-card-statuses").append('<a class="edit-card" href="https://' + window.location.hostname + '/manager/product/edit/' + id + '" target="_blank"></a>');
 		}
