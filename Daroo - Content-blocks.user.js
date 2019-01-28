@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      3.4
+// @version      3.5
 // @include      *daroo*.*/manager/*
 // @description  Формы для добавления контент-блоков. Парсинг документа на заголовки, META-заголовки и контент-блоки с последующей их вставкой в текстовый редактор сайта.
 // @updateURL 	 https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Content-blocks.user.js
@@ -120,6 +120,7 @@ div#doc-textarea-holder #doc-text {
 //▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 
 function getPageType(param) {
+	console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Вызов функции getPageType() с параметром > ' + param);
 	switch (true) {
 		case $('input#product__token').length > 0:
 			if (param == "type") return "product";
@@ -168,15 +169,22 @@ class Menu {
 		//Клик на кнопку "Разобрать документ"
 		$("#doc-textarea-button").click(function () {
 
+			console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Нажатие на кнопку "Разобрать документ"');
+
 			//Создаем поле для текста с пояснением в tooltip о типе карточки
 			$("#doc-textarea-holder").html(`<textarea id='doc-text' placeholder='Вставьте содержимое документа в это поле' data-toggle='tooltip' data-trigger='manual' data-html='true' data-placement='left' data-original-title='Текст будет разобран как <b>${getPageType("name")}</b>'></textarea>`);
 
-			//Отображаем поле для текста
+
 			$("#doc-text").fadeIn(1, function () {
+
+					console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Коллбэк — отображение tooltip к полю ввода');
+
 					$(this).focus().tooltip('show');
 				})
 				//Передаем содержимое поля парсеру при input и скрываем поле
 				.on("input", function () {
+
+					console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Коллбэк — парсинг и работа с панелью результата');
 
 					//Парсить содержимое поля
 					parser.parse($(this).val());
@@ -233,6 +241,8 @@ class Panel {
 			</div>
 		`);
 
+		console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Панель результата добавлена к body c offset > ' + settings);
+
 		$("#rezultPanel")
 			.draggable()
 			.offset(settings.offset)
@@ -240,7 +250,7 @@ class Panel {
 			.on('mouseup', function () {
 				settings.offset = $(this).offset();
 				GM_setValue("settings", settings);
-				// console.log(GM_getValue("settings"));
+				console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Объект settings в storage после сохранения по mouseup > ' + GM_getValue("settings"));
 			})
 			//Закрывать по клику на крестик
 			.on('click', '.close', function () {
@@ -441,6 +451,9 @@ class Parser {
 	}
 
 	parse(text) {
+
+		console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Вызов parse() c параметром > ' + text);
+
 		//Разбираем текст по строкам
 		let strings = text.split('\n');
 
@@ -577,9 +590,7 @@ class BlockConstructor {
 	//  ЦИТАТА
 	//===============================================================================================
 	makeCiText(start, arr) {
-
 		arr = arr.slice(++start);
-
 		return `<div class="detail-quote-block clear">
 				<div class="quoute-holder">
 					<figure>
@@ -599,7 +610,6 @@ class BlockConstructor {
 	//===============================================================================================
 	makePvText(start, arr) {
 		arr = arr.slice(++start);
-
 		const strings = [
 			`<div class="detail-desc-features clear"><h2>${arr[0]}</h2><ul>`,
 			`<li><figure><img src="http://images.daroo.gift/daroo.ru/gallery/editor/2018/01/12/5a58c61b50bf3.jpg"><br></figure><h3>${arr[2].split('\t')[0]}<br></h3>${arr[3].split('\t')[0]}</li>`,
@@ -624,7 +634,6 @@ class BlockConstructor {
 	//===============================================================================================
 	makeOtText(start, arr) {
 		arr = arr.slice(++start);
-
 		const regex = /^.{1,2}-sh$/g;
 		arr.some(function (item, i) { //Подрезаем массив по началу следующего блока
 			if (regex.test(item)) { //Если нашли начало следующего контент-блока
