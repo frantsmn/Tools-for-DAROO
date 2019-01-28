@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      3.3
+// @version      3.4
 // @include      *daroo*.*/manager/*
 // @description  Формы для добавления контент-блоков. Парсинг документа на заголовки, META-заголовки и контент-блоки с последующей их вставкой в текстовый редактор сайта.
 // @updateURL 	 https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Content-blocks.user.js
@@ -201,6 +201,7 @@ class Menu {
 
 					//Скрыть tooltip
 					$(this).delay(50).tooltip('hide').fadeOut(0);
+
 				})
 				//Скрываем поле для текста при focusout
 				.on("focusout", function () {
@@ -642,7 +643,7 @@ class BlockConstructor {
 
 		let ot_text = '<div class="full-desc"><div class="desc row-text">';
 		if (arr[0].length) { //Если есть заголовок
-			ot_text += `<h2>'${arr[0]}</h2>`; //Вставляем заголовок в итоговый текст
+			ot_text += `<h2>${arr[0]}</h2>`; //Вставляем заголовок в итоговый текст
 		}
 		for (let i = 1; i <= arr.length - 1; i++) {
 			if (arr[i][0] == '●' || arr[i][0] == '•') {
