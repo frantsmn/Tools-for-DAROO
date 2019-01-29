@@ -356,6 +356,7 @@ $(function () {
 				image: _.find('.catalog-card-image a img').attr('data-src'),
 				link: _.find('.catalog-card-image a')[0].href,
 				isNew: _.find('.catalog-card-statuses').has('.cc-new').length ? true : false,
+				isSet: _.find('.catalog-card-statuses').has('.cc-set').length ? true : false,
 				discount: _.find('.catalog-card-statuses').has('.cc-promo').length ? _.find('.catalog-card-image a .cc-promo').text() : false,
 				price: _.find('.catalog-card-content .cc-price').text().replace(/\n?/g, ""),
 				partner: _.find('.catalog-card-content .cc-partner').text(),

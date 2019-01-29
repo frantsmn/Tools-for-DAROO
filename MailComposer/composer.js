@@ -29,6 +29,7 @@ const mail = {
         image: '',
         link: '',
         isNew: '',
+        isSet: '',
         discount: '',
         price: '',
         partner: '',
@@ -42,6 +43,7 @@ const mail = {
         title: 'Наименование товара',
         image: 'https://daroo.by/img/lazy.svg',
         link: 'https://daroo.by',
+        isSet: false,
         isNew: true,
         discount: '25%',
         price: '10 руб. – 200 руб.',
@@ -151,8 +153,8 @@ function collectData() {
 //###################################################################################
 
 //Helper IF_OR для шаблонизатора
-Handlebars.registerHelper('if_or', function (elem1, elem2, options) {
-    if (Handlebars.Utils.isEmpty(elem1) && Handlebars.Utils.isEmpty(elem2)) {
+Handlebars.registerHelper('if_or', function (elem1, elem2, elem3, options) {
+    if (Handlebars.Utils.isEmpty(elem1) && Handlebars.Utils.isEmpty(elem2) && Handlebars.Utils.isEmpty(elem3)) {
         return options.inverse(this);
     } else {
         return options.fn(this);

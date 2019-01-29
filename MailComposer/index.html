@@ -388,10 +388,13 @@
                                   </td>
                                 </tr>
                                 
-                                {{#if_or isNew discount}}
+                                {{#if_or isNew isSet discount}}
                                   <tr><td style="line-height: 25px; padding-top: 5px;">
                                     {{#if isNew}}
                                       <span style="background-color: #84b914; padding: 3px 5px; border-radius: 3px; color: white; font-weight: bold; white-space:nowrap;">Новинка</span>
+                                    {{/if}}
+                                    {{#if isSet}}
+                                      <span style="background-color: #ec5c44; padding: 3px 5px; border-radius: 3px; color: white; font-weight: bold; white-space:nowrap;">Набор</span>
                                     {{/if}}
                                     {{#if discount}}
                                       <span style="background-color: #fdae2f; padding: 3px 5px; border-radius: 3px; color: white; font-weight: bold; white-space:nowrap;">Скидка {{discount}}</span>
