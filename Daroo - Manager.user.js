@@ -2,7 +2,7 @@
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
 // @include      */manager/*
-// @version      2.4
+// @version      2.5
 // @description  Исправления и улучшения для админки DAROO
 // @updateURL    https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Manager.user.js
 // @author       Frants Mitskun
@@ -462,7 +462,7 @@ height: 216px !important;
 function getBlockNumberFromUrl() {
     const params = new URLSearchParams(location.search)
     if (params)
-        return params.get('editBlock').length ? params.get('editBlock') : null;
+        return params.get('editBlock')!= null && params.get('editBlock').length ? params.get('editBlock') : null;
     else return null;
 }
 
