@@ -225,7 +225,6 @@ $(function () {
 	
 	</style>`;
 
-
 	var meta = `
 	<div id="meta">
 		<table>
@@ -286,7 +285,6 @@ $(function () {
 
 	//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 	//ВСПОМОГАТЕЛЬНЫЕ ЭЛЕМЕНТЫ НА СНИППЕТЕ КАРТОЧКИ ТОВАРА
-
 
 	let catalog_card_style = `
 	<style>
@@ -384,7 +382,6 @@ $(function () {
 			_.addClass("penAdded").find(".catalog-card-statuses").append('<a class="edit-card" href="https://' + window.location.hostname + '/manager/product/edit/' + id + '" target="_blank"></a>');
 		}
 	}
-
 
 	//###############################################################
 	//Кнопки редактирования цен в аккордеон цен на карточке
@@ -517,4 +514,67 @@ $(function () {
 			promos: promos
 		};
 	}
+
+
+
+	//Кнопки редактирования контент-блоков
+	class ContentBlockButtons {
+		constructor() {
+
+			$("body").append(`
+				<style>
+				/* Кнопка редактирования контент-блока */
+				.content-block-button {
+					position: absolute;
+					top: 0;
+					right: 0;
+					display: block;
+					height: 30px;
+					width: 30px;
+					background: rgba(0, 0, 0, 0.5);
+					border-radius: 5px;
+					border: solid 1px rgba(255, 255, 255, 0.5);
+					background-image: url('data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCIgdmlld0JveD0iMCAwIDQ1OSA0NTkiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDQ1OSA0NTk7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPGc+Cgk8ZyBpZD0iY3JlYXRlIj4KCQk8cGF0aCBkPSJNMCwzNjIuMVY0NTloOTYuOWwyODAuNS0yODMuMDVsLTk2LjktOTYuOUwwLDM2Mi4xeiBNNDUxLjM1LDEwMmMxMC4yLTEwLjIsMTAuMi0yNS41LDAtMzUuN0wzOTIuNyw3LjY0OSAgICBjLTEwLjItMTAuMi0yNS41LTEwLjItMzUuNywwbC00NS45LDQ1LjlsOTYuOSw5Ni45TDQ1MS4zNSwxMDJ6IiBmaWxsPSIjRkZGRkZGIi8+Cgk8L2c+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==');
+					background-repeat: no-repeat;
+					background-position: center;
+					transition: background .2s ease, border .2s ease;
+				}
+				
+				.content-block-button:hover {
+					background-color: rgba(0, 0, 0, 0.8);
+					border: solid 1px rgba(255, 255, 255, 0.8);
+				}
+
+
+				/* Подсветка контент-блока */
+				.button-hovered {
+					background-color: #e9edff;
+					border-radius: 5px;
+				}
+
+				.detail-content > div {
+					transition: background-color .2s ease;
+				}
+				</style>
+			`);
+
+
+			$('.detail-content:first > div:not(:first-child)')
+				.each(function (i) {
+					let block = $(this);
+					block.append(`
+					<a class="content-block-button" href="https://${window.location.hostname}/manager/${page.type.type}/edit/${google_tag_params.local_id}?editBlock=${i+1}" title="Редактировать контент-блок #${i+1}" target="_blank"></a>
+				`)
+						.css('position', 'relative')
+						.on('hover', '.content-block-button', function () {
+							block.addClass('button-hovered');
+						})
+						.on('mouseout', '.content-block-button', function () {
+							block.removeClass('button-hovered');
+						});
+				});
+		}
+	}
+
+	const cbb = new ContentBlockButtons();
 });

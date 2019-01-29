@@ -92,9 +92,9 @@ function categoryTableImprove() {
             let categoryName = $(this).find("td.ig-grid-cell-ct-name").length ? $(this).find("td.ig-grid-cell-ct-name").html().replace(/\./g, '').trim() : '';
 
             $(this).find("td:last-child div").prepend('<a href="/manager/category/product/edit/' + id + '" target="_blank"><input type="button" value="Edit" style="margin:0px; width:50px; height:22px;" class="btn btn-primary btn-xs"/></a>')
-			.css({
-                "width": "auto"
-            });
+                .css({
+                    "width": "auto"
+                });
             $(this).find("button[title='Редактирование']").each(function () {
                 $(this).remove();
             });
@@ -453,3 +453,23 @@ height: 216px !important;
         $("div.navbar-header").html("<a class='navbar-brand' id='brand-name' href=" + $("#tab-main table tr:first-child td a").attr('href') + " target='_blank'>" + $(".container h1").html() + "</a>");
     }
 }
+
+
+//========================================================================================================
+//Переход со страницы товара в редактор контент-блока
+
+//Получить порядковый номер блока из URL
+function getBlockNumberFromUrl() {
+    const params = new URLSearchParams(location.search)
+    return params.get('editBlock').length ? params.get('editBlock') : null;
+}
+
+//Перейти в редактирование соотв. блока
+$(function () {
+    const number = getBlockNumberFromUrl(); 
+    if (number !== null) {
+        const blockId = $(`#tab-description #block-table tbody tr:eq(${getBlockNumberFromUrl()})`).data('sort-id');
+        const itemId = $(`#tab-description #block-table tbody tr:eq(${getBlockNumberFromUrl()}) td[id*='content-block-edit']`).data('product-id');
+        location.href = `https://${location.host}/manager/product-content-block/edit/${itemId}/${blockId}`;
+    }
+});
