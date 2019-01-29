@@ -2,7 +2,7 @@
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
 // @include      */manager/*
-// @version      2.3
+// @version      2.4
 // @description  Исправления и улучшения для админки DAROO
 // @updateURL    https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Manager.user.js
 // @author       Frants Mitskun
@@ -461,12 +461,14 @@ height: 216px !important;
 //Получить порядковый номер блока из URL
 function getBlockNumberFromUrl() {
     const params = new URLSearchParams(location.search)
-    return params.get('editBlock').length ? params.get('editBlock') : null;
+    if (params)
+        return params.get('editBlock').length ? params.get('editBlock') : null;
+    else return null;
 }
 
 //Перейти в редактирование соотв. блока
 $(function () {
-    const number = getBlockNumberFromUrl(); 
+    const number = getBlockNumberFromUrl();
     if (number !== null) {
         const blockId = $(`#tab-description #block-table tbody tr:eq(${getBlockNumberFromUrl()})`).data('sort-id');
         const itemId = $(`#tab-description #block-table tbody tr:eq(${getBlockNumberFromUrl()}) td[id*='content-block-edit']`).data('product-id');
