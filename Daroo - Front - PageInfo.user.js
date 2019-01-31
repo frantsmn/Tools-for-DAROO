@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Front - PageInfo
 // @namespace    PageInfo
-// @version      4.7
+// @version      4.8
 // @description  Добавляет на страницы сайта DAROO вспомогательные ссылки и информацию (для редактора/контент-менеджера)
 // @updateURL    https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Front%20-%20PageInfo.user.js
 // @author       Frants Mitskun
@@ -25,7 +25,7 @@ $(function () {
 		show_meta: false
 	};
 
-	var page = {
+	const page = {
 		id: google_tag_params.local_id,
 		// title       : $("div.nav :last").html(),
 		url: window.location.href,
@@ -35,7 +35,7 @@ $(function () {
 	};
 
 	if (page.id == null) {
-		alert("Для работы кнопок редактирования карточки - обновите страницу. Если данная ошибка появляется слишком часто, сообщите об этом разработчику скрипта DAROO-Front-PageInfo \n ERROR:\n local_id = " + google_tag_params.local_id + "\n page.id = " + page.id);
+		alert("Пожалуйста, обновите страницу для полноценной работы вспомогательных скриптов. Если данная ошибка появляется слишком часто, сообщите об этом разработчику скрипта DAROO-Front-PageInfo \n ERROR:\n local_id = " + google_tag_params.local_id + "\n page.id = " + page.id);
 	}
 
 	//Возвращает тип страницы {type, str1, str2} //Используется для page.type
@@ -386,143 +386,169 @@ $(function () {
 
 	//###############################################################
 	//Кнопки редактирования цен в аккордеон цен на карточке
-	//###############################################################
 
 	//Кнопки редактирования цен в аккордеон цен на карточке
-	$("div.accordion-content-buy").each(function () {
-		$(this).after('<div class="accordion-content-buy"><a class="page-menu-el" href="https://' + window.location.hostname + '/manager/price/edit/' + $(this).find("a.btn-2").attr("href").split("/").slice(-1)[0] + '" target="_blank">Редактировать</a></div>');
-	});
-
-	//Кнопки перехода с разводящей на цены в аккордеон с партнерами
-	$("ul.accordion-goto-next-page").each(function () {
-		$("div.accordion-header").css({
-			"padding": "10px 40px 0",
-			"height": "90px"
-		});
-		$(this).after('<a class="page-menu-el" style="position:relative; top:-55px; left:500px; padding:10px 30px; background-color:white;" href="' + $(this).attr("data-ajax-url") + '" target="_blank">Открыть в новой вкладке</a>');
+	$("div.accordion-content-buy")
+	.each(function () {
+		$(this).after(`
+			<div class="accordion-content-buy">
+				<a class="page-menu-el" href="https://${window.location.hostname}/manager/price/edit/${$(this).find("a.btn-2").attr("href").split("/").slice(-1)[0]}" target="_blank">Редактировать</a>
+			</div>
+		`);
 	});
 
 
-	//###############################################################
-	//ССЫЛКА НА БАННЕР (на Карточке товара/Ценовом предложении)
-	//###############################################################
+	//##############################################
+	//Ссылка на скачивание баннера(ов) (на КП/КТ/ЦП)
+	new class BannerDownloadLink {
+		constructor() {
+			$("body").append(`
+				<style>
 
-	$("body").append(`
-	<style>
+				#banner-url {
+					float: right;
+					position: relative;
+					margin-bottom: -75px;
+					margin-top: 5px;
+					margin-right: 5px;
+					padding: 5px;
+					background: rgba(52, 52, 52, 0.7);
+					border: solid 1px gray;
+					border-radius: 3px;
+					z-index: 999999 !important;
+					opacity: .5;
+					transition: .2s ease opacity;
+				}
 
-	#banner-url {
-		float: right;
-		position: relative;
-		height: 50px;
-		width: 200px;
-		margin-bottom: -75px;
-		margin-top: 5px;
-		margin-right: 5px;
-		padding: 5px;
-		background: rgba(52, 52, 52, 0.7);
-		color: white;
-		border: 1px dashed orange;
-		border-radius: 3px;
-		z-index: 9999999 !important;
+				#banner-url:hover {
+					opacity: 1;
+				}
+
+				#banner-url a {
+					color: white;
+					transition: .2s ease color;
+				}
+
+				#banner-url a:hover {
+					color: orange;
+				}
+
+				#banner-url input {
+					height: 30px;
+					width: 100%;
+					box-sizing: border-box;
+					color: white;
+					background: #000;
+					border: solid 1px gray;
+					border-radius: 3px;
+					margin-top: 4px;
+					padding: 0 0 0 5px;
+				}
+
+				</style>
+			`);
+
+			//Добавить разметку для КТ/ЦП
+			if (page.type.type === 'product' || page.type.type === 'price')
+			$("ul.details-slider")
+				.find('li')
+				.each(function () {
+					$(this).prepend(`
+						<div id="banner-url">
+							<a href="${$(this).find('img').attr('src')}" target="_blank" download>Сохранить изображение</a><br>
+							<input value="${$(this).find('img').attr('src')}">
+						</div>
+				`);
+				});
+
+			//Добавить разметку для КП
+			if (page.type.type === 'supplier')
+			$('div.card-partner div.box-img')
+				.each(function () {
+					$(this).prepend(`
+						<div id="banner-url">
+							<a href="${$(this).find('img').attr('src')}" target="_blank" download>Сохранить изображение</a><br>
+							<input value="${$(this).find('img').attr('src')}">
+						</div>
+					`);
+				});
+
+			$("#banner-url input").mouseenter(function () {
+				$("#banner-url input").select();
+			});
+		}
 	}
-	#banner-url a {
-		color: white;
-		letter-spacing: 1px;
-		padding-left: 2px;
-	}
-	#banner-url a:hover {
-		color: orange;
-	}
-	#banner-url input {
-		color: white;
-		background: black;
-		border: solid gray 1px;
-		border-radius: 2px;
-		padding-left: 2px;
-		width: 195px;
-	}
-
-	</style>
-	`);
-
-	$("ul.details-slider").find("li").each(function () {
-		$(this).prepend("<div id=\"banner-url\">" +
-			"<a href=\"" + $(this).find("img").attr("src") + "\" target=\"_blank\" download>Сохранить изображение</a><br>" +
-			"<input value=\"" + $(this).find("img").attr("src") + "\">" +
-			"</div>");
-	});
-
-	$("#banner-url input").mouseenter(function () {
-		$("#banner-url input").select();
-	});
 
 
-	//###############################################################
-	//СЧЕТЧИК ЦЕН (на баннере)
-	//###############################################################
+	//########################
+	//Счетчик цен (на баннере)
+	new class PricesCounter {
+		constructor() {
+			$('body').append(`
+				<style>
 
-	$("body").append(`
-	<style>
+				#prices-counter {
+					position: absolute;
+					margin-top: 5px;
+					margin-left: 5px;
+					padding: 5px;
+					background: rgba(52, 52, 52, 0.7);
+					color: white;
+					border: solid gray 1px;
+					border-radius: 3px;
+					z-index: 9999999 !important;
+					opacity: .5;
+					transition: .2s ease opacity;
+				}
+				
+				#prices-counter:hover {
+					opacity: 1;
+				}
+				
+				#prices-counter div {
+					background-color: #000;
+					margin-top: 4px;
+					border-radius: 3px;
+					border: solid gray 1px;
+					padding: 4px 6px;
+				}
+				
+				#prices-counter span {
+					font-weight: bold;
+					color: orange;
+				}
+				
+				</style>
+			`);
 
-	#prices-counter {
-		float: left;
-		position: absolute;
-		margin-top: 5px;
-		margin-left: 5px;
-		padding: 5px;
-		background: rgba(52, 52, 52, 0.7);
-		color: white;
-		border: 1px dashed orange;
-		border-radius: 3px;
-		z-index: 9999999 !important;
-	}
-	#prices-counter div {
-		background-color: black;
-		margin-top: 4px;
-		border-radius: 2px;
-		border: solid gray 1px;
-		padding: 4px 6px;
-	}
-	#prices-counter span {
-		color: orange;
-		font-weight: bold;
-	}
-	
-	</style>`);
-
-	$("ul.details-slider").find("li").each(function () {
-		$(this).prepend("<div id=\"prices-counter\">" +
-			"Счетчик цен<div>" +
-			"Акций: <span>" + count_prices().promos + "</span><br>" +
-			"Обычных: <span>" + count_prices().prices + "</span><br>" +
-			"Всего цен: <span>" + count_prices().all + "</span></div>" +
-			"</div>");
-	});
-
-	//Функция подсчета цен в карточке
-	function count_prices() {
-		var prices = 0;
-		var promos = 0;
-		$(".accordion-content [itemprop='offers']")
-			.each(function () {
+			let prices = 0;
+			let promos = 0;
+			$('.accordion-content [itemprop="offers"]').each(function () {
 				prices++;
-				if ($(this).find(".accordion-content-discount").children().length > 0)
+				if ($(this).find('.accordion-content-discount').children().length)
 					promos++;
 			});
-		return {
-			all: prices,
-			prices: prices - promos,
-			promos: promos
-		};
+
+			$('ul.details-slider').prepend(`
+
+				<div id="prices-counter">Счетчик цен
+					<div>
+						Акций: <span>${promos}</span><br>
+						Обычных: <span>${prices-promos}</span><br>
+						Всего: <span>${prices}</span>
+					</div>
+				</div>
+	
+			`);
+		}
 	}
 
 
-
+	//####################################
 	//Кнопки редактирования контент-блоков
-	class ContentBlockButtons {
+	new class ContentBlockButtons {
 		constructor() {
-
-			$("body").append(`
+			$('body').append(`
 				<style>
 				/* Кнопка редактирования контент-блока */
 				.content-block-button {
@@ -546,7 +572,6 @@ $(function () {
 					border: solid 1px rgba(255, 255, 255, 0.8);
 				}
 
-
 				/* Подсветка контент-блока */
 				.button-hovered {
 					background-color: #e9edff;
@@ -559,23 +584,29 @@ $(function () {
 				</style>
 			`);
 
-
-			$('.detail-content:first > div:not(:first-child)')
-				.each(function (i) {
+			//Счетчик блоков
+			let counter = 0;
+			$('.detail-content:first > div')
+				.each(function () {
+					//Текущий контент-блок
 					let block = $(this);
-					block.append(`
-					<a class="content-block-button" href="https://${window.location.hostname}/manager/${page.type.type}/edit/${google_tag_params.local_id}?editBlock=${i+1}" title="Редактировать контент-блок #${i+1}" target="_blank"></a>
-				`)
-						.css('position', 'relative')
-						.on('hover', '.content-block-button', function () {
-							block.addClass('button-hovered');
-						})
-						.on('mouseout', '.content-block-button', function () {
-							block.removeClass('button-hovered');
-						});
+					//Если блок не является блоком со списком цен
+					if (!block.has('.detail-order-panel').length) {
+						counter++;
+						block.append(`
+							<a class="content-block-button" href="https://${window.location.hostname}/manager/${page.type.type}/edit/${google_tag_params.local_id}?editBlock=${counter}" title="Редактировать контент-блок #${counter}" target="_blank"></a>
+						`)
+							.css('position', 'relative')
+							.on('hover', '.content-block-button', function () {
+								block.addClass('button-hovered');
+							})
+							.on('mouseout', '.content-block-button', function () {
+								block.removeClass('button-hovered');
+							});
+					}
 				});
 		}
 	}
 
-	const cbb = new ContentBlockButtons();
+	/* END */
 });

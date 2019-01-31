@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
-// @include      */manager/*
+// @include 	 *daroo*.*/manager/*
 // @version      2.5
 // @description  Исправления и улучшения для админки DAROO
 // @updateURL    https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Manager.user.js
@@ -461,17 +461,56 @@ height: 216px !important;
 //Получить порядковый номер блока из URL
 function getBlockNumberFromUrl() {
     const params = new URLSearchParams(location.search)
-    if (params)
-        return params.get('editBlock')!= null && params.get('editBlock').length ? params.get('editBlock') : null;
-    else return null;
+    return params.get('editBlock') != null && params.get('editBlock').length ? params.get('editBlock') : null;
 }
 
 //Перейти в редактирование соотв. блока
 $(function () {
     const number = getBlockNumberFromUrl();
-    if (number !== null) {
-        const blockId = $(`#tab-description #block-table tbody tr:eq(${getBlockNumberFromUrl()})`).data('sort-id');
-        const itemId = $(`#tab-description #block-table tbody tr:eq(${getBlockNumberFromUrl()}) td[id*='content-block-edit']`).data('product-id');
-        location.href = `https://${location.host}/manager/product-content-block/edit/${itemId}/${blockId}`;
+    if (number) {
+        if (getPageType('type') === 'product') {
+            const blockId = $(`#tab-description #block-table tbody tr:eq(${number})`).data('sort-id');
+            const itemId = $(`#tab-description #block-table tbody tr:eq(${number}) td[id*='content-block-edit']`).data('product-id');
+            location.href = `https://${location.host}/manager/product-content-block/edit/${itemId}/${blockId}`;
+        }
+        if (getPageType('type') === 'supplier') {
+            const blockId = $(`#supplier-blocks-contents tr:eq(${number})`).data('sort-id');
+            const itemId = $(`#supplier-blocks-contents tr:eq(${number}) td[id*='content-block-edit']`).data('supplier-id');
+            location.href = `https://${location.host}/manager/supplier-content-block/edit/${itemId}/${blockId}`;
+        }
     }
 });
+
+
+
+//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+//ОПРЕДЕЛЕНИЕ ТИПА РЕДАКТИРУЕМОЙ СТРАНИЦЫ
+//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+
+function getPageType(param) {
+    switch (true) {
+        case $('input#product__token').length > 0:
+            if (param == "type") return "product";
+            if (param == "name") return "карточка товара";
+            return {
+                type: "product",
+                name: "карточка товара"
+            }
+
+        case $('input#supplier__token').length > 0:
+            if (param == "type") return "supplier";
+            if (param == "name") return "карточка партнера";
+            return {
+                type: "supplier",
+                name: "карточка партнера"
+            }
+
+        default:
+            if (param == "type") return "product";
+            if (param == "name") return "карточка товара";
+            return {
+                type: "product",
+                name: "карточка товара"
+            }
+    }
+}
