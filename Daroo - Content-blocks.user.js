@@ -118,7 +118,7 @@ div#doc-textarea-holder #doc-text {
 const pageType = new class PageType {
 	constructor() {}
 	getType() {
-		console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Определение типа страницы — PageType.getType()');
+		console.log('[Daroo - content-blocks.user.js] : Определение типа страницы — PageType.getType()');
 		switch (true) {
 			case $('input#product__token').length > 0:
 				return "product";
@@ -129,7 +129,7 @@ const pageType = new class PageType {
 		}
 	}
 	getText() {
-		console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Определение типа страницы — PageType.getText()');
+		console.log('[Daroo - content-blocks.user.js] : Определение типа страницы — PageType.getText()');
 		switch (true) {
 			case $('input#product__token').length > 0:
 				return "карточка товара";
@@ -162,7 +162,7 @@ class Menu {
 		//Клик на кнопку "Разобрать документ"
 		$("#doc-textarea-button").click(function () {
 
-			console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Нажатие на кнопку "Разобрать документ"');
+			console.log('[Daroo - content-blocks.user.js] : Нажатие на кнопку "Разобрать документ"');
 
 			//Создаем поле для текста с пояснением в tooltip о типе карточки
 			$("#doc-textarea-holder").html(`<textarea id='doc-text' placeholder='Вставьте содержимое документа в это поле' data-toggle='tooltip' data-trigger='manual' data-html='true' data-placement='left' data-original-title='Текст будет разобран как <b>${pageType.getText()}</b>'></textarea>`);
@@ -170,14 +170,14 @@ class Menu {
 
 			$("#doc-text").fadeIn(1, function () {
 
-					console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Коллбэк — отображение tooltip к полю ввода');
+					console.log('[Daroo - content-blocks.user.js] : Коллбэк — отображение tooltip к полю ввода');
 
 					$(this).focus().tooltip('show');
 				})
 				//Передаем содержимое поля парсеру при input и скрываем поле
 				.on("input", function () {
 
-					console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Коллбэк — парсинг и работа с панелью результата');
+					console.log('[Daroo - content-blocks.user.js] : Коллбэк — парсинг и работа с панелью результата');
 
 					//Парсить содержимое поля
 					parser.parse($(this).val());
@@ -234,7 +234,7 @@ class Panel {
 			</div>
 		`);
 
-		console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Панель результата добавлена к body c offset > ' + settings);
+		console.log('[Daroo - content-blocks.user.js] : Панель результата добавлена к body c offset > ' + settings);
 
 		$("#rezultPanel")
 			.draggable()
@@ -243,7 +243,7 @@ class Panel {
 			.on('mouseup', function () {
 				settings.offset = $(this).offset();
 				GM_setValue("settings", settings);
-				console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Объект settings в storage после сохранения по mouseup > ' + GM_getValue("settings"));
+				console.log('[Daroo - content-blocks.user.js] : Объект settings в storage после сохранения по mouseup > ' + GM_getValue("settings"));
 			})
 			//Закрывать по клику на крестик
 			.on('click', '.close', function () {
@@ -445,7 +445,7 @@ class Parser {
 
 	parse(text) {
 
-		console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Вызов parse() c параметром > ' + text);
+		console.log('[Daroo - content-blocks.user.js] : Вызов parse() c параметром > ' + text);
 
 		//Разбираем текст по строкам
 		let strings = text.split('\n');

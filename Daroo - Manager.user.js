@@ -2,7 +2,7 @@
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
 // @include 	 *daroo*.*/manager/*
-// @version      2.5
+// @version      2.6
 // @description  Исправления и улучшения для админки DAROO
 // @updateURL    https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Manager.user.js
 // @author       Frants Mitskun
@@ -11,10 +11,37 @@
 // @copyright 	 2017-2019, frantsmn (https://github.com/frantsmn/userscripts)
 // ==/UserScript==
 
-//Ссылки из МЕНЮ открываются не в фрейме
+//ПУНКТЫ ГЛАВНОГО МЕНЮ открываются как обычные ссылки (не в фрейме)
 $("#admin-nav").find('a.admin-nav-item').each(function () {
     $(this).removeClass("admin-nav-item");
 });
+
+//ОПРЕДЕЛЕНИЕ ТИПА РЕДАКТИРУЕМОЙ СТРАНИЦЫ (По умолчанию возвращает тип и текст: "карточка товара")
+const pageType = new class PageType {
+    constructor() {}
+    getType() {
+        console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Определение типа страницы — PageType.getType()');
+        switch (true) {
+            case $('input#product__token').length > 0:
+                return "product";
+            case $('input#supplier__token').length > 0:
+                return "supplier";
+            default:
+                return "product";
+        }
+    }
+    getText() {
+        console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Определение типа страницы — PageType.getText()');
+        switch (true) {
+            case $('input#product__token').length > 0:
+                return "карточка товара";
+            case $('input#supplier__token').length > 0:
+                return "карточка партнера";
+            default:
+                return "карточка товара";
+        }
+    }
+}
 
 //========================================================================================================
 
@@ -32,51 +59,96 @@ setTimeout(function run() {
     setTimeout(run, 1000);
 }, 1000);
 
+
+
 //======================================================================================================== tableImprove
-
-//ТОЛЬКО ДЛЯ ТАБЛИЦЫ ТОПОВ — Функция проверяет активный элемент в выпадающем списке городов и возвращает часть урла (msk, spb, ...)
-function tops_city() {
-    if ($("#select2--container").text().indexOf('Москва'))
-        return "msk";
-    if ($("#select2--container").text().indexOf('Санкт-Петербург'))
-        return "spb";
-    if ($("#select2--container").text().indexOf('Екатеринбург'))
-        return "ekb";
-    if ($("#select2--container").text().indexOf('Новосибирск'))
-        return "nsk";
-    if ($("#select2--container").text().indexOf('Минск'))
-        return "minsk";
-}
-
-
-//======================================================================================================== tableImprove — Ссылки на редактирование страниц карточек и цен в таблицах + ссылки на страницу товара из таблицы топов
+//Ссылки на редактирование страниц карточек и цен в таблицах + ссылки на страницу товара из таблицы топов
 
 function tableImprove() {
-    /*Для страницы с таблицей ( ЦЕН || КАРТОЧЕК || ТОПОВ || ЦЕН в карточке товара)*/
-    if ($("table#grid_results_product_grid").length || $("table#grid_results_product_price_grid").length || $("form#top-form").length || $("#product-contents").length || $("#grid_results_supplier_grid").length) {
-        $("table").find("tr").each(function () {
-            if (!$(this).hasClass("link-added")) {
-                var id = $(this).find(".ig-grid-cell-id").text().trim();
-                var route = $(this).find(".ig-grid-cell-price").length ? "http://" + window.location.hostname + "/manager/price/edit/" + id : "http://" + window.location.hostname + "/manager/product/edit/" + id;
-                $(this).find(".ig-grid-cell-id").html('<a href="' + route + '" target="_blank"><input type="button" value="Edit" style="margin:0px; margin-left:4px; width:50px; height:22px;" class="btn btn-primary btn-xs"/></a>');
 
-                if (window.location.href.indexOf("manager/tops/create") > 0) {
-                    $(this).find(".route").prepend('<a href="http://' + window.location.hostname + '/' + tops_city() + '/' + $(this).find(".route").text().trim() + '" target="_blank" style="display:inline-block;"><input type="button" value="Open" style="margin-left:2px; width:45px; height:20px;" class="btn btn-xs btn-primary"/></a>');
-                }
-                $(this).addClass("link-added");
-            }
-        });
-
-        //Кнопки редактирования для таблицы цен на странице редактирования карточки товара
-        if (!$("#tab-prices").hasClass("link-added")) {
-            $("#tab-prices").find("tr").each(function () {
-                if (typeof $(this).attr('data-sort-id') !== "undefined")
-                    $(this).append('<td align="center"><a href="/manager/price/edit/' + $(this).attr('data-sort-id') + '" target="_blank"><input type="button" value="Edit" style="margin:2px; margin-left:4px; width:50px; height:22px;" class="btn btn-xs btn-primary"/></a></td>');
-                $("#tab-prices").addClass("link-added");
+    //Добавление кнопок редактирования для таблицы карточек товаров
+    const grid = $("#grid_results_product_grid");
+    if (grid.length && !grid.find('tr:first').hasClass("edit-link-added")) {
+		console.log('[Daroo - Mamager.user.js] : Добавление кнопок редактирования для таблицы карточек товаров');
+        grid
+            .find('tr[id*=grid-row-]')
+            .each(function () {
+                const regex = /[0-9]*$/gm;
+                const id = regex.exec(this.id)[0];
+                $(this)
+                    .find('td:last')
+                    .html(`<a href="/manager/product/edit/${id}" target="_blank"><input type="button" value="Edit" style="width: 100%; padding: 2px;" class="btn btn-primary btn-sm"></a>`)
+                    .addClass('edit-link-added'); //Присваеваем каждой строчке (а не таблице), т.к. результаты могут быть подгружены динамически
             });
+    }
+
+    //Добавление кнопок редактирования для цен карточки товара
+    const grid2 = $("#tab-prices #product-contents");
+    if (grid2.length && !grid2.hasClass("edit-links-added")) {
+        console.log('[Daroo - Mamager.user.js] : Добавление кнопок редактирования для цен карточки товара');
+        grid2
+            .addClass("edit-links-added")
+            .find("tr")
+            .each(function () {
+                if ($(this).attr('data-sort-id')) {
+                    $(this)
+                        .find('td:last')
+                        .html(`<a href="/manager/price/edit/${$(this).attr('data-sort-id')}" target="_blank"><input type="button" value="Edit" style="width:50px;" class="btn btn-sm btn-primary"></a>`);
+                }
+            });
+    }
+
+    //Добавление кнопок редактирования для таблицы цен на странице карточки товара
+    const grid3 = $('#grid_results_product_price_search_grid');
+    if (grid3.length && !grid3.find('tr:first').hasClass("edit-link-added")) {
+        console.log('[Daroo - Mamager.user.js] : Добавление кнопок редактирования для таблицы цен на странице карточки товара');
+        grid3
+            .find('tr[id*=grid-row-]')
+            .each(function () {
+                const regex = /[0-9]*$/gm;
+                const id = regex.exec(this.id)[0];
+                $(this)
+                    .find('td:last')
+                    .html(`<a href="/manager/price/edit/${id}" target="_blank"><input type="button" value="Edit" style="width: 100%; padding: 2px;" class="btn btn-primary btn-sm"></a>`)
+                    .addClass('edit-link-added'); //Присваеваем каждой строчке (а не таблице), т.к. результаты могут быть подгружены динамически
+            });
+    }
+
+    //Добавление кнопок перехода на страницу товара из таблицы топов
+    if ($('#top-form').length && $('#existent-list tr').length){
+        console.log('[Daroo - Mamager.user.js] : Добавление кнопок перехода на страницу товара из таблицы топов');
+        const grid4 = $('#existent-list');
+        if (!$('#existent-list tr:first').hasClass("open-link-added")) {
+            grid4
+                .find("tr")
+                .each(function () {
+                    $(this)
+                    .addClass("open-link-added")
+                    .find(".route")
+                    .prepend(`<a href="/${getRegionCode()}/${$(this).find(".route").text().trim()}" target="_blank" style="display:inline-block;"><input type="button" value="Open" style="margin-left:2px; width:45px; height:20px;" class="btn btn-xs btn-primary"></a>`);
+                });
         }
     }
+    function getRegionCode() {
+        switch ($("#select2--container").attr('title').trim()) {
+			case 'Москва':
+                return "msk";
+            case 'Санкт-Петербург':
+                return "spb";
+            case 'Екатеринбург':
+                return "ekb";
+            case 'Новосибирск':
+                return "nsk";
+            case 'Минск':
+				return "minsk";
+			default:
+				return "minsk";
+        }
+    }
+    
+
 }
+
 
 //======================================================================================================== categoryTableImprove
 
@@ -468,49 +540,15 @@ function getBlockNumberFromUrl() {
 $(function () {
     const number = getBlockNumberFromUrl();
     if (number) {
-        if (getPageType('type') === 'product') {
+        if (pageType.getType === 'product') {
             const blockId = $(`#tab-description #block-table tbody tr:eq(${number})`).data('sort-id');
             const itemId = $(`#tab-description #block-table tbody tr:eq(${number}) td[id*='content-block-edit']`).data('product-id');
             location.href = `https://${location.host}/manager/product-content-block/edit/${itemId}/${blockId}`;
         }
-        if (getPageType('type') === 'supplier') {
+        if (pageType.getType === 'supplier') {
             const blockId = $(`#supplier-blocks-contents tr:eq(${number})`).data('sort-id');
             const itemId = $(`#supplier-blocks-contents tr:eq(${number}) td[id*='content-block-edit']`).data('supplier-id');
             location.href = `https://${location.host}/manager/supplier-content-block/edit/${itemId}/${blockId}`;
         }
     }
 });
-
-
-
-//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-//ОПРЕДЕЛЕНИЕ ТИПА РЕДАКТИРУЕМОЙ СТРАНИЦЫ
-//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-
-function getPageType(param) {
-    switch (true) {
-        case $('input#product__token').length > 0:
-            if (param == "type") return "product";
-            if (param == "name") return "карточка товара";
-            return {
-                type: "product",
-                name: "карточка товара"
-            }
-
-        case $('input#supplier__token').length > 0:
-            if (param == "type") return "supplier";
-            if (param == "name") return "карточка партнера";
-            return {
-                type: "supplier",
-                name: "карточка партнера"
-            }
-
-        default:
-            if (param == "type") return "product";
-            if (param == "name") return "карточка товара";
-            return {
-                type: "product",
-                name: "карточка товара"
-            }
-    }
-}

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Front - PageInfo
 // @namespace    PageInfo
-// @version      5.0
+// @version      5.1
 // @description  Добавляет на страницы сайта DAROO вспомогательные ссылки и информацию (для редактора/контент-менеджера)
 // @updateURL    https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Front%20-%20PageInfo.user.js
 // @author       Frants Mitskun
@@ -239,7 +239,6 @@ $(function () {
 				
 				<td><textarea id="metatext-for-table">` + document.location.href + '&#9;' + $("title").html() + '&#9;' + $("h1").html().replace(/\r?\n/g, "") + '&#9;' + $('meta[name="description"]').attr('content') + '&#9;' + date + `</textarea></td>
 				<td><button id="copyButton" class="page-menu-el">Скопировать для вставки в Google Таблицы</button></td>
-				
 			</tr>
 		</table>
 	</div>
@@ -282,9 +281,7 @@ $(function () {
 		} catch (e) {}
 	}
 
-	//###############################################################
-	//Кнопки редактирования цен в аккордеон цен на карточке
-
+	//#####################################################
 	//Кнопки редактирования цен в аккордеон цен на карточке
 	$("div.accordion-content-buy")
 		.each(function () {
