@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      3.5
+// @version      3.6
 // @include      *daroo*.*/manager/*
-// @description  Формы для добавления контент-блоков. Парсинг документа на заголовки, META-заголовки и контент-блоки с последующей их вставкой в текстовый редактор сайта.
+// @description  Парсинг документа на заголовки, META-заголовки и контент-блоки с последующей их вставкой в текстовый редактор сайта.
 // @updateURL 	 https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Content-blocks.user.js
 // @author       Frants Mitskun
 // @grant        GM_getValue
@@ -114,48 +114,41 @@ div#doc-textarea-holder #doc-text {
 
 `);
 
-
-//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //ОПРЕДЕЛЕНИЕ ТИПА РЕДАКТИРУЕМОЙ СТРАНИЦЫ
-//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-
-function getPageType(param) {
-	console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Вызов функции getPageType() с параметром > ' + param);
-	switch (true) {
-		case $('input#product__token').length > 0:
-			if (param == "type") return "product";
-			if (param == "name") return "карточка товара";
-			return {
-				type: "product",
-				name: "карточка товара"
-			}
-
-		case $('input#supplier__token').length > 0:
-			if (param == "type") return "supplier";
-			if (param == "name") return "карточка партнера";
-			return {
-				type: "supplier",
-				name: "карточка партнера"
-			}
-
-		default:
-			if (param == "type") return "product";
-			if (param == "name") return "карточка товара";
-			return {
-				type: "product",
-				name: "карточка товара"
-			}
+const pageType = new class PageType {
+	constructor() {}
+	getType() {
+		console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Определение типа страницы — PageType.getType()');
+		switch (true) {
+			case $('input#product__token').length > 0:
+				return "product";
+			case $('input#supplier__token').length > 0:
+				return "supplier";
+			default:
+				return "product";
+		}
+	}
+	getText() {
+		console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Определение типа страницы — PageType.getText()');
+		switch (true) {
+			case $('input#product__token').length > 0:
+				return "карточка товара";
+			case $('input#supplier__token').length > 0:
+				return "карточка партнера";
+			default:
+				return "карточка товара";
+		}
 	}
 }
 
-//=================================================
+//===============================================
 // __________
 // \______   \_____ _______  ______ ___________
 //  |     ___/\__  \\_  __ \/  ___// __ \_  __ \
 //  |    |     / __ \|  | \/\___ \\  ___/|  | \/
 //  |____|    (____  /__|  /____  >\___  >__|
 //                 \/           \/     \/
-//=================================================
+//===============================================
 
 class Menu {
 	constructor() {
@@ -172,7 +165,7 @@ class Menu {
 			console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Нажатие на кнопку "Разобрать документ"');
 
 			//Создаем поле для текста с пояснением в tooltip о типе карточки
-			$("#doc-textarea-holder").html(`<textarea id='doc-text' placeholder='Вставьте содержимое документа в это поле' data-toggle='tooltip' data-trigger='manual' data-html='true' data-placement='left' data-original-title='Текст будет разобран как <b>${getPageType("name")}</b>'></textarea>`);
+			$("#doc-textarea-holder").html(`<textarea id='doc-text' placeholder='Вставьте содержимое документа в это поле' data-toggle='tooltip' data-trigger='manual' data-html='true' data-placement='left' data-original-title='Текст будет разобран как <b>${pageType.getText()}</b>'></textarea>`);
 
 
 			$("#doc-text").fadeIn(1, function () {
@@ -259,7 +252,7 @@ class Panel {
 			})
 			.on('click', '.paste-meta-info-button', function () {
 
-				if (getPageType("type") === "product") {
+				if (pageType.getType() === "product") {
 
 					//Заголовки
 					$("input#product_translations_ru_name").css("border-color", "#00c14b").val(parser.meta.title_for_catalog);
@@ -282,7 +275,7 @@ class Panel {
 					}).val(parser.meta.description_for_marketing);
 				}
 
-				if (getPageType("type") === "supplier") {
+				if (pageType.getType() === "supplier") {
 
 					//Заголовки
 					$("input#supplier_translations_ru_name").css("border-color", "#00c14b").val(parser.meta.title_for_catalog);
@@ -373,7 +366,7 @@ class Panel {
 	//Добавление строки с кнопкой вставки лида (текста для баннера) на панель результата
 	addLidTextRow(text) {
 		//Если есть Лид и мы на странице редактирования карточки
-		if (text != null && getPageType("type") === "product") {
+		if (text != null && pageType.getType() === "product") {
 
 			$("#rezultPanel #rows").append('<div class="row"><b>Лид (текст для баннера)</b><button class="btn btn-xs btn-default add-new-banner-button">Добавить новый баннер</button><button class="btn btn-xs btn-default paste-lid-text-button">Вставить лид</button></div>');
 			$("button.paste-lid-text-button").on("click", function () {
@@ -383,7 +376,7 @@ class Panel {
 			});
 
 			$("button.add-new-banner-button").on("click", function () {
-				if (getPageType("type") === "product")
+				if (pageType.getType() === "product")
 					$("a[id='product-banner-create'] button").click();
 			});
 
@@ -478,21 +471,21 @@ class Parser {
 					break;
 				case /Заголовок в каталоге для товаров \/ Название партнера	/.test(strings[i]):
 					this.meta.title_for_catalog = strings[i].slice(53);
-					this.meta.titlesHtml += getPageType("type") === "product" ? "<span class='seo'>Крошка</span><span>Наименование</span><span>Наименование для каталога</span>" : "<span class='seo'>Крошка</span><span>Наименование</span><span>Краткое наименование</span>";
+					this.meta.titlesHtml += pageType.getType() === "product" ? "<span class='seo'>Крошка</span><span>Наименование</span><span>Наименование для каталога</span>" : "<span class='seo'>Крошка</span><span>Наименование</span><span>Краткое наименование</span>";
 					break;
 				case /Заголовок H1 \(только для товаров\)	/.test(strings[i]):
 					this.meta.h1 = strings[i].slice(34);
-					this.meta.titlesHtml += getPageType("type") === "product" ? "<span>Заголовок H1</span>" : "";
+					this.meta.titlesHtml += pageType.getType() === "product" ? "<span>Заголовок H1</span>" : "";
 					break;
 				case /Заголовок для рекламы \(только для товаров\) 25 символов	/.test(strings[i]):
 					this.meta.title_for_marketing = strings[i].slice(55);
-					this.meta.titlesHtml += getPageType("type") === "product" ? "<span>Наименование для маркетинга</span>" : "";
+					this.meta.titlesHtml += pageType.getType() === "product" ? "<span>Наименование для маркетинга</span>" : "";
 					break;
 				case /Лид для товара \/ Лид для партнера/.test(strings[i]):
 					while (strings[i + 1] === "")
 						i++;
 					this.meta.lid = strings[i + 1];
-					this.meta.titlesHtml += getPageType("type") === "product" ? "" : "<span class='text'>Аннотация</span>";
+					this.meta.titlesHtml += pageType.getType() === "product" ? "" : "<span class='text'>Аннотация</span>";
 					break;
 				case /Описание для маркетинга/.test(strings[i]):
 					while (strings[i + 1] === "")
@@ -770,15 +763,15 @@ class BlockConstructor {
 		});
 
 		let langLabels = [
-			"",
-			"Что взять с собой?",
-			"С кем пойти?",
-			"Сезон",
-			"Расписание и время",
-			"Безопасность",
-			"Программа",
-			"Дополнительные возможности",
-			"Возраст"
+			'',
+			'Что взять с собой?',
+			'С кем пойти?',
+			'Сезон',
+			'Расписание и время',
+			'Безопасность',
+			'Программа',
+			'Дополнительные возможности',
+			'Возраст'
 		];
 
 		let counter = 0; //Счетчик пары

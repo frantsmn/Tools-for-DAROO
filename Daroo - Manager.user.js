@@ -98,7 +98,7 @@ function categoryTableImprove() {
             $(this).find("button[title='Редактирование']").each(function () {
                 $(this).remove();
             });
-            $(this).find("td.ig-grid-cell-router-route").html('<a href="http://' + window.location.hostname + '/spb/' + route + '" target="_blank">' + route + '</a>');
+            $(this).find("td.ig-grid-cell-router-route").html('<a href="http://' + window.location.hostname + '/minsk/' + route + '" target="_blank">' + route + '</a>');
 
             if (!categoryName.includes('...') && !/.*Каталог.*/.test(categoryName) && !/.*Без категории.*/.test(categoryName) && !/.*Акции и скидки.*/.test(categoryName) && !/.*Акции и скидки.*/.test(categoryName) && !/.*Подарочные наборы.*/.test(categoryName)) {
                 $(this).find("td.ig-grid-cell-ct-name").html("<span>" + categoryName + "</span>");
@@ -173,11 +173,11 @@ function categoryPageImprove() {
     if (!$('#category_router_route').hasClass("improved")) {
         var route = $('#category_router_route').val();
         $('#category_router_route')
-            .after('<span id="category_router_route_link"><a style="border: solid 1px #c3c3c3;border-radius:  4px;padding: 5px 10px 4px;position:  relative;top: 3px;display: inline;" href="http://' + window.location.hostname + '/spb/' + route + '" target="_blank">' + route + '</a></span>');
+            .after('<span id="category_router_route_link"><a style="border: solid 1px #c3c3c3;border-radius:  4px;padding: 5px 10px 4px;position:  relative;top: 3px;display: inline;" href="http://' + window.location.hostname + '/minsk/' + route + '" target="_blank">' + route + '</a></span>');
         $('#category_router_route').on('input', function () {
             var route = $('#category_router_route').val();
             $('#category_router_route_link')
-                .html('<a style="border: solid 1px #c3c3c3;border-radius:  4px;padding: 5px 10px 4px;position:  relative;top: 3px;display: inline;" href="http://' + window.location.hostname + '/spb/' + route + '" target="_blank">' + route + '</a>');
+                .html('<a style="border: solid 1px #c3c3c3;border-radius:  4px;padding: 5px 10px 4px;position:  relative;top: 3px;display: inline;" href="http://' + window.location.hostname + '/minsk/' + route + '" target="_blank">' + route + '</a>');
         });
         $('#category_router_route').addClass("improved");
     }

@@ -282,127 +282,127 @@ $(function () {
 		} catch (e) {}
 	}
 
-
-	//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-	//ВСПОМОГАТЕЛЬНЫЕ ЭЛЕМЕНТЫ НА СНИППЕТЕ КАРТОЧКИ ТОВАРА
-
-	let catalog_card_style = `
-	<style>
-
-	.catalog-card-image .edit-card {
-		display: block;
-		position: absolute;
-		top: 0;
-		right: 0;
-		height: 30px;
-		width: 30px;
-		background: rgba(0, 0, 0, 0.5);
-		border-radius: 5px;
-		border: solid 1px rgba(255, 255, 255, 0.5);
-		background-image: url('data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCIgdmlld0JveD0iMCAwIDQ1OSA0NTkiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDQ1OSA0NTk7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPGc+Cgk8ZyBpZD0iY3JlYXRlIj4KCQk8cGF0aCBkPSJNMCwzNjIuMVY0NTloOTYuOWwyODAuNS0yODMuMDVsLTk2LjktOTYuOUwwLDM2Mi4xeiBNNDUxLjM1LDEwMmMxMC4yLTEwLjIsMTAuMi0yNS41LDAtMzUuN0wzOTIuNyw3LjY0OSAgICBjLTEwLjItMTAuMi0yNS41LTEwLjItMzUuNywwbC00NS45LDQ1LjlsOTYuOSw5Ni45TDQ1MS4zNSwxMDJ6IiBmaWxsPSIjRkZGRkZGIi8+Cgk8L2c+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==');
-		background-repeat: no-repeat;
-		background-position: center;
-		transition: background .2s ease, border .2s ease;
-	}
-
-	.catalog-card-image .edit-card:hover {
-		background-color: rgba(0, 0, 0, 0.8);
-		border: solid 1px rgba(255, 255, 255, 0.8);
-	}
-
-	.jsonInput {
-		position: absolute;
-		top: 0;
-		right: 40px;
-		height: 30px;
-		width: 100px;
-		background: rgba(0, 0, 0, 0.5);
-		border-radius: 5px;
-		border: solid 1px rgba(255, 255, 255, 0.5);
-		transition: background .2s ease, border .2s ease;
-		padding: 0 0 0 5px;
-		color: white;
-	}
-
-	.jsonInput:hover {
-		background-color: rgba(0, 0, 0, 0.8);
-		border: solid 1px rgba(255, 255, 255, 0.8);
-	}
-
-	</style>`;
-
-	$("head").append(catalog_card_style);
-
-	$(document).ready(function () {
-		$(".catalog-card:not(.penAdded), .big-catalog-card:not(.penAdded)").each(function () {
-			addEditButton(this);
-			addTextarea(this);
-		});
-	});
-
-	$(document).on('mouseenter', ".catalog-card:not(.penAdded)", function () {
-		$(".catalog-card:not(.penAdded), .big-catalog-card:not(.penAdded)").each(function () {
-			addEditButton(this);
-			addTextarea(this);
-		});
-	});
-
-	//Функция добавляет textarea c json-инорфмацией для рассылки
-	function addTextarea(item) {
-		let _ = $(item);
-		if (!_.hasClass("jsonInputAdded")) {
-			const data = JSON.stringify({
-				title: _.find('.cc-name p').text(),
-				image: _.find('.catalog-card-image a img').attr('data-src'),
-				link: _.find('.catalog-card-image a')[0].href,
-				isNew: _.find('.catalog-card-statuses').has('.cc-new').length ? true : false,
-				isSet: _.find('.catalog-card-statuses').has('.cc-set').length ? true : false,
-				discount: _.find('.catalog-card-statuses').has('.cc-promo').length ? _.find('.catalog-card-image a .cc-promo').text() : false,
-				price: _.find('.catalog-card-content .cc-price').text().replace(/\n?/g, ""),
-				partner: _.find('.catalog-card-content .cc-partner').text(),
-				rating: _.find('.catalog-card-content .cc-popularity').has('.cc-rating').length ? _.find('.catalog-card-content .cc-popularity .cc-rating').text() : 'Рейтинг 4/5',
-			});
-
-			const a = $(document.createElement('input'))
-				.val(data)
-				.addClass('jsonInput')
-				.hover(function () {
-					$(this).select();
-				});
-
-			_.addClass("jsonInputAdded").find(".catalog-card-statuses").append(a);
-		}
-	}
-
-	//Функция добавляет кнопку редактирования карточки товара
-	function addEditButton(item) {
-		let _ = $(item);
-		if (!_.hasClass("penAdded")) {
-			let id = _.data("card-id");
-
-			_.addClass("penAdded").find(".catalog-card-statuses").append('<a class="edit-card" href="https://' + window.location.hostname + '/manager/product/edit/' + id + '" target="_blank"></a>');
-		}
-	}
-
 	//###############################################################
 	//Кнопки редактирования цен в аккордеон цен на карточке
 
 	//Кнопки редактирования цен в аккордеон цен на карточке
 	$("div.accordion-content-buy")
-	.each(function () {
-		$(this).after(`
+		.each(function () {
+			$(this).after(`
 			<div class="accordion-content-buy">
 				<a class="page-menu-el" href="https://${window.location.hostname}/manager/price/edit/${$(this).find("a.btn-2").attr("href").split("/").slice(-1)[0]}" target="_blank">Редактировать</a>
 			</div>
 		`);
-	});
+		});
+
+
+	//################################################
+	//Вспомогательные элементы на сниппете КТ и набора
+	new class SnippetElements {
+		constructor() {
+			$('body').append(`
+				<style>
+			
+				.catalog-card-image .edit-card {
+					display: block;
+					position: absolute;
+					top: 0;
+					right: 0;
+					height: 30px;
+					width: 30px;
+					background: rgba(0, 0, 0, 0.5);
+					border-radius: 5px;
+					border: solid 1px rgba(255, 255, 255, 0.5);
+					background-image: url('data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCIgdmlld0JveD0iMCAwIDQ1OSA0NTkiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDQ1OSA0NTk7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPGc+Cgk8ZyBpZD0iY3JlYXRlIj4KCQk8cGF0aCBkPSJNMCwzNjIuMVY0NTloOTYuOWwyODAuNS0yODMuMDVsLTk2LjktOTYuOUwwLDM2Mi4xeiBNNDUxLjM1LDEwMmMxMC4yLTEwLjIsMTAuMi0yNS41LDAtMzUuN0wzOTIuNyw3LjY0OSAgICBjLTEwLjItMTAuMi0yNS41LTEwLjItMzUuNywwbC00NS45LDQ1LjlsOTYuOSw5Ni45TDQ1MS4zNSwxMDJ6IiBmaWxsPSIjRkZGRkZGIi8+Cgk8L2c+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==');
+					background-repeat: no-repeat;
+					background-position: center;
+					transition: background .2s ease, border .2s ease;
+				}
+			
+				.catalog-card-image .edit-card:hover {
+					background-color: rgba(0, 0, 0, 0.8);
+					border: solid 1px rgba(255, 255, 255, 0.8);
+				}
+			
+				.jsonInput {
+					position: absolute;
+					top: 0;
+					right: 40px;
+					height: 30px;
+					width: 100px;
+					background: rgba(0, 0, 0, 0.5);
+					border-radius: 5px;
+					border: solid 1px rgba(255, 255, 255, 0.5);
+					transition: background .2s ease, border .2s ease;
+					padding: 0 0 0 5px;
+					color: white;
+				}
+			
+				.jsonInput:hover {
+					background-color: rgba(0, 0, 0, 0.8);
+					border: solid 1px rgba(255, 255, 255, 0.8);
+				}
+			
+				</style>
+			`);
+
+			$(document)
+				.ready(function () {
+					$(".catalog-card:not(.penAdded), .big-catalog-card:not(.penAdded)").each(function () {
+						addEditButton(this);
+						addTextarea(this);
+					});
+				})
+				.on('mouseenter', ".catalog-card:not(.penAdded)", function () {
+					$(".catalog-card:not(.penAdded), .big-catalog-card:not(.penAdded)").each(function () {
+						addEditButton(this);
+						addTextarea(this);
+					});
+				});
+
+			//Функция добавляет textarea c json-инорфмацией для рассылки
+			function addTextarea(item) {
+				let _ = $(item);
+				if (!_.hasClass("jsonInputAdded")) {
+					const data = JSON.stringify({
+						title: _.find('.cc-name p').text(),
+						image: _.find('.catalog-card-image a img').attr('data-src'),
+						link: _.find('.catalog-card-image a')[0].href,
+						isNew: _.find('.catalog-card-statuses').has('.cc-new').length ? true : false,
+						isSet: _.find('.catalog-card-statuses').has('.cc-set').length ? true : false,
+						discount: _.find('.catalog-card-statuses').has('.cc-promo').length ? _.find('.catalog-card-image a .cc-promo').text() : false,
+						price: _.find('.catalog-card-content .cc-price').text().replace(/\n?/g, ""),
+						partner: _.find('.catalog-card-content .cc-partner').text(),
+						rating: _.find('.catalog-card-content .cc-popularity').has('.cc-rating').length ? _.find('.catalog-card-content .cc-popularity .cc-rating').text() : 'Рейтинг 4/5',
+					});
+
+					const a = $(document.createElement('input'))
+						.val(data)
+						.addClass('jsonInput')
+						.hover(function () {
+							$(this).select();
+						});
+					_.addClass("jsonInputAdded").find(".catalog-card-statuses").append(a);
+				}
+			}
+
+			//Функция добавляет кнопку редактирования карточки товара
+			function addEditButton(item) {
+				let _ = $(item);
+				if (!_.hasClass("penAdded")) {
+					let id = _.data("card-id");
+					_.addClass("penAdded").find(".catalog-card-statuses").append('<a class="edit-card" href="https://' + window.location.hostname + '/manager/product/edit/' + id + '" target="_blank"></a>');
+				}
+			}
+		}
+	}
 
 
 	//##############################################
 	//Ссылка на скачивание баннера(ов) (на КП/КТ/ЦП)
 	new class BannerDownloadLink {
 		constructor() {
-			$("body").append(`
+			$('body').append(`
 				<style>
 
 				#banner-url {
