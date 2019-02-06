@@ -2,7 +2,7 @@
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
 // @include 	 *daroo*.*/manager/*
-// @version      2.6
+// @version      2.7
 // @description  Исправления и улучшения для админки DAROO
 // @updateURL    https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Manager.user.js
 // @author       Frants Mitskun
@@ -11,12 +11,42 @@
 // @copyright 	 2017-2019, frantsmn (https://github.com/frantsmn/userscripts)
 // ==/UserScript==
 
+const regionCodes = {
+    'Москва': 'msk',
+    'Санкт-Петербург': 'spb',
+    'Екатеринбург': 'ekb',
+    'Новосибирск': 'nsk',
+    'Брест': 'brest',
+    'Витебск': 'vitebsk',
+    'Гомель': 'gomel',
+    'Гродно': 'grodno',
+    'Могилев': 'mogilev',
+    'Минск': 'minsk',
+    'Полоцк и Новополоцк': 'polotsk',
+}
+
+//Запуск функций по таймауту
+setTimeout(function run() {
+
+    tableImprove();
+    checkContacts();
+    restyleBlog();
+    categoryTableImprove();
+    categoryPageImprove();
+    landingTableImprove();
+    commentsTableImprove();
+
+    setTimeout(run, 1000);
+}, 1000);
+
+
 //ПУНКТЫ ГЛАВНОГО МЕНЮ открываются как обычные ссылки (не в фрейме)
 $("#admin-nav").find('a.admin-nav-item').each(function () {
     $(this).removeClass("admin-nav-item");
 });
 
-//ОПРЕДЕЛЕНИЕ ТИПА РЕДАКТИРУЕМОЙ СТРАНИЦЫ (По умолчанию возвращает тип и текст: "карточка товара")
+
+//ОПРЕДЕЛЕНИЕ ТИПА РЕДАКТИРУЕМОЙ СТРАНИЦЫ
 const pageType = new class PageType {
     constructor() {}
     getType() {
@@ -43,23 +73,6 @@ const pageType = new class PageType {
     }
 }
 
-//========================================================================================================
-
-//Запуск всех функций по таймауту
-setTimeout(function run() {
-
-    tableImprove();
-    checkContacts();
-    restyleBlog();
-    categoryTableImprove();
-    categoryPageImprove();
-    landingTableImprove();
-    commentsTableImprove();
-
-    setTimeout(run, 1000);
-}, 1000);
-
-
 
 //======================================================================================================== tableImprove
 //Ссылки на редактирование страниц карточек и цен в таблицах + ссылки на страницу товара из таблицы топов
@@ -67,18 +80,18 @@ setTimeout(function run() {
 function tableImprove() {
 
     //Добавление кнопок редактирования для таблицы карточек товаров
-    const grid = $("#grid_results_product_grid");
-    if (grid.length && !grid.find('tr:first').hasClass("edit-link-added")) {
-		console.log('[Daroo - Mamager.user.js] : Добавление кнопок редактирования для таблицы карточек товаров');
+    const grid = $("#grid_results_product_grid tbody");
+    if (grid.length && !grid.find('tr:first').hasClass('edit-link-added')) {
+        console.log('[Daroo - Mamager.user.js] : Добавление кнопок редактирования для таблицы карточек товаров');
         grid
             .find('tr[id*=grid-row-]')
             .each(function () {
                 const regex = /[0-9]*$/gm;
                 const id = regex.exec(this.id)[0];
                 $(this)
+                    .addClass('edit-link-added') //Присваеваем каждой строчке (а не таблице), т.к. результаты могут быть подгружены динамически
                     .find('td:last')
-                    .html(`<a href="/manager/product/edit/${id}" target="_blank"><input type="button" value="Edit" style="width: 100%; padding: 2px;" class="btn btn-primary btn-sm"></a>`)
-                    .addClass('edit-link-added'); //Присваеваем каждой строчке (а не таблице), т.к. результаты могут быть подгружены динамически
+                    .html(`<a href="/manager/product/edit/${id}" target="_blank"><input type="button" value="Edit" style="width: 100%; padding: 2px;" class="btn btn-primary btn-sm"></a>`);
             });
     }
 
@@ -99,7 +112,7 @@ function tableImprove() {
     }
 
     //Добавление кнопок редактирования для таблицы цен на странице карточки товара
-    const grid3 = $('#grid_results_product_price_search_grid');
+    const grid3 = $('#grid_results_product_price_search_grid tbody');
     if (grid3.length && !grid3.find('tr:first').hasClass("edit-link-added")) {
         console.log('[Daroo - Mamager.user.js] : Добавление кнопок редактирования для таблицы цен на странице карточки товара');
         grid3
@@ -108,47 +121,28 @@ function tableImprove() {
                 const regex = /[0-9]*$/gm;
                 const id = regex.exec(this.id)[0];
                 $(this)
+                    .addClass('edit-link-added') //Присваеваем каждой строчке (а не таблице), т.к. результаты могут быть подгружены динамически
                     .find('td:last')
-                    .html(`<a href="/manager/price/edit/${id}" target="_blank"><input type="button" value="Edit" style="width: 100%; padding: 2px;" class="btn btn-primary btn-sm"></a>`)
-                    .addClass('edit-link-added'); //Присваеваем каждой строчке (а не таблице), т.к. результаты могут быть подгружены динамически
+                    .html(`<a href="/manager/price/edit/${id}" target="_blank"><input type="button" value="Edit" style="width: 100%; padding: 2px;" class="btn btn-primary btn-sm"></a>`);
             });
     }
 
     //Добавление кнопок перехода на страницу товара из таблицы топов
-    if ($('#top-form').length && $('#existent-list tr').length){
-        console.log('[Daroo - Mamager.user.js] : Добавление кнопок перехода на страницу товара из таблицы топов');
+    if ($('#top-form').length && $('#existent-list tr').length) {
         const grid4 = $('#existent-list');
-        if (!$('#existent-list tr:first').hasClass("open-link-added")) {
+        if (!$('#existent-list tr:first').hasClass('open-link-added')) {
+            console.log('[Daroo - Mamager.user.js] : Добавление кнопок перехода на страницу товара из таблицы топов');
             grid4
                 .find("tr")
                 .each(function () {
                     $(this)
-                    .addClass("open-link-added")
-                    .find(".route")
-                    .prepend(`<a href="/${getRegionCode()}/${$(this).find(".route").text().trim()}" target="_blank" style="display:inline-block;"><input type="button" value="Open" style="margin-left:2px; width:45px; height:20px;" class="btn btn-xs btn-primary"></a>`);
+                        .addClass("open-link-added") //Присваеваем каждой строчке (а не таблице), т.к. результаты могут быть подгружены динамически
+                        .find(".route")
+                        .prepend(`<a href="/${regionCodes[$("#select2--container").attr('title').trim()]}/${$(this).find(".route").text().trim()}" target="_blank" style="display:inline-block;"><input type="button" value="Open" style="margin-left:2px; width:45px; height:20px;" class="btn btn-xs btn-primary"></a>`);
                 });
         }
     }
-    function getRegionCode() {
-        switch ($("#select2--container").attr('title').trim()) {
-			case 'Москва':
-                return "msk";
-            case 'Санкт-Петербург':
-                return "spb";
-            case 'Екатеринбург':
-                return "ekb";
-            case 'Новосибирск':
-                return "nsk";
-            case 'Минск':
-				return "minsk";
-			default:
-				return "minsk";
-        }
-    }
-    
-
 }
-
 
 //======================================================================================================== categoryTableImprove
 
@@ -526,29 +520,25 @@ height: 216px !important;
     }
 }
 
-
 //========================================================================================================
 //Переход со страницы товара в редактор контент-блока
 
 //Получить порядковый номер блока из URL
-function getBlockNumberFromUrl() {
+const number = function getBlockNumberFromUrl() {
     const params = new URLSearchParams(location.search)
     return params.get('editBlock') != null && params.get('editBlock').length ? params.get('editBlock') : null;
-}
+}();
 
 //Перейти в редактирование соотв. блока
-$(function () {
-    const number = getBlockNumberFromUrl();
-    if (number) {
-        if (pageType.getType === 'product') {
-            const blockId = $(`#tab-description #block-table tbody tr:eq(${number})`).data('sort-id');
-            const itemId = $(`#tab-description #block-table tbody tr:eq(${number}) td[id*='content-block-edit']`).data('product-id');
-            location.href = `https://${location.host}/manager/product-content-block/edit/${itemId}/${blockId}`;
-        }
-        if (pageType.getType === 'supplier') {
-            const blockId = $(`#supplier-blocks-contents tr:eq(${number})`).data('sort-id');
-            const itemId = $(`#supplier-blocks-contents tr:eq(${number}) td[id*='content-block-edit']`).data('supplier-id');
-            location.href = `https://${location.host}/manager/supplier-content-block/edit/${itemId}/${blockId}`;
-        }
+if (number) {
+    if (pageType.getType() === 'product') {
+        const blockId = $(`#tab-description #block-table tbody tr:eq(${number})`).data('sort-id');
+        const itemId = $(`#tab-description #block-table tbody tr:eq(${number}) td[id*='content-block-edit']`).data('product-id');
+        location.href = `https://${location.host}/manager/product-content-block/edit/${itemId}/${blockId}`;
     }
-});
+    if (pageType.getType() === 'supplier') {
+        const blockId = $(`#supplier-blocks-contents tr:eq(${number})`).data('sort-id');
+        const itemId = $(`#supplier-blocks-contents tr:eq(${number}) td[id*='content-block-edit']`).data('supplier-id');
+        location.href = `https://${location.host}/manager/supplier-content-block/edit/${itemId}/${blockId}`;
+    }
+}
