@@ -2,7 +2,7 @@
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
 // @include 	 *daroo*.*/manager/*
-// @version      2.7
+// @version      2.8
 // @description  Исправления и улучшения для админки DAROO
 // @updateURL    https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Manager.user.js
 // @author       Frants Mitskun
@@ -127,21 +127,34 @@ function tableImprove() {
             });
     }
 
-    //Добавление кнопок перехода на страницу товара из таблицы топов
+    //Исправления для таблицы топов
     if ($('#top-form').length && $('#existent-list tr').length) {
-        const grid4 = $('#existent-list');
-        if (!$('#existent-list tr:first').hasClass('open-link-added')) {
-            console.log('[Daroo - Mamager.user.js] : Добавление кнопок перехода на страницу товара из таблицы топов');
-            grid4
-                .find("tr")
-                .each(function () {
-                    $(this)
+        $('#existent-list tr').each(
+            function () {
+                const row = $(this);
+
+                //#1 Добавление кнопок перехода на страницу товара из таблицы топов
+                if (!row.hasClass('open-link-added')) {
+                    console.log('[Daroo - Mamager.user.js] : Добавление кнопки перехода на страницу товара из таблицы топов');
+                    row
                         .addClass("open-link-added") //Присваеваем каждой строчке (а не таблице), т.к. результаты могут быть подгружены динамически
                         .find(".route")
                         .prepend(`<a href="/${regionCodes[$("#select2--container").attr('title').trim()]}/${$(this).find(".route").text().trim()}" target="_blank" style="display:inline-block;"><input type="button" value="Open" style="margin-left:2px; width:45px; height:20px;" class="btn btn-xs btn-primary"></a>`);
+                }
+
+                //#2 Изменение порядкового номера ("Позиция в топе") в табилце топов
+                row.find('td.pos').each(function () {
+                    const cell = $(this);
+                    if (!cell.hasClass('one-added')) {
+                        cell
+                            .html(parseInt(cell.html()) + 1)
+                            .addClass('one-added');
+                    }
                 });
-        }
+
+            });
     }
+
 }
 
 //======================================================================================================== categoryTableImprove
