@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Front - PageInfo
 // @namespace    PageInfo
-// @version      5.2
+// @version      5.3
 // @description  Добавляет на страницы сайта DAROO вспомогательные ссылки и информацию (для редактора/контент-менеджера)
 // @updateURL    https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Front%20-%20PageInfo.user.js
 // @author       Frants Mitskun
@@ -17,6 +17,63 @@
 
 
 $(function () {
+
+	//Определение типа страницы
+	getPageType = () => {
+
+		//Определение типа страницы по классу Product (карточка товара || ценовое предложение)
+		if (typeof Product !== 'undefined') {
+			switch (Product.get('type')) {
+				case 'product':
+					return {
+						type: "product",
+						str1: "Редактировать карточку товара",
+						str2: "Карточка товара"
+					}
+				case 'price':
+					return {
+						type: "price",
+						str1: "Редактировать ценовое предложение",
+						str2: "Ценовое предложение"
+					}
+				default:
+					break;
+			}
+		}
+
+		//Определение типа страницы (карточка партнера)
+		if ($('.card-partner').length)
+			return {
+				type: "supplier",
+				str1: "Редактировать карточку партнера",
+				str2: "Партнер"
+			};
+
+		//Определение типа страницы (запись блога)
+		if (/(\/life\/)/.exec(window.location.href) !== null)
+			return {
+				type: "blog",
+				str1: "Редактировать запись",
+				str2: "Запись блога"
+			};
+	}
+
+	const date = new Date().toLocaleDateString();
+	const settings = GM_getValue("settings") ? GM_getValue("settings") : {
+		show_meta: true
+	};
+	const page = {
+		id: google_tag_params.local_id,
+		url: window.location.href,
+		type: getPageType(),
+		hostname: window.location.hostname
+	};
+
+	if (page.id == null) {
+		alert("Пожалуйста, обновите страницу для полноценной работы вспомогательных скриптов. Если данная ошибка появляется слишком часто, сообщите об этом разработчику скрипта DAROO-Front-PageInfo \n ERROR:\n local_id = " + google_tag_params.local_id + "\n page.id = " + page.id);
+	}
+
+
 
 	new class MetaPanel {
 		constructor() {
@@ -131,61 +188,6 @@ $(function () {
 			
 			</style>
 			`);
-
-			//Определение типа страницы
-			this.getPageType = () => {
-
-				//Определение типа страницы по классу Product (карточка товара || ценовое предложение)
-				if (typeof Product !== 'undefined') {
-					switch (Product.get('type')) {
-						case 'product':
-							return {
-								type: "product",
-								str1: "Редактировать карточку товара",
-								str2: "Карточка товара"
-							}
-						case 'price':
-							return {
-								type: "price",
-								str1: "Редактировать ценовое предложение",
-								str2: "Ценовое предложение"
-							}
-						default:
-							break;
-					}
-				}
-
-				//Определение типа страницы (карточка партнера)
-				if ($('.card-partner').length)
-					return {
-						type: "supplier",
-						str1: "Редактировать карточку партнера",
-						str2: "Партнер"
-					};
-
-				//Определение типа страницы (запись блога)
-				if (/(\/life\/)/.exec(window.location.href) !== null)
-					return {
-						type: "blog",
-						str1: "Редактировать запись",
-						str2: "Запись блога"
-					};
-			}
-
-			const date = new Date().toLocaleDateString();
-			const settings = GM_getValue("settings") ? GM_getValue("settings") : {
-				show_meta: true
-			};
-			const page = {
-				id: google_tag_params.local_id,
-				url: window.location.href,
-				type: this.getPageType(),
-				hostname: window.location.hostname
-			};
-
-			if (page.id == null) {
-				alert("Пожалуйста, обновите страницу для полноценной работы вспомогательных скриптов. Если данная ошибка появляется слишком часто, сообщите об этом разработчику скрипта DAROO-Front-PageInfo \n ERROR:\n local_id = " + google_tag_params.local_id + "\n page.id = " + page.id);
-			}
 
 			//▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 			//МЕНЮ
