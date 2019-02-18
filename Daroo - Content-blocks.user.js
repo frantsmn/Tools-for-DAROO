@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      3.7
+// @version      3.8
 // @include      *daroo*.*/manager/*
 // @description  Парсинг документа на заголовки, META-заголовки и контент-блоки с последующей их вставкой в текстовый редактор сайта.
 // @updateURL 	 https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Content-blocks.user.js
@@ -16,7 +16,7 @@
 
 // GM_deleteValue("settings");
 
-$(function () {
+$(document).ready(function () {
 
 	GM_addStyle(`
 
@@ -119,32 +119,26 @@ $(function () {
 	//ОПРЕДЕЛЕНИЕ ТИПА РЕДАКТИРУЕМОЙ СТРАНИЦЫ
 	const pageType = new class PageType {
 		constructor() {
-			this.getType = () => {
-				console.log('[Daroo - content-blocks.user.js] : Определение типа страницы — PageType.getType()');
-				switch (true) {
-					case $('input#product__token').length > 0:
-						return "product";
-					case $('input#supplier__token').length > 0:
-						return "supplier";
-					default:
-						return "product";
-				}
-			}
+			//Если есть хеш, то проверять его, если нет, то проверяем путь
+			const str = window.location.hash.length ? window.location.hash : window.location.pathname;
 
-			this.getText = () => {
-				console.log('[Daroo - content-blocks.user.js] : Определение типа страницы — PageType.getText()');
-				switch (true) {
-					case $('input#product__token').length > 0:
-						return "карточка товара";
-					case $('input#supplier__token').length > 0:
-						return "карточка партнера";
-					default:
-						return "карточка товара";
-				}
+			switch (true) {
+				case /product/.exec(str) !== null:
+					this.type = 'product';
+					this.text = 'карточка товара';
+					console.log(`[Daroo - content-blocks.user.js] : Определение типа страницы > ${this.type}, ${this.text}`);
+					return;
+				case /supplier/.exec(str) !== null:
+					this.type = 'supplier';
+					this.text = 'карточка партнера';
+					console.log(`[Daroo - content-blocks.user.js] : Определение типа страницы > ${this.type}, ${this.text}`);
+					return;
+				default:
+					this.type = 'unknown type';
+					this.text = '<span style="color:red;">неизвестный тип страницы</span>';
+					console.log(`[Daroo - content-blocks.user.js] : Определение типа страницы > ${this.type}, ${this.text}`);
+					return
 			}
-
-			this.type = this.getType();
-			this.text = this.getText();
 		}
 	}
 
