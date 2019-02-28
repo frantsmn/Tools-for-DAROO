@@ -47,7 +47,7 @@ const mail = {
         isNew: true,
         discount: '25%',
         price: '10 руб. – 200 руб.',
-        partner: 'Наименование партнера',
+        partner: 'Наименование компании',
         rating: 'Рейтинг 4/5',
         //Если позиция вторая в списке, то добавим переносы в табличке </tr><tr>
         isSecond: '',
@@ -55,7 +55,7 @@ const mail = {
 
     button: {
         title: 'Посмотреть еще',
-        link: 'http://daroo.by/minsk/catalog',
+        link: 'http://daroo.by/catalog',
     },
 
     year: new Date().getFullYear()
