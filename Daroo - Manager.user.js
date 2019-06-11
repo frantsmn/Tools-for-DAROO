@@ -2,7 +2,7 @@
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
 // @include 	 *daroo*.*/manager/*
-// @version      2.9
+// @version      3.0
 // @description  Исправления и улучшения для админки DAROO
 // @updateURL    https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Manager.user.js
 // @author       Frants Mitskun
@@ -35,6 +35,7 @@ setTimeout(function run() {
     categoryPageImprove();
     landingTableImprove();
     commentsTableImprove();
+    deleteGalleryHelper();
 
     setTimeout(run, 1000);
 }, 1000);
@@ -48,7 +49,7 @@ $("#admin-nav").find('a.admin-nav-item').each(function () {
 
 //ОПРЕДЕЛЕНИЕ ТИПА РЕДАКТИРУЕМОЙ СТРАНИЦЫ
 const pageType = new class PageType {
-    constructor() {}
+    constructor() { }
     getType() {
         console.log('Отладка скрипта [Daroo - content-blocks.user.js] : Определение типа страницы — PageType.getType()');
         switch (true) {
@@ -541,5 +542,22 @@ if (number) {
         const blockId = $(`#supplier-blocks-contents tr:eq(${number})`).data('sort-id');
         const itemId = $(`#supplier-blocks-contents tr:eq(${number}) td[id*='content-block-edit']`).data('supplier-id');
         location.href = `https://${location.host}/manager/supplier-content-block/edit/${itemId}/${blockId}`;
+    }
+}
+
+//========================================================================================================
+//Помощник удаления галереи
+
+function deleteGalleryHelper() {
+    if (!$('#delete-galery-button').length) {
+        $('#tab-images').prepend(`<button id="delete-galery-button" class="btn btn-danger">Удалить галерею</button>`);
+        $('#delete-galery-button').on('click', function () {
+            $('#tab-images').find('a.image-delete-btn.btn.btn-default.btn-xs').each(function () {
+                var button = $(this);
+                if (!button.parents('#tpl').length) {
+                    $(this).click();
+                }
+            });
+        });
     }
 }
