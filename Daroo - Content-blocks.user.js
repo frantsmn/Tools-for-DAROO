@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Daroo - Content-blocks
 // @namespace    Content-blocks
-// @version      3.8
+// @version      3.9
 // @include      *daroo*.*/manager/*
 // @description  Парсинг документа на заголовки, META-заголовки и контент-блоки с последующей их вставкой в текстовый редактор сайта.
 // @updateURL 	 https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Content-blocks.user.js
@@ -171,10 +171,10 @@ $(document).ready(function () {
 
 				$("#doc-text").fadeIn(1, function () {
 
-						console.log('[Daroo - content-blocks.user.js] : Коллбэк — отображение tooltip к полю ввода');
+					console.log('[Daroo - content-blocks.user.js] : Коллбэк — отображение tooltip к полю ввода');
 
-						$(this).focus().tooltip('show');
-					})
+					$(this).focus().tooltip('show');
+				})
 					//Передаем содержимое поля парсеру при input и скрываем поле
 					.on("input", function () {
 
@@ -263,7 +263,7 @@ $(document).ready(function () {
 
 						//SEO
 						$("input#product_seo_translations_ru_metaTitle").css("border-color", "#00c14b").val(parser.meta.title);
-						/*keywords*/
+						$("textarea#product_seo_translations_ru_metaKeywords").css("border-color", "#00c14b").val(parser.meta.keywords);
 						$("textarea#product_seo_translations_ru_metaDescription").css("border-color", "#00c14b").val(parser.meta.description);
 						$("input#product_seo_translations_ru_metaBreadcrumbs").css("border-color", "#00c14b").val(parser.meta.title_for_catalog);
 
@@ -284,7 +284,7 @@ $(document).ready(function () {
 
 						//SEO
 						$("input#supplier_seo_translations_ru_metaTitle").css("border-color", "#00c14b").val(parser.meta.title);
-						/*keywords*/
+						$("textarea#supplier_seo_translations_ru_metaKeywords").css("border-color", "#00c14b").val(parser.meta.keywords);
 						$("textarea#supplier_seo_translations_ru_metaDescription").css("border-color", "#00c14b").val(parser.meta.description);
 						$("input#supplier_seo_translations_ru_metaBreadcrumbs").css("border-color", "#00c14b").val(parser.meta.title_for_catalog);
 
@@ -314,10 +314,10 @@ $(document).ready(function () {
 						$("select#product_block_content").val(by).change();
 						$("select#supplier_block_content").val(by).change();
 					} else
-					if (location.host === "daroo.ru") {
-						$("select#product_block_content").val(ru).change();
-						$("select#supplier_block_content").val(ru).change();
-					}
+						if (location.host === "daroo.ru") {
+							$("select#product_block_content").val(ru).change();
+							$("select#supplier_block_content").val(ru).change();
+						}
 				}
 
 				//Выбираем необходимый блок согласно кодовому имени
@@ -470,6 +470,10 @@ $(document).ready(function () {
 						this.meta.description = strings[i].slice(12);
 						this.meta.titlesHtml += "<span class='seo'>Мета-описание</span>";
 						break;
+					case /Ключи для H1 заголовка	/.test(strings[i]):
+						this.meta.keywords = strings[i].slice(23);
+						this.meta.titlesHtml += "<span class='seo'>Ключевые слова</span>";
+						break;
 					case /Заголовок в каталоге для товаров \/ Название партнера	/.test(strings[i]):
 						this.meta.title_for_catalog = strings[i].slice(53);
 						this.meta.titlesHtml += pageType.type === "product" ? "<span class='seo'>Крошка</span><span>Наименование</span><span>Наименование для каталога</span>" : "<span class='seo'>Крошка</span><span>Наименование</span><span>Краткое наименование</span>";
@@ -558,7 +562,7 @@ $(document).ready(function () {
 	}
 
 	class BlockConstructor {
-		constructor() {}
+		constructor() { }
 
 		//===============================================================================================
 		//  ДВЕ КОЛОНКИ
