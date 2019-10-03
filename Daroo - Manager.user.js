@@ -29,6 +29,7 @@ const regionCodes = {
 setTimeout(function run() {
 
     tableImprove();
+    commentsTableImprove()
     checkContacts();
     restyleBlog();
     categoryTableImprove();
@@ -207,17 +208,133 @@ function categoryTableImprove() {
 //======================================================================================================== commentsTableImprove
 
 function commentsTableImprove() {
-    if ($("#grid_results_comments_grid").length && $("#grid_results_comments_grid").hasClass("improved") === false) {
+    if ($("#grid_results_comments_grid").length && !$("#grid_results_comments_grid .lasttr").length) {
+        $("#grid_results_comments_grid").addClass("improved");
+
+        GM_addStyle(`
+
+thead tr{
+	display: table;
+	width: 100%;
+}
+
+tbody{
+	display: flex;
+	flex-flow: column nowrap;
+}
+
+tbody td{
+    width: auto !important;
+    min-width: 80px !important;
+}
+
+tbody td.ig-grid-cell-pdt-usageCondition{
+     min-width: 200px !important;
+}
+
+tbody td.ig-grid-cell-commentsPrice-comment {
+     min-width: 400px !important;
+}
+
+tbody td:nth-child(2){
+    min-width: 20px !important;
+}
+
+tbody td:first-child{
+	display: none;
+}
+
+tbody td.ig-grid-cell-commentsPrice-rating{
+	font-size: 30px;
+	opacity: 0.6;
+	text-align: center;
+	transition: opacity 0.2s ease;
+}
+
+tbody tr:hover > td.ig-grid-cell-commentsPrice-rating{
+	opacity: 1;
+}
+
+.lasttr {
+	display: block !important;
+	height: 100px !important;
+	position: absolute !important;
+	top: -25px !important;
+	right: 0 !important;
+	background: none !important;
+}
+
+.lasttr td {
+	border: none;
+	display: block !important;
+}
+
+
+
+/* Serice classes */
+
+.good-bg {
+	background: rgba(38, 255, 0, .2);
+}
+
+.soso-bg {
+	background: rgba(255, 221, 0, .2);
+}
+
+.bad-bg {
+	background: rgba(244, 137, 137, .2);
+}
+
+
+.good-sh {
+	box-shadow: inset 0px 0px 3px 3px  rgba(38, 255, 0, .4);
+}
+
+.soso-sh {
+	box-shadow: inset 0px 0px 3px 3px  rgba(255, 221, 0, .4);
+}
+
+.bad-sh {
+	box-shadow: inset 0px 0px 3px 3px rgba(244, 137, 137, .4);
+}`);
+
         $("#grid_results_comments_grid tbody").find("tr").each(function () {
             var id = $(this).attr("id") ? Number(($(this).attr("id")).slice(9)) : '';
-            $(this).find("td:last-child div").prepend('<a href="/manager/comments/edit/' + id + '" target="_blank"><input type="button" value="Edit" style="margin:0px; width:50px; height:22px;" class="btn btn-primary btn-xs"/></a>').css({
+            $(this).find("td:last-child div").prepend('<a href="/manager/comments/edit/' + id + '" target="_blank"><input type="button" value="Edit" value="Title" style="margin:0px; width:50px; height:22px;" class="btn btn-primary btn-xs"/></a>').css({
                 "width": "auto"
             });
             $(this).find("button[title='Редактирование']").each(function () {
                 $(this).remove();
             });
+
+            $("#grid_results_comments_grid tbody").find("tr").last().addClass('lasttr');
+
+
+            var statusCell = $(this).find('.ig-grid-cell-commentsPrice-status');
+            var statusCellText = $(this).find('.ig-grid-cell-commentsPrice-status').text().trim();
+            if (statusCellText == "Опубликован") {
+                statusCell.addClass('good-bg');
+            } else
+                if (statusCellText == "Отказано в публикации") {
+                    statusCell.addClass('bad-bg');
+                } else
+                    if (statusCellText == "На модерации") {
+                        statusCell.addClass('soso-bg');
+                    }
+
+            var markCell = $(this).find('.ig-grid-cell-commentsPrice-rating');
+            var markCellText = $(this).find('.ig-grid-cell-commentsPrice-rating').text().trim();
+            if (markCellText == "5" || markCellText == "4") {
+                markCell.addClass('good-sh');
+            } else
+                if (markCellText == "3") {
+                    markCell.addClass('soso-sh');
+                } else
+                    if (markCellText == "2" || markCellText == "1" || markCellText == "0") {
+                        markCell.addClass('bad-sh');
+                    }
         });
-        $("#grid_results_comments_grid").addClass("improved");
+
     }
 }
 
