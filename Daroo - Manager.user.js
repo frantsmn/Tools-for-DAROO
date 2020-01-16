@@ -2,7 +2,7 @@
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
 // @include 	 *daroo*.*/manager/*
-// @version      3.1
+// @version      3.2
 // @description  Исправления и улучшения для админки DAROO
 // @updateURL    https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Manager.user.js
 // @author       Frants Mitskun
@@ -37,6 +37,7 @@ setTimeout(function run() {
     landingTableImprove();
     commentsTableImprove();
     deleteGalleryHelper();
+    makePhotoPreviewsBigger();
 
     setTimeout(run, 1000);
 }, 1000);
@@ -677,4 +678,34 @@ function deleteGalleryHelper() {
             });
         });
     }
+}
+
+
+//========================================================================================================
+//Большие превью в предпросмотре фотографий прикрепленных к комметарию
+
+function makePhotoPreviewsBigger() {
+
+    if (/https:\/\/daroo*.*manager\/comments\/edit*.*/.test(window.location.href) && document.querySelector('#tab-photos')) {
+
+        if (document.querySelector('#tab-photos').classList.contains('previewfix') === false) {
+
+            document.querySelectorAll('#tab-photos a.thumbnail img')
+                .forEach(item => {
+                    item.src = item.src.replace(/https:\/\/daroo\.by\/media\/cache\/small\//, 'http://');
+                    item.width = 700;
+                });
+
+            document.querySelectorAll('#js-sort-image li')
+                .forEach(item => {
+                    item.classList.remove('col-md-3');
+                    item.classList.remove('col-md-6');
+                });
+
+            document.querySelector('#tab-photos').classList.add('previewfix');
+            
+        }
+
+    }
+
 }
