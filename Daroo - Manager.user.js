@@ -2,7 +2,7 @@
 // @name         Daroo - Manager
 // @namespace    Scripts for Daroo Manager
 // @include 	 *daroo*.*/manager/*
-// @version      3.2
+// @version      3.3
 // @description  Исправления и улучшения для админки DAROO
 // @updateURL    https://github.com/frantsmn/userscripts/raw/master/Daroo%20-%20Manager.user.js
 // @author       Frants Mitskun
@@ -699,7 +699,6 @@ function makePhotoPreviewsBigger() {
             document.querySelectorAll('#js-sort-image li')
                 .forEach(item => {
                     item.classList.remove('col-md-3');
-                    item.classList.remove('col-md-6');
                 });
 
             document.querySelector('#tab-photos').classList.add('previewfix');
